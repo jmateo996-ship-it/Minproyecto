@@ -1,0 +1,32 @@
+[
+ {
+  "shape": "Narrative Workflow",
+  "theme": "ink",
+  "axes": "light/grotesk-sans/chromatic-teal",
+  "hero": "Stage",
+  "nav": "edge-aligned",
+  "footer": "letter close",
+  "imagery": "photographs, library 1, muted",
+  "photos": [
+   "Nizza-Soap-4070848.jpg"
+  ],
+  "entry": "none",
+  "fingerprint": "c8dce4",
+  "sections": [
+   "hero",
+   "switcher",
+   "statement band",
+   "booking times",
+   "hours table",
+   "footer"
+  ],
+  "signature": "service list that hands its pick to the booking",
+  "waived": [
+   "22",
+   "77"
+  ],
+  "prompt": "Estética Inma, centro de estética",
+  "date": "2026-11-19",
+  "mode": "build"
+ }
+]

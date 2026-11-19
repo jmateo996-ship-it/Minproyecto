@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estética Inma</title>
+<meta name="description" content="Centro de estética en el barrio: facial, corporal, depilación, manos y pies, pestañas y cejas, masajes y maquillaje. Pide tu cita por WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav__row">
+    <a class="wordmark" href="#inicio">Estética Inma</a>
+    <div class="nav__end">
+      <span class="tag tag--out" id="estado" hidden></span>
+      <a class="nav__link" href="#carta">Servicios</a>
+      <a class="btn btn--primary btn--sm" href="#cita">Pedir cita</a>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="hero">
+    <div class="container hero__grid">
+      <div class="hero__text">
+        <h1>Tu piel, en buenas manos.</h1>
+        <p class="lead">Un centro de estética de barrio, con cita y sin prisas.</p>
+        <div class="actions">
+          <a class="btn btn--primary" href="#cita">Pedir cita</a>
+          <a class="btn" href="#carta">Ver la carta</a>
+        </div>
+      </div>
+      <figure class="photo hero__photo" data-slot="hero" data-alt="La cabina de Estética Inma con luz de día, o las manos de Inma durante un tratamiento">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Nizza-Soap-4070848.jpg/1280px-Nizza-Soap-4070848.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Nizza-Soap-4070848.jpg/960px-Nizza-Soap-4070848.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Nizza-Soap-4070848.jpg/1280px-Nizza-Soap-4070848.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Nizza-Soap-4070848.jpg/1920px-Nizza-Soap-4070848.jpg 1920w" sizes="(min-width: 60rem) 55vw, 100vw" width="4331" height="3361" alt="Pastillas de jabón rosa apiladas en una caja de madera" style="object-position: 50% 50%" fetchpriority="high">
+      </figure>
+    </div>
+  </section>
+
+  <ol class="stages">
+    <li>
+      <section class="stage" id="carta" aria-labelledby="carta-h">
+        <div class="container">
+          <div class="stage__head">
+            <h2 id="carta-h">Elige en la carta.</h2>
+            <p class="lead">Seis familias de tratamientos. Pulsa «Elegir» y pasa a la hora.</p>
+          </div>
+
+          <div data-switch>
+            <div class="seg" role="tablist" aria-label="Familias de tratamientos" hidden>
+              <button role="tab" id="t-facial" aria-controls="p-facial" aria-selected="true">Facial</button>
+              <button role="tab" id="t-corporal" aria-controls="p-corporal" aria-selected="false" tabindex="-1">Corporal</button>
+              <button role="tab" id="t-depilacion" aria-controls="p-depilacion" aria-selected="false" tabindex="-1">Depilación</button>
+              <button role="tab" id="t-manos" aria-controls="p-manos" aria-selected="false" tabindex="-1">Manos y pies</button>
+              <button role="tab" id="t-mirada" aria-controls="p-mirada" aria-selected="false" tabindex="-1">Pestañas y cejas</button>
+              <button role="tab" id="t-masajes" aria-controls="p-masajes" aria-selected="false" tabindex="-1">Masajes y maquillaje</button>
+            </div>
+
+            <section class="panel" role="tabpanel" id="p-facial" aria-labelledby="t-facial">
+              <h3 class="panel__title">Facial</h3>
+              <ul class="ruled">
+                <li><span class="svc__name">Higiene facial</span><span class="svc__line">Limpieza, extracción y mascarilla.</span><span class="svc__min">60 min</span><span class="svc__price">45 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Hidratación intensiva</span><span class="svc__line">Para la piel seca o tirante.</span><span class="svc__min">50 min</span><span class="svc__price">40 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Peeling</span><span class="svc__line">Afina la textura y aclara manchas.</span><span class="svc__min">45 min</span><span class="svc__price">55 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Radiofrecuencia</span><span class="svc__line">Firmeza en óvalo y cuello.</span><span class="svc__min">40 min</span><span class="svc__price">50 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+              </ul>
+            </section>
+
+            <section class="panel" role="tabpanel" id="p-corporal" aria-labelledby="t-corporal">
+              <h3 class="panel__title">Corporal</h3>
+              <ul class="ruled">
+                <li><span class="svc__name">Maderoterapia</span><span class="svc__line">Masaje con rodillos de madera.</span><span class="svc__min">50 min</span><span class="svc__price">40 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Presoterapia</span><span class="svc__line">Piernas ligeras, sesión tumbada.</span><span class="svc__min">40 min</span><span class="svc__price">30 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Drenaje linfático</span><span class="svc__line">Manual, suave y lento.</span><span class="svc__min">60 min</span><span class="svc__price">50 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Envoltura corporal</span><span class="svc__line">Exfoliación y arcilla.</span><span class="svc__min">60 min</span><span class="svc__price">45 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+              </ul>
+            </section>
+
+            <section class="panel" role="tabpanel" id="p-depilacion" aria-labelledby="t-depilacion">
+              <h3 class="panel__title">Depilación</h3>
+              <ul class="ruled">
+                <li><span class="svc__name">Piernas completas</span><span class="svc__line">Cera tibia.</span><span class="svc__min">45 min</span><span class="svc__price">28 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Axilas e ingles</span><span class="svc__line">Cera de baja temperatura.</span><span class="svc__min">30 min</span><span class="svc__price">18 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Cejas con hilo</span><span class="svc__line">Forma y limpieza.</span><span class="svc__min">15 min</span><span class="svc__price">10 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Láser de diodo</span><span class="svc__line">Por zona, en bonos.</span><span class="svc__min">20 min</span><span class="svc__price">35 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+              </ul>
+            </section>
+
+            <section class="panel" role="tabpanel" id="p-manos" aria-labelledby="t-manos">
+              <h3 class="panel__title">Manos y pies</h3>
+              <ul class="ruled">
+                <li><span class="svc__name">Manicura clásica</span><span class="svc__line">Forma, cutícula y esmalte.</span><span class="svc__min">30 min</span><span class="svc__price">15 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Semipermanente</span><span class="svc__line">Dura de dos a tres semanas.</span><span class="svc__min">45 min</span><span class="svc__price">22 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Uñas de gel</span><span class="svc__line">Construcción o relleno.</span><span class="svc__min">75 min</span><span class="svc__price">38 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Pedicura completa</span><span class="svc__line">Durezas, uñas y masaje.</span><span class="svc__min">60 min</span><span class="svc__price">30 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+              </ul>
+            </section>
+
+            <section class="panel" role="tabpanel" id="p-mirada" aria-labelledby="t-mirada">
+              <h3 class="panel__title">Pestañas y cejas</h3>
+              <ul class="ruled">
+                <li><span class="svc__name">Lifting de pestañas</span><span class="svc__line">Con tinte incluido.</span><span class="svc__min">60 min</span><span class="svc__price">45 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Extensiones pelo a pelo</span><span class="svc__line">Primera puesta.</span><span class="svc__min">120 min</span><span class="svc__price">70 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Laminado de cejas</span><span class="svc__line">Peinadas y fijadas.</span><span class="svc__min">45 min</span><span class="svc__price">35 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Tinte de cejas</span><span class="svc__line">Color a tu tono.</span><span class="svc__min">15 min</span><span class="svc__price">9 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+              </ul>
+            </section>
+
+            <section class="panel" role="tabpanel" id="p-masajes" aria-labelledby="t-masajes">
+              <h3 class="panel__title">Masajes y maquillaje</h3>
+              <ul class="ruled">
+                <li><span class="svc__name">Masaje relajante</span><span class="svc__line">Cuerpo entero, aceite tibio.</span><span class="svc__min">60 min</span><span class="svc__price">45 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Descontracturante</span><span class="svc__line">Espalda, cuello y hombros.</span><span class="svc__min">45 min</span><span class="svc__price">40 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Maquillaje de evento</span><span class="svc__line">Bodas, cenas, fotos.</span><span class="svc__min">60 min</span><span class="svc__price">50 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+                <li><span class="svc__name">Maquillaje de novia</span><span class="svc__line">Con prueba previa.</span><span class="svc__min">120 min</span><span class="svc__price">150 €</span><button class="btn btn--sm svc__pick" aria-pressed="false">Elegir</button></li>
+              </ul>
+            </section>
+          </div>
+          <p class="note">Precios con IVA incluido.</p>
+        </div>
+      </section>
+    </li>
+
+    <li class="band-wrap">
+      <section class="band" aria-label="Cómo trabajamos">
+        <div class="container">
+          <p class="statement">Una cabina, una clienta, el tiempo que haga falta.</p>
+          <p class="band__line">Inma te atiende de principio a fin y te dice con franqueza qué te conviene y qué no.</p>
+        </div>
+      </section>
+    </li>
+
+    <li>
+      <section class="stage" id="cita" aria-labelledby="cita-h">
+        <div class="container">
+          <div class="stage__head">
+            <h2 id="cita-h">Escoge tu hora.</h2>
+            <p class="lead">Elige día y hora; te confirmamos por WhatsApp.</p>
+          </div>
+          <div class="book">
+            <div class="days" id="dias">
+              <p class="day">Escríbenos por WhatsApp o llama al 600 000 000 y te damos hora.</p>
+            </div>
+            <aside class="summary" aria-live="polite">
+              <dl>
+                <div><dt>Servicio</dt><dd id="r-servicio">Sin elegir</dd></div>
+                <div><dt>Día</dt><dd id="r-dia">Sin elegir</dd></div>
+                <div><dt>Hora</dt><dd id="r-hora">Sin elegir</dd></div>
+              </dl>
+              <a class="btn btn--primary" id="r-enviar" href="https://wa.me/34600000000?text=Hola%20Inma%2C%20quiero%20pedir%20cita.">Pedir por WhatsApp</a>
+              <small>Si no puedes venir, avísanos un día antes.</small>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </li>
+
+    <li>
+      <section class="stage" id="visita" aria-labelledby="visita-h">
+        <div class="container">
+          <div class="stage__head">
+            <h2 id="visita-h">Ven a vernos.</h2>
+          </div>
+          <div class="visit">
+            <table class="hours">
+              <caption class="visually-hidden">Horario</caption>
+              <tbody>
+                <tr data-dow="1"><th scope="row">Lunes</th><td>10:00 a 14:00</td><td>16:00 a 20:00</td></tr>
+                <tr data-dow="2"><th scope="row">Martes</th><td>10:00 a 14:00</td><td>16:00 a 20:00</td></tr>
+                <tr data-dow="3"><th scope="row">Miércoles</th><td>10:00 a 14:00</td><td>16:00 a 20:00</td></tr>
+                <tr data-dow="4"><th scope="row">Jueves</th><td>10:00 a 14:00</td><td>16:00 a 20:00</td></tr>
+                <tr data-dow="5"><th scope="row">Viernes</th><td>10:00 a 14:00</td><td>16:00 a 20:00</td></tr>
+                <tr data-dow="6"><th scope="row">Sábado</th><td>10:00 a 14:00</td><td>Cerrado</td></tr>
+                <tr data-dow="0"><th scope="row">Domingo</th><td>Cerrado</td><td></td></tr>
+              </tbody>
+            </table>
+            <div class="place">
+              <p class="place__addr">Calle del Olmo 14, bajo</p>
+              <p>Junto a la farmacia. Hay aparcamiento en la plaza.</p>
+              <div class="actions">
+                <a class="btn" href="tel:+34600000000">Llamar</a>
+                <a href="https://www.google.com/maps/search/?api=1&amp;query=Calle%20del%20Olmo%2014">Cómo llegar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </li>
+  </ol>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <p class="signoff">Hasta pronto, Inma.</p>
+      <ul class="footer__links">
+        <li><a href="#carta">Servicios</a></li>
+        <li><a href="#cita">Pedir cita</a></li>
+        <li><a href="#visita">Horario y dirección</a></li>
+        <li><a href="https://instagram.com/">Instagram</a></li>
+      </ul>
+    </div>
+    <div class="legal">
+      <span>Estética Inma, Calle del Olmo 14</span>
+      <span data-credits>Fotografía: <a href="https://commons.wikimedia.org/wiki/File:Nizza-Soap-4070848.jpg">Ermell</a> (CC BY-SA 4.0, Wikimedia Commons)</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  // Opening hours per weekday: [start, end] in hours.
+  const HORARIO = { 0: [], 1: [[10, 14], [16, 20]], 2: [[10, 14], [16, 20]], 3: [[10, 14], [16, 20]], 4: [[10, 14], [16, 20]], 5: [[10, 14], [16, 20]], 6: [[10, 14]] };
+  const WA = 'https://wa.me/34600000000?text=';
+  const now = new Date();
+  const hNow = now.getHours() + now.getMinutes() / 60;
+
+  // Status pill in the nav.
+  const estado = document.getElementById('estado');
+  const abierto = HORARIO[now.getDay()].some(([a, b]) => hNow >= a && hNow < b);
+  if (abierto) {
+    const fin = HORARIO[now.getDay()].find(([a, b]) => hNow >= a && hNow < b)[1];
+    estado.textContent = `Abierto, hasta las ${fin}:00`;
+    estado.className = 'tag tag--in';
+  } else {
+    let d = new Date(now);
+    for (let i = 0; i < 8; i++) {
+      const tramos = HORARIO[d.getDay()];
+      const prox = tramos.find(([a]) => i > 0 || a > hNow);
+      if (prox) { estado.textContent = `Cerrado, abre ${i === 0 ? 'hoy' : i === 1 ? 'mañana' : 'el ' + DIAS[d.getDay()]} a las ${prox[0]}:00`; break; }
+      d.setDate(d.getDate() + 1);
+    }
+  }
+  estado.hidden = false;
+  const hoy = document.querySelector(`.hours tr[data-dow="${now.getDay()}"]`);
+  if (hoy) { hoy.dataset.today = ''; hoy.querySelector('th').insertAdjacentHTML('beforeend', ' <span class="tag tag--in">Hoy</span>'); }
+
+  // Switcher.
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  document.querySelector('[role="tablist"]').hidden = false;
+  const select = (t) => {
+    tabs.forEach((x) => { const on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; });
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!k) return;
+      const n = tabs[(i + k + tabs.length) % tabs.length]; n.focus(); select(n);
+    });
+  });
+  select(tabs[0]);
+
+  // Booking state.
+  const r = { servicio: null, dia: null, hora: null };
+  const out = { servicio: document.getElementById('r-servicio'), dia: document.getElementById('r-dia'), hora: document.getElementById('r-hora') };
+  const enviar = document.getElementById('r-enviar');
+  const render = () => {
+    for (const k in r) out[k].textContent = r[k] || 'Sin elegir';
+    const partes = ['Hola Inma, quiero pedir cita'];
+    if (r.servicio) partes.push(`para ${r.servicio}`);
+    if (r.dia) partes.push(`el ${r.dia}`);
+    if (r.hora) partes.push(`a las ${r.hora}`);
+    enviar.href = WA + encodeURIComponent(partes.join(' ') + '.');
+  };
+
+  document.querySelectorAll('.svc__pick').forEach((b) => {
+    const nombre = b.parentElement.querySelector('.svc__name').textContent;
+    b.setAttribute('aria-label', `Elegir ${nombre}`);
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.svc__pick').forEach((x) => { x.setAttribute('aria-pressed', 'false'); x.textContent = 'Elegir'; });
+      b.setAttribute('aria-pressed', 'true'); b.textContent = 'Elegido';
+      r.servicio = nombre.toLowerCase(); render();
+      document.getElementById('cita').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+  });
+
+  // Next three open days, hourly start times.
+  const dias = document.getElementById('dias');
+  dias.textContent = '';
+  let d = new Date(now), hechos = 0;
+  for (let i = 0; hechos < 3 && i < 10; i++, d.setDate(d.getDate() + 1)) {
+    const tramos = HORARIO[d.getDay()];
+    if (!tramos.length) continue;
+    const etiqueta = i === 0 ? 'Hoy' : i === 1 ? 'Mañana' : DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice(1) + ' ' + d.getDate();
+    const larga = i === 0 ? 'hoy' : i === 1 ? 'mañana' : `${DIAS[d.getDay()]} ${d.getDate()}`;
+    const col = document.createElement('div'); col.className = 'day';
+    col.innerHTML = `<h3>${etiqueta}</h3><ul class="slots"></ul>`;
+    const ul = col.querySelector('ul');
+    let libres = 0;
+    tramos.forEach(([a, b]) => { for (let h = a; h < b; h++) {
+      const li = document.createElement('li'); const btn = document.createElement('button');
+      btn.className = 'slot'; btn.textContent = `${String(h).padStart(2, '0')}:00`; btn.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-label', `${larga}, ${btn.textContent}`);
+      if (i === 0 && h <= hNow) btn.disabled = true; else libres++;
+      btn.addEventListener('click', () => {
+        dias.querySelectorAll('.slot').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true'); r.dia = larga; r.hora = btn.textContent; render();
+      });
+      li.append(btn); ul.append(li);
+    } });
+    if (i === 0 && !libres) continue;
+    dias.append(col); hechos++;
+  }
+  render();
+})();
+</script>
+<script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+</body>
+</html>
