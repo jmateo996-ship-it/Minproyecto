@@ -1,6 +1,35 @@
 [
  {
   "shape": "Narrative Workflow",
+  "theme": "hum",
+  "axes": "light/rounded-sans/chromatic-yellow",
+  "hero": "Stage",
+  "nav": "edge-aligned",
+  "footer": "letter close",
+  "imagery": "photographs, library 1, natural",
+  "photos": [
+   "Nizza-Soap-4070848.jpg"
+  ],
+  "entry": "none",
+  "fingerprint": "c8dce4-hum",
+  "sections": [
+   "hero",
+   "switcher",
+   "pear band",
+   "booking times",
+   "hours table",
+   "footer"
+  ],
+  "signature": "service list on card stock that hands its pick to the booking",
+  "waived": [
+   "77"
+  ],
+  "prompt": "Estética Inma, moderna y juvenil",
+  "date": "2026-11-19",
+  "mode": "build"
+ },
+ {
+  "shape": "Narrative Workflow",
   "theme": "ink",
   "axes": "light/grotesk-sans/chromatic-teal",
   "hero": "Stage",
