@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estética Inma</title>
+  <meta name="description" content="Estética Inma: manicura, depilación láser, maquillaje y cejas. Reserva tu cita en el día.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Sofia+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav__row">
+      <a class="nav__mark" href="#inicio">Estética Inma</a>
+      <nav aria-label="Principal">
+        <ul class="nav__links">
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#horario">Horario</a></li>
+          <li><a class="nav__cta" href="#reserva">Reservar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__copy">
+          <h1>Uñas, láser y make up.</h1>
+          <p class="lead">Tu estudio de belleza en el barrio, con cita hoy mismo.</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#reserva">Pedir cita hoy</a>
+            <a class="btn" href="#servicios">Ver precios</a>
+          </div>
+        </div>
+
+        <form class="book diecut" id="reserva" data-endpoint="" novalidate aria-labelledby="book-title">
+          <span class="tag tag--lime book__tag">Hoy, jueves</span>
+          <h2 class="book__title" id="book-title">Huecos libres</h2>
+
+          <fieldset class="chips">
+            <legend>Servicio</legend>
+            <input type="radio" name="servicio" id="sv1" value="Manicura semipermanente" checked><label for="sv1">Manicura</label>
+            <input type="radio" name="servicio" id="sv2" value="Depilación láser"><label for="sv2">Láser</label>
+            <input type="radio" name="servicio" id="sv3" value="Maquillaje"><label for="sv3">Make up</label>
+            <input type="radio" name="servicio" id="sv4" value="Cejas y pestañas"><label for="sv4">Cejas</label>
+          </fieldset>
+
+          <fieldset class="chips chips--time">
+            <legend>Hora</legend>
+            <input type="radio" name="hora" id="h1" value="11:00"><label for="h1">11:00</label>
+            <input type="radio" name="hora" id="h2" value="12:30"><label for="h2">12:30</label>
+            <input type="radio" name="hora" id="h3" value="16:00"><label for="h3">16:00</label>
+            <input type="radio" name="hora" id="h4" value="17:30" checked><label for="h4">17:30</label>
+            <input type="radio" name="hora" id="h5" value="19:00"><label for="h5">19:00</label>
+          </fieldset>
+
+          <label class="field__label" for="tel">Tu móvil</label>
+          <div class="book__row">
+            <input id="tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" pattern="[0-9 +]{9,15}" required placeholder="600 000 000">
+            <button class="btn btn--primary" type="submit" data-book-btn>Reservar a las 17:30</button>
+          </div>
+          <p class="book__help" id="book-help" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="services" id="servicios" aria-labelledby="services-title">
+      <div class="container">
+        <div class="services__head">
+          <h2 id="services-title">La carta</h2>
+          <p>Precios cerrados, sin sorpresas al pagar.</p>
+        </div>
+
+        <div class="switch" data-switch>
+          <div class="tabs" role="tablist" aria-label="Tipo de servicio">
+            <button role="tab" aria-selected="true" aria-controls="p-unas" id="t-unas">Uñas</button>
+            <button role="tab" aria-selected="false" aria-controls="p-laser" id="t-laser" tabindex="-1">Depilación láser</button>
+            <button role="tab" aria-selected="false" aria-controls="p-make" id="t-make" tabindex="-1">Make up</button>
+            <button role="tab" aria-selected="false" aria-controls="p-cejas" id="t-cejas" tabindex="-1">Cejas y pestañas</button>
+          </div>
+
+          <section class="panel" role="tabpanel" id="p-unas" aria-labelledby="t-unas">
+            <ul class="ladder">
+              <li><span>Manicura exprés</span><span class="ladder__time">30 min</span><span class="ladder__price">12 €</span></li>
+              <li><span>Semipermanente con color</span><span class="ladder__time">45 min</span><span class="ladder__price">22 €</span></li>
+              <li><span>Uñas de gel con nail art</span><span class="ladder__time">90 min</span><span class="ladder__price">38 €</span></li>
+              <li><span>Pedicura spa</span><span class="ladder__time">60 min</span><span class="ladder__price">28 €</span></li>
+            </ul>
+          </section>
+          <section class="panel" role="tabpanel" id="p-laser" aria-labelledby="t-laser">
+            <ul class="ladder">
+              <li><span>Axilas</span><span class="ladder__time">15 min</span><span class="ladder__price">25 €</span></li>
+              <li><span>Ingles brasileñas</span><span class="ladder__time">20 min</span><span class="ladder__price">35 €</span></li>
+              <li><span>Piernas completas</span><span class="ladder__time">50 min</span><span class="ladder__price">79 €</span></li>
+              <li><span>Bono 6 sesiones, zona pequeña</span><span class="ladder__time">6 citas</span><span class="ladder__price">120 €</span></li>
+            </ul>
+          </section>
+          <section class="panel" role="tabpanel" id="p-make" aria-labelledby="t-make">
+            <ul class="ladder">
+              <li><span>Make up de día</span><span class="ladder__time">40 min</span><span class="ladder__price">30 €</span></li>
+              <li><span>Make up de fiesta</span><span class="ladder__time">60 min</span><span class="ladder__price">45 €</span></li>
+              <li><span>Novias, con prueba</span><span class="ladder__time">2 citas</span><span class="ladder__price">140 €</span></li>
+              <li><span>Clase de automaquillaje</span><span class="ladder__time">90 min</span><span class="ladder__price">55 €</span></li>
+            </ul>
+          </section>
+          <section class="panel" role="tabpanel" id="p-cejas" aria-labelledby="t-cejas">
+            <ul class="ladder">
+              <li><span>Diseño de cejas</span><span class="ladder__time">20 min</span><span class="ladder__price">14 €</span></li>
+              <li><span>Laminado de cejas</span><span class="ladder__time">45 min</span><span class="ladder__price">35 €</span></li>
+              <li><span>Lifting de pestañas</span><span class="ladder__time">60 min</span><span class="ladder__price">42 €</span></li>
+              <li><span>Tinte de pestañas</span><span class="ladder__time">20 min</span><span class="ladder__price">15 €</span></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="offer" aria-labelledby="offer-title">
+      <div class="container offer__inner">
+        <h2 id="offer-title">Tu primera sesión de láser, a mitad de precio.</h2>
+        <span class="tag tag--pink offer__tag">Solo nuevas clientas</span>
+        <a class="btn btn--light" href="#reserva">Lo quiero</a>
+      </div>
+    </section>
+
+    <section class="steps" aria-labelledby="steps-title">
+      <div class="container">
+        <h2 id="steps-title">Así de fácil</h2>
+        <ol class="steps__list">
+          <li class="step diecut"><h3><span class="step__num" aria-hidden="true">1</span>Elige hora</h3><p>Desde el móvil, en un minuto.</p></li>
+          <li class="step diecut"><h3><span class="step__num" aria-hidden="true">2</span>Te escribimos</h3><p>Un WhatsApp para confirmar.</p></li>
+          <li class="step diecut"><h3><span class="step__num" aria-hidden="true">3</span>Sales brillando</h3><p>Y con la próxima cita, si quieres.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="visit" id="horario" aria-labelledby="visit-title">
+      <div class="container visit__grid">
+        <div>
+          <h2 id="visit-title">Pásate</h2>
+          <p class="visit__addr">Calle del Carmen 14, bajo<br>46003 Valencia</p>
+          <p class="visit__phone"><a href="tel:+34960000000">960 000 000</a></p>
+        </div>
+        <table class="hours">
+          <caption class="visually-hidden">Horario de apertura</caption>
+          <tbody>
+            <tr><th scope="row">Lunes</th><td>Cerrado</td></tr>
+            <tr><th scope="row">Martes a viernes</th><td>10:00 a 20:30</td></tr>
+            <tr><th scope="row">Sábado</th><td>9:30 a 14:30</td></tr>
+            <tr><th scope="row">Domingo</th><td>Cerrado</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <p class="foot__statement">Ven tal cual. Sal más tú.</p>
+      <div class="foot__row">
+        <a class="btn btn--primary" href="#reserva">Reservar cita</a>
+        <ul class="foot__links">
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#horario">Horario</a></li>
+          <li><a href="https://instagram.com/">Instagram</a></li>
+        </ul>
+      </div>
+      <p class="foot__small">Estética Inma, Valencia. Todos los datos de esta página son de ejemplo.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tabs: arrow keys move between services; without script every panel shows.
+    document.querySelectorAll('[data-switch]').forEach((sw) => {
+      const tabs = [...sw.querySelectorAll('[role="tab"]')];
+      const select = (t) => {
+        tabs.forEach((x) => {
+          const on = x === t;
+          x.setAttribute('aria-selected', on);
+          x.tabIndex = on ? 0 : -1;
+          document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+        });
+      };
+      tabs.forEach((t, i) => {
+        t.addEventListener('click', () => select(t));
+        t.addEventListener('keydown', (e) => {
+          const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+          if (!d) return;
+          const n = tabs[(i + d + tabs.length) % tabs.length];
+          select(n); n.focus();
+        });
+      });
+      select(tabs[0]);
+    });
+
+    // Booking card: the button names the chosen time; the form is not connected yet.
+    const form = document.querySelector('.book');
+    const btn = form.querySelector('[data-book-btn]');
+    const help = form.querySelector('#book-help');
+    const tel = form.querySelector('#tel');
+    form.addEventListener('change', (e) => {
+      if (e.target.name === 'hora') btn.textContent = 'Reservar a las ' + e.target.value;
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const ok = tel.checkValidity();
+      tel.toggleAttribute('aria-invalid', !ok);
+      if (!ok) {
+        tel.setAttribute('aria-describedby', help.id);
+        help.textContent = 'Ese número no parece completo. Escríbelo con 9 cifras.';
+        tel.focus();
+        return;
+      }
+      const data = new FormData(form);
+      if (!form.dataset.endpoint) {
+        help.textContent = 'Esto es una demo: ' + data.get('servicio') + ' a las ' + data.get('hora') + ' no se ha enviado.';
+        return;
+      }
+      fetch(form.dataset.endpoint, { method: 'POST', body: data })
+        .then((r) => { help.textContent = r.ok ? '¡Hecho! Te escribimos al ' + tel.value.trim() + '.' : 'No ha salido. Prueba en un minuto.'; })
+        .catch(() => { help.textContent = 'No ha salido. Prueba en un minuto.'; });
+    });
+  </script>
+</body>
+</html>
