@@ -15,7 +15,7 @@ body { background: var(--color-ink); color: var(--color-paper); }
 .hint { max-width: 40ch; text-align: center; font-size: var(--text-sm); color: var(--color-rule); }
 
 .bars { display: none; }
-.js .bars { position: absolute; z-index: 3; top: 36px; left: 36px; right: 36px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.js .bars { position: absolute; z-index: 3; top: 36px; left: 36px; right: 36px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-xs); }
 .bars span { height: 8px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--color-white) 45%, transparent); }
 .bars span.is-done, .bars span.is-on { background: var(--color-white); }
 
@@ -30,7 +30,7 @@ body { background: var(--color-ink); color: var(--color-paper); }
 .export .bars, .export .nav-zone, .export .hint { display: none; }
 
 /* Story canvas: 1080 x 1920, content inside Instagram's safe zone */
-.story { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 72px; width: 1080px; height: 1920px; padding: 300px 96px 300px; overflow: hidden; border-radius: 0; }
+.story { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 72px; width: 1080px; height: 1920px; padding: 300px var(--space-3xl) 300px; overflow: hidden; border-radius: 0; }
 .js:not(.export) .story { border-radius: 40px; }
 .story--pink { background: var(--color-accent); color: var(--color-accent-ink); }
 .story--lime { background: var(--color-accent-2); color: var(--color-ink); }
@@ -38,7 +38,7 @@ body { background: var(--color-ink); color: var(--color-paper); }
 .story--paper { background: var(--color-paper); color: var(--color-ink); }
 
 .story__top { position: absolute; top: 150px; left: 96px; }
-.story__bottom { display: grid; gap: 24px; margin-top: auto; }
+.story__bottom { display: grid; gap: var(--space-lg); margin-top: auto; }
 .story__mega { max-width: 8ch; margin-top: auto; font-size: 150px; line-height: 0.95; }
 .story__head { max-width: 9ch; font-size: 116px; line-height: 1; }
 .story__line { max-width: 18ch; font: 700 64px/1.15 var(--font-body); }
@@ -50,7 +50,7 @@ body { background: var(--color-ink); color: var(--color-paper); }
 .tag--pink { background: var(--color-accent); color: var(--color-accent-ink); }
 .tag--ink { background: var(--color-ink); color: var(--color-paper); }
 
-.card { display: grid; gap: 16px; padding: 56px 64px; border: 12px solid var(--color-white); border-radius: 44px; box-shadow: 14px 16px 0 var(--color-ink); }
+.card { display: grid; gap: var(--space-md); padding: var(--space-2xl); border: 12px solid var(--color-white); border-radius: 44px; box-shadow: 14px 16px 0 var(--color-ink); }
 .story--ink .card { box-shadow: 14px 16px 0 var(--color-ink-2); }
 .card--white { background: var(--color-paper-3); color: var(--color-ink); }
 .card--pink { background: var(--color-accent); color: var(--color-accent-ink); }
@@ -65,7 +65,7 @@ body { background: var(--color-ink); color: var(--color-paper); }
 .list li span:last-child { font: 400 64px/1 var(--font-display); }
 
 .stack { display: grid; gap: 48px; }
-.stack .card { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding-block: 40px; }
+.stack .card { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding-block: var(--space-xl); }
 
 .slots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
 .slots span { display: grid; place-items: center; min-height: 120px; border-radius: var(--radius-pill); box-shadow: inset 0 0 0 5px var(--color-ink); font: 400 56px/1 var(--font-display); }
