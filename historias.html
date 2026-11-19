@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Historias Estética Inma</title>
+  <meta name="description" content="Cinco historias de Instagram de Estética Inma, en 1080 por 1920.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Sofia+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="historias.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <main class="viewer" aria-label="Historias de Estética Inma">
+    <div class="stage" data-stage>
+      <div class="bars" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <!-- 1. Portada -->
+      <article class="story story--pink" aria-label="Historia 1 de 5">
+        <div class="story__top">
+          <span class="tag tag--lime">Valencia</span>
+        </div>
+        <h1 class="story__mega">Estética Inma</h1>
+        <div class="story__bottom">
+          <p class="story__line">Uñas, láser y make up.</p>
+          <p class="story__small">Desliza para ver la carta</p>
+        </div>
+      </article>
+
+      <!-- 2. Uñas -->
+      <article class="story story--lime" aria-label="Historia 2 de 5">
+        <div class="story__top">
+          <span class="tag tag--ink">Uñas</span>
+        </div>
+        <div class="card card--white tilt-l">
+          <p class="card__label">Semipermanente con color</p>
+          <p class="card__figure">22 €</p>
+          <p class="card__label">45 minutos</p>
+        </div>
+        <ul class="list">
+          <li><span>Manicura exprés</span><span>12 €</span></li>
+          <li><span>Gel con nail art</span><span>38 €</span></li>
+          <li><span>Pedicura spa</span><span>28 €</span></li>
+        </ul>
+      </article>
+
+      <!-- 3. Láser -->
+      <article class="story story--ink" aria-label="Historia 3 de 5">
+        <div class="story__top">
+          <span class="tag tag--lime">Depilación láser</span>
+        </div>
+        <h2 class="story__head">Tu primera sesión, a mitad de precio.</h2>
+        <div class="card card--pink tilt-r">
+          <p class="card__figure">50%</p>
+          <p class="card__label">Solo nuevas clientas</p>
+        </div>
+        <p class="story__small">Axilas desde 25 €. Bono de 6 sesiones, 120 €.</p>
+      </article>
+
+      <!-- 4. Make up -->
+      <article class="story story--paper" aria-label="Historia 4 de 5">
+        <div class="story__top">
+          <span class="tag tag--pink">Make up</span>
+        </div>
+        <h2 class="story__head">¿Tienes plan?</h2>
+        <div class="stack">
+          <div class="card card--white tilt-l"><p class="card__label">De día</p><p class="card__price">30 €</p></div>
+          <div class="card card--pink tilt-r"><p class="card__label">De fiesta</p><p class="card__price">45 €</p></div>
+          <div class="card card--ink tilt-l"><p class="card__label">Novias, con prueba</p><p class="card__price">140 €</p></div>
+        </div>
+      </article>
+
+      <!-- 5. Reserva -->
+      <article class="story story--pink" aria-label="Historia 5 de 5">
+        <div class="story__top">
+          <span class="tag tag--lime">Hoy, jueves</span>
+        </div>
+        <h2 class="story__head">Quedan huecos</h2>
+        <div class="card card--white tilt-r slots">
+          <span>11:00</span><span>12:30</span><span class="is-on">17:30</span><span>19:00</span>
+        </div>
+        <div class="story__bottom">
+          <p class="story__line">Escríbenos por DM o llama al 960 000 000.</p>
+          <p class="story__small">Calle del Carmen 14, Valencia</p>
+        </div>
+      </article>
+
+      <button class="nav-zone nav-zone--prev" type="button" data-prev aria-label="Historia anterior"></button>
+      <button class="nav-zone nav-zone--next" type="button" data-next aria-label="Historia siguiente"></button>
+    </div>
+    <p class="hint">Toca a la derecha para avanzar, a la izquierda para volver. Flechas del teclado también.</p>
+  </main>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const stage = document.querySelector('[data-stage]');
+      const stories = [...stage.querySelectorAll('.story')];
+      const bars = [...stage.querySelectorAll('.bars span')];
+      const exportFrame = params.get('frame');
+
+      // Export mode: one story at its real 1080 x 1920 size, no chrome.
+      if (exportFrame) {
+        document.documentElement.classList.add('export');
+        stories.forEach((s, i) => { s.hidden = i !== Number(exportFrame) - 1; });
+        return;
+      }
+
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const fit = () => {
+        const s = Math.min(innerWidth / 1080, (innerHeight - 56) / 1920);
+        stage.style.setProperty('--scale', s);
+      };
+      fit(); addEventListener('resize', fit);
+
+      let i = 0, timer;
+      const show = (n) => {
+        i = (n + stories.length) % stories.length;
+        stories.forEach((s, k) => { s.hidden = k !== i; });
+        bars.forEach((b, k) => { b.classList.toggle('is-done', k < i); b.classList.toggle('is-on', k === i); });
+        clearTimeout(timer);
+        if (!reduce) timer = setTimeout(() => show(i + 1), 6000);
+      };
+      stage.querySelector('[data-prev]').addEventListener('click', () => show(i - 1));
+      stage.querySelector('[data-next]').addEventListener('click', () => show(i + 1));
+      addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') show(i + 1);
+        if (e.key === 'ArrowLeft') show(i - 1);
+      });
+      show(0);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+/* Hallmark · shape: Story frames · genre: playful · theme: Sticker (by request, continuing the site) · job: book · draw: 6c1b25
+ * hero: the first story · nav: none · footer: none · imagery: none · signature: the 50% die-cut fill on the ink story · sticker: sheet
+ * axes: light/display-heavy/chromatic-magenta · posture: full-palette · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, still no salon photographs, so each story leads with one fill and one figure */
+/* waive 44d: each story is a fixed 1080 x 1920 Instagram canvas, scaled whole to the viewport */
+@import url("./tokens.css");
+@import url("./base.css");
+
+body { background: var(--color-ink); color: var(--color-paper); }
+
+/* Viewer */
+.viewer { min-height: 100svh; display: grid; place-items: center; align-content: center; gap: var(--space-sm); padding-block: var(--space-xs); }
+.js:not(.export) .viewer .stage { --scale: 0.4; width: 1080px; height: 1920px; margin-inline: calc(1080px * (var(--scale) - 1) / 2); margin-block: calc(1920px * (var(--scale) - 1) / 2); transform: scale(var(--scale)); }
+.stage { position: relative; display: grid; gap: var(--space-xl); }
+.hint { max-width: 40ch; text-align: center; font-size: var(--text-sm); color: var(--color-rule); }
+
+.bars { display: none; }
+.js .bars { position: absolute; z-index: 3; top: 36px; left: 36px; right: 36px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.bars span { height: 8px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--color-white) 45%, transparent); }
+.bars span.is-done, .bars span.is-on { background: var(--color-white); }
+
+.nav-zone { display: none; }
+.js .nav-zone { position: absolute; z-index: 2; top: 0; bottom: 0; display: block; width: 50%; border: 0; background: transparent; cursor: pointer; }
+.nav-zone--prev { left: 0; } .nav-zone--next { right: 0; }
+.nav-zone:focus-visible { outline: 8px solid var(--color-accent-2); outline-offset: -8px; }
+
+/* Export: the bare canvas */
+.export body, .export .viewer { display: block; min-height: 0; padding: 0; background: var(--color-ink); }
+.export .stage { width: 1080px; height: 1920px; transform: none; margin: 0; }
+.export .bars, .export .nav-zone, .export .hint { display: none; }
+
+/* Story canvas: 1080 x 1920, content inside Instagram's safe zone */
+.story { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 72px; width: 1080px; height: 1920px; padding: 300px 96px 300px; overflow: hidden; border-radius: 0; }
+.js:not(.export) .story { border-radius: 40px; }
+.story--pink { background: var(--color-accent); color: var(--color-accent-ink); }
+.story--lime { background: var(--color-accent-2); color: var(--color-ink); }
+.story--ink { background: var(--color-ink); color: var(--color-paper); }
+.story--paper { background: var(--color-paper); color: var(--color-ink); }
+
+.story__top { position: absolute; top: 150px; left: 96px; }
+.story__bottom { display: grid; gap: 24px; margin-top: auto; }
+.story__mega { max-width: 8ch; margin-top: auto; font-size: 150px; line-height: 0.95; }
+.story__head { max-width: 9ch; font-size: 116px; line-height: 1; }
+.story__line { max-width: 18ch; font: 700 64px/1.15 var(--font-body); }
+.story__small { max-width: 30ch; font: 600 40px/1.3 var(--font-body); }
+
+/* Tags and die-cut cards, at story scale */
+.tag { display: inline-flex; align-items: center; min-height: 88px; padding: 0 44px; border: 8px solid var(--color-white); border-radius: var(--radius-pill); box-shadow: 8px 10px 0 var(--color-ink); font: 400 40px/1 var(--font-display); rotate: -4deg; }
+.tag--lime { background: var(--color-accent-2); color: var(--color-ink); }
+.tag--pink { background: var(--color-accent); color: var(--color-accent-ink); }
+.tag--ink { background: var(--color-ink); color: var(--color-paper); }
+
+.card { display: grid; gap: 16px; padding: 56px 64px; border: 12px solid var(--color-white); border-radius: 44px; box-shadow: 14px 16px 0 var(--color-ink); }
+.story--ink .card { box-shadow: 14px 16px 0 var(--color-ink-2); }
+.card--white { background: var(--color-paper-3); color: var(--color-ink); }
+.card--pink { background: var(--color-accent); color: var(--color-accent-ink); }
+.card--ink { background: var(--color-ink); color: var(--color-paper); }
+.tilt-l { rotate: -3deg; } .tilt-r { rotate: 3deg; }
+.card__label { font: 700 44px/1.2 var(--font-body); }
+.card__figure { font: 400 260px/0.95 var(--font-display); font-variant-numeric: tabular-nums; }
+.card__price { font: 400 120px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+
+.list { display: grid; margin: 0; padding: 0; list-style: none; border-top: 4px dashed var(--color-ink-2); }
+.list li { display: flex; justify-content: space-between; gap: 32px; padding-block: 32px; border-bottom: 4px dashed var(--color-ink-2); font: 700 52px/1.1 var(--font-body); }
+.list li span:last-child { font: 400 64px/1 var(--font-display); }
+
+.stack { display: grid; gap: 48px; }
+.stack .card { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding-block: 40px; }
+
+.slots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.slots span { display: grid; place-items: center; min-height: 120px; border-radius: var(--radius-pill); box-shadow: inset 0 0 0 5px var(--color-ink); font: 400 56px/1 var(--font-display); }
+.slots span.is-on { background: var(--color-accent-2); }
+
+@media (prefers-reduced-motion: reduce) { .nav-zone { transition: none; } }
