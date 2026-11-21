@@ -11,15 +11,12 @@ Abre `index.html` en un navegador moderno de escritorio (Chrome, Edge o Firefox)
 | Acción | Tecla |
 | --- | --- |
 | Moverse | W A S D |
-| Apuntar y disparar | Ratón · clic izquierdo |
-| Apuntar con precisión | Clic derecho |
-| Correr (hace ruido) | Mayús |
-| Agacharse (silencio, menos visibilidad) | C / Ctrl |
-| CQC: neutralización silenciosa / cuchillo | Espacio |
-| Interactuar con objetivos | E (mantener) |
-| Recargar · cambiar arma · botiquín | R · Q / 1 / 2 · H |
-| Linterna | F |
-| Pausa | Esc / P |
+| Apuntar y disparar (con puntería asistida) | Ratón + clic |
+| Acción: activar objetivos, neutralizar guardias, cuchillo | E |
+| Agacharse (silencio, menos visibilidad) | C |
+| Correr · cambiar arma · linterna · pausa | Mayús · Q · F · Esc |
+
+La recarga y los botiquines funcionan solos cuando hace falta (también con R y H).
 
 En pantallas táctiles aparecen dos joysticks y botones.
 

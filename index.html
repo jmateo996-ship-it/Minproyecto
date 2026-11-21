@@ -1875,7 +1875,8 @@ function guardSees(a, P, range) {
   const dx = P.x - a.x, dz = P.z - a.z, d = Math.hypot(dx, dz);
   if (d > range) return false;
   const cosA = (dx * Math.sin(a.yaw) + dz * Math.cos(a.yaw)) / (d || 1);
-  if (d > 1.4 && cosA < Math.cos(a.state === 'alert' ? 1.4 : 0.8)) return false;
+  const feel = d < 1.4 && P.run; // de espaldas solo te notan si corres
+  if (!feel && cosA < Math.cos(a.state === 'alert' ? 1.4 : 0.8)) return false;
   return losClear(G.level.map, a.x, a.z, P.x, P.z);
 }
 
@@ -1961,6 +1962,16 @@ const WEAP = {
   pistol: { name: 'Pistola · silenciada', mag: 12, rate: 0.24, dmg: 34, spread: 0.035, pellets: 1, noise: 5.5, range: 30, reload: 1.15 },
   shotgun: { name: 'Escopeta táctica', mag: 6, rate: 0.85, dmg: 17, spread: 0.16, pellets: 7, noise: 26, range: 13, reload: 1.9 },
 };
+// apuntado asistido: si hay un enemigo cerca de la línea de tiro, la bala va hacia él
+function assistYaw(range) {
+  const P = G.player; let best = null, bs = 0.4;
+  for (const a of G.actors) {
+    if (!a.alive || a.faction === 'p') continue; const d = dist(a, P); if (d > range) continue;
+    const ang = Math.atan2(a.x - P.x, a.z - P.z), da = angDiff(ang, P.yaw); if (da > 0.4) continue;
+    const score = da + d * 0.01; if (score < bs && losClear(G.level.map, P.x, P.z, a.x, a.z)) { bs = score; best = ang; }
+  }
+  return best === null ? P.yaw : best;
+}
 function playerFire() {
   const P = G.player, W = WEAP[P.weapon];
   if (P.fireT > 0 || P.reloadT > 0) return;
@@ -1968,8 +1979,9 @@ function playerFire() {
   P.mag[P.weapon]--; P.fireT = W.rate; P.recoil = 1; G.stats.shots++;
   const gx = P.x + Math.sin(P.yaw) * 0.6 + Math.cos(P.yaw) * 0.12, gz = P.z + Math.cos(P.yaw) * 0.6 - Math.sin(P.yaw) * 0.12;
   const aimK = mouse.right ? 0.4 : 1;
+  const baseYaw = assistYaw(W.range);
   for (let k = 0; k < W.pellets; k++) {
-    const ang = P.yaw + (Math.random() - 0.5) * 2 * W.spread * aimK * (P.run ? 1.8 : 1);
+    const ang = baseYaw + (Math.random() - 0.5) * 2 * W.spread * aimK * (P.run ? 1.8 : 1);
     const dx = Math.sin(ang), dz = Math.cos(ang); const h = hitscan(gx, gz, dx, dz, W.range);
     const ex = gx + dx * h.d, ez = gz + dz * h.d;
     fxTracer(gx, gz, ex, ez, P.weapon === 'pistol' ? 0xffe0a0 : 0xffb070);
@@ -1987,12 +1999,18 @@ function startReload() {
   if (P.reloadT > 0 || P.mag[P.weapon] >= W.mag || P.res[P.weapon] <= 0) return;
   P.reloadT = W.reload; SFX.reload();
 }
+function cqcTarget() {
+  const P = G.player; let best = null, bd = 2.1;
+  for (const a of G.actors) { if (!a.alive || a.faction === 'p' || a.kind === 'boss') continue; const d = dist(a, P) - a.r; if (d < bd) { best = a; bd = d; } }
+  return best;
+}
+function canTakedown(a) { return a && a.kind === 'guard' && (a.state !== 'alert' || angDiff(a.yaw, Math.atan2(a.x - G.player.x, a.z - G.player.z)) < 1.2); }
 function doCQC() {
   const P = G.player; if (P.cqcT > 0) return; P.cqcT = 0.55;
-  let best = null, bd = 1.9;
-  for (const a of G.actors) { if (!a.alive || a.faction === 'p') continue; const d = dist(a, P); if (d > bd + a.r) continue; const ang = Math.atan2(a.x - P.x, a.z - P.z); if (angDiff(ang, P.yaw) > 1.1) continue; best = a; bd = d; }
+  const best = cqcTarget();
   P.recoil = 0.6;
   if (!best) { SFX.knife(); return; }
+  P.yaw = Math.atan2(best.x - P.x, best.z - P.z);
   const behind = angDiff(best.yaw, Math.atan2(best.x - P.x, best.z - P.z)) < 1.2;
   if (best.kind === 'guard' && (best.state !== 'alert' || behind)) {
     SFX.takedown(); killActor(best, true, true); G.stats.takedowns++; G.stats.kills--; best.yaw = P.yaw; fxBlood(best.x, best.z);
@@ -2037,6 +2055,8 @@ function updPlayer(dt) {
   if (P.reloadT > 0) { P.reloadT -= dt; if (P.reloadT <= 0) { const W = WEAP[P.weapon], need = W.mag - P.mag[P.weapon], take = Math.min(need, P.res[P.weapon]); P.mag[P.weapon] += take; P.res[P.weapon] -= take; } }
   if ((mouse.left || touch.fire) && !G.uiBlock) playerFire();
   if (P.mag[P.weapon] === 0 && P.res[P.weapon] > 0 && P.reloadT <= 0 && P.fireT <= 0) startReload();
+  // curación automática
+  if (P.hp < 25 && P.med > 0) { P.med--; P.hp = Math.min(100, P.hp + 45); SFX.pickup(); subLine('SYS', null, 'Botiquín aplicado automáticamente'); }
   // recogida
   for (const p of G.level.pickups) {
     if (p.taken) continue; if (Math.hypot(p.x - P.x, p.z - P.z) > 1.1) continue;
@@ -2272,7 +2292,8 @@ function interactables() {
 const ACT = { relay: ['Sabotear relé', 1.4], generator: ['Arrancar generador', 1.6], terminal: ['Descargar datos', 2.0], tank: ['Colocar C4', 1.8], antenna: ['Instalar inhibidor', 2.4], vault: ['Introducir código', 1.8], console: ['Desactivar bomba', 1.8], emitter: ['Desactivar emisor', 2.0], fuel: ['Colocar C4', 1.8], heli: ['Colocar C4', 2.2] };
 function updInteract(dt) {
   const t = interactables(); G.curT = t;
-  if (t && (keys.KeyE || touch.act) && G.player.alive) {
+  if (G.autoT && G.autoT !== t) G.autoT = null;
+  if (t && (keys.KeyE || touch.act || G.autoT === t) && G.player.alive) {
     t.progress += dt / ACT[t.type][1];
     if (t.progress >= 1) completeTarget(t);
   } else if (t) t.progress = Math.max(0, t.progress - dt * 2);
@@ -2338,8 +2359,14 @@ function updTags() {
   if (t && G.player.alive) {
     const [x, y] = proj(t.x, (t.mesh.userData.h || 1.6) + 0.8, t.z);
     pe.hidden = false; pe.style.left = x + 'px'; pe.style.top = y + 'px';
-    const lbl = ACT[t.type][0]; pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> mantén · ${lbl}<div class="prog"><i style="width:${(t.progress * 100) | 0}%"></i></div>`;
-  } else pe.hidden = true;
+    const lbl = ACT[t.type][0]; pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> ${lbl}<div class="prog"><i style="width:${(t.progress * 100) | 0}%"></i></div>`;
+  } else {
+    const c = G.player.alive ? cqcTarget() : null;
+    if (c && (canTakedown(c) || c.faction === 'i')) {
+      const [x, y] = proj(c.x, 2.3, c.z); pe.hidden = false; pe.style.left = x + 'px'; pe.style.top = y + 'px';
+      pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> ${c.kind === 'guard' ? 'Neutralizar en silencio' : 'Cuchillo'}`;
+    } else pe.hidden = true;
+  }
   if (!box.contains(pe)) box.appendChild(pe);
 }
 
@@ -2550,7 +2577,7 @@ function update(dt) {
     }
   }
   // hints de la primera misión
-  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD · apunta con el ratón · Mayús para correr (hace ruido).', 'C para agacharte: te mueves en silencio y te ven peor. F apaga la linterna.', 'Espacio cerca de un guardia de espaldas: neutralización silenciosa.', 'El radar muestra los conos de visión. El rombo indica el objetivo.'].forEach(t => subLine('SYS', null, t)); }
+  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD y apunta con el ratón. Clic para disparar: la puntería te ayuda.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar: marca el objetivo. Los botiquines se usan solos.'].forEach(t => subLine('SYS', null, t)); }
   if (P.hp < 30 && P.alive) { G.hbT = (G.hbT || 0) - dt; if (G.hbT <= 0) { G.hbT = 0.9; SFX.heartbeat(); } }
   updCamera(dt); updLights(dt); updFX(dt); updSubs(dt);
   CUT.uPlayer.value.set(P.x, 0, P.z);
@@ -2592,16 +2619,20 @@ function showTitle() {
 }
 function showKeys(back) {
   screen(`<div class="card"><div class="eyebrow">Manual de campo</div><h2>Controles</h2>
+    <div class="eyebrow" style="margin-top:6px">Lo esencial</div>
     <div class="keys">
-      <kbd>W A S D</kbd><span>Moverse</span><kbd>Ratón</kbd><span>Apuntar · clic izquierdo dispara</span>
-      <kbd>Clic derecho</kbd><span>Apuntar con precisión (más lento, menos dispersión)</span>
-      <kbd>Mayús</kbd><span>Correr (hace ruido)</span><kbd>C / Ctrl</kbd><span>Agacharse: silencio y menos visibilidad</span>
-      <kbd>Espacio</kbd><span>CQC: neutraliza en silencio a un guardia desprevenido · cuchillo contra infectados</span>
-      <kbd>E (mantener)</kbd><span>Interactuar con objetivos</span><kbd>R</kbd><span>Recargar</span>
-      <kbd>Q · 1 · 2</kbd><span>Cambiar de arma</span><kbd>H</kbd><span>Usar botiquín (+45)</span>
-      <kbd>F</kbd><span>Linterna: ver mejor o pasar desapercibida</span><kbd>Esc / P</kbd><span>Pausa</span>
+      <kbd>W A S D</kbd><span>Moverse</span>
+      <kbd>Ratón + clic</kbd><span>Apuntar y disparar (la puntería se ajusta sola al enemigo más cercano)</span>
+      <kbd>E</kbd><span>Acción: activa objetivos con una pulsación, neutraliza guardias que no te han visto y usa el cuchillo con los infectados</span>
+      <kbd>C</kbd><span>Agacharse: te mueves en silencio y te ven peor</span>
     </div>
-    <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Los anillos en el suelo muestran cuánto ruido haces.</p>
+    <div class="eyebrow" style="margin-top:16px">Extras</div>
+    <div class="keys">
+      <kbd>Mayús</kbd><span>Correr (hace ruido)</span><kbd>Q</kbd><span>Cambiar de arma</span>
+      <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span>
+      <kbd>R · H</kbd><span>Recargar y curarse a mano (las dos cosas también ocurren solas)</span>
+    </div>
+    <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Los anillos en el suelo muestran cuánto ruido haces.</p>
     <div class="btnrow"><button class="btn" id="bBack">Volver</button></div></div>`);
   $('bBack').onclick = () => { SFX.ui(); back(); }; $('bBack').focus();
 }
@@ -2749,6 +2780,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') { P.lamp = !P.lamp; SFX.ui(); }
   if (e.code === 'KeyR') startReload();
   if (e.code === 'Space') doCQC();
+  if (e.code === 'KeyE') { if (G.curT) G.autoT = G.curT; else doCQC(); }
   if (e.code === 'KeyH') { if (P.med > 0 && P.hp < 100) { P.med--; P.hp = Math.min(100, P.hp + 45); SFX.pickup(); subLine('SYS', null, 'Botiquín aplicado'); } }
   if ((e.code === 'KeyQ' || e.code === 'Digit1' || e.code === 'Digit2') && P.hasShotgun) { const w = e.code === 'Digit1' ? 'pistol' : e.code === 'Digit2' ? 'shotgun' : (P.weapon === 'pistol' ? 'shotgun' : 'pistol'); if (w !== P.weapon) { P.weapon = w; P.reloadT = 0; P.fireT = 0.35; SFX.reload(); } }
 });
@@ -2774,7 +2806,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
   stick('stickL', (x, y) => { touch.mx = x; touch.mz = y; });
   stick('stickR', (x, y) => { touch.ax = x; touch.az = y; touch.fire = Math.hypot(x, y) > 0.75; });
   document.querySelectorAll('.tbtns button').forEach(b => {
-    b.addEventListener('pointerdown', (e) => { e.preventDefault(); const k = b.dataset.k; if (k === 'KeyE') { touch.act = true; return; } dispatchEvent(new KeyboardEvent('keydown', { code: k })); setTimeout(() => dispatchEvent(new KeyboardEvent('keyup', { code: k })), 60); });
+    b.addEventListener('pointerdown', (e) => { e.preventDefault(); const k = b.dataset.k; if (k === 'KeyE') { if (G.curT) G.autoT = G.curT; else if (G.mode === 'play' && !G.paused) doCQC(); return; } dispatchEvent(new KeyboardEvent('keydown', { code: k })); setTimeout(() => dispatchEvent(new KeyboardEvent('keyup', { code: k })), 60); });
     b.addEventListener('pointerup', () => { if (b.dataset.k === 'KeyE') touch.act = false; });
   });
 }
@@ -2794,7 +2826,7 @@ try {
   requestAnimationFrame(loop);
 } catch (err) { $('loading').textContent = 'ERROR: ' + err.message; console.error(err); }
 // gancho de depuración (consola): __PC.start(n) inicia la misión n (1-20)
-window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true) };
+window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r) };
 
 </script>
 
