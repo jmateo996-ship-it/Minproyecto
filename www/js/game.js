@@ -7,7 +7,6 @@
 
 (() => {
   const { CHARACTERS, PROLOGUE, CHAPTERS, ENDING, ACTS } = window.STORY;
-  const CHECKPOINT_T = 150; // punto de control a mitad de cada misión (2:30)
   const A = window.GameAudio;
   const TAU = Math.PI * 2;
   const $ = id => document.getElementById(id);
@@ -335,7 +334,7 @@
       G.bg.progress = clamp(G.levelT / G.chapter.duration, 0, 1);
       G.waveT -= dt;
       // Punto de control a mitad de misión
-      if (!G.checkpoint && G.levelT >= CHECKPOINT_T) {
+      if (!G.checkpoint && G.levelT >= checkpointT()) {
         const p0 = G.player;
         G.checkpoint = { score: G.score, power: p0.power, drones: p0.drones, bombs: p0.bombs };
         floatText(G.W / 2, G.H * 0.35, 'PUNTO DE CONTROL', '#9dff6a');
@@ -344,7 +343,7 @@
       const minute = Math.floor(G.levelT / 60);
       if (minute > G.lastAssault && G.levelT < G.chapter.duration - 10) {
         G.lastAssault = minute;
-        G.banner = { text: 'OLEADA ' + (minute + 1) + '/5', sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
+        G.banner = { text: 'OLEADA ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / 60), sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
         FORMATIONS[G.chapter.theme === 'asteroids' ? 'rocks' : 'sweep'](); FORMATIONS.carrier();
         G.waveT = 4;
       }
@@ -720,7 +719,7 @@
 
   /* opts: { keep: conserva la nave de la misión anterior,
              snap: restaura potencia/drones/pulsos guardados,
-             fromCheckpoint: empieza en el minuto 2:30 } */
+             fromCheckpoint: empieza a mitad de misión } */
   async function startChapter(idx, opts = {}) {
     const id = ++runId;
     G.chapterIdx = idx; G.chapter = CHAPTERS[idx]; G.difficulty = 1 + idx * 0.15;
@@ -731,7 +730,7 @@
     const p = G.player;
     if (!opts.fromCheckpoint) { G.chapterStartScore = G.score; G.missionSnap = { power: p.power, drones: p.drones, bombs: p.bombs }; G.checkpoint = null; }
     G.bg = Backgrounds.create(G.chapter.theme, G.W, G.H, G.R);
-    G.levelT = opts.fromCheckpoint ? CHECKPOINT_T : 0; G.waveT = 3; G.lastFreeDrop = G.levelT;
+    G.levelT = opts.fromCheckpoint ? checkpointT() : 0; G.waveT = 3; G.lastFreeDrop = G.levelT;
     G.lastAssault = Math.floor(G.levelT / 60);
     G.commIdx = G.chapter.comms.filter(c => c.t <= G.levelT).length;
     G.phaseState = 'level';
@@ -741,7 +740,7 @@
     // Tarjeta de misión
     $('cardNum').textContent = ACTS[G.chapter.act] + ' · MISIÓN ' + G.chapter.id + '/' + CHAPTERS.length;
     $('cardTitle').textContent = G.chapter.title;
-    $('cardPlace').textContent = opts.fromCheckpoint ? 'Desde el punto de control · 2:30 restantes' : G.chapter.place + (G.chapter.boss ? (G.chapter.boss.super ? ' · SÚPER JEFE' : ' · JEFE FINAL') : '');
+    $('cardPlace').textContent = opts.fromCheckpoint ? 'Desde el punto de control · ' + fmtTime(G.chapter.duration - checkpointT()) + ' restantes' : G.chapter.place + (G.chapter.boss ? (G.chapter.boss.super ? ' · SÚPER JEFE' : ' · JEFE FINAL') : '');
     show('card');
     await sleep(2600);
     if (id !== runId) return;
@@ -802,7 +801,7 @@
     else ending();
   }
 
-  /* Misión sin jefe: superviviste los 5 minutos */
+  /* Misión sin jefe: sobreviviste hasta el final de la cuenta atrás */
   async function missionComplete() {
     const id = runId;
     clearComms();
@@ -818,6 +817,7 @@
     p.inv = 0;
     nextMission();
   }
+  const checkpointT = () => G.chapter.duration / 2; // punto de control a mitad de misión
   const fmtTime = s => { s = Math.ceil(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
   async function ending() {
@@ -877,7 +877,7 @@
       const b = document.createElement('button');
       b.className = 'btn' + (locked ? ' locked' : '') + (c.boss ? (c.boss.super ? ' super' : ' boss') : '');
       const tag = c.boss ? `<em>${c.boss.super ? 'SÚPER JEFE' : 'JEFE'}</em>` : '';
-      b.innerHTML = `${c.id}. ${c.title}${tag}<small>${locked ? 'Bloqueada' : c.place + ' · 5 min'}</small>`;
+      b.innerHTML = `${c.id}. ${c.title}${tag}<small>${locked ? 'Bloqueada' : c.place + ' · ' + Math.round(c.duration / 60) + ' min'}</small>`;
       b.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; hideAll(); startChapter(i); });
       list.appendChild(b);
     });

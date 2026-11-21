@@ -27,7 +27,7 @@ Hace ocho años, la Red se apagó por única vez en la historia durante **nueve 
 
 ## Misiones
 
-Son 15 misiones de 5 minutos cada una, en tres actos. Cada acto termina con un jefe.
+Son 15 misiones en tres actos: las del Acto I duran 3 minutos y las de los actos II y III, 5 minutos. Cada acto termina con un jefe.
 
 ### Acto I · La Huida
 1. **El Apagón** · Bloque 77 de Nexo‑9. El Censo detecta a Teo y la familia despega en el *Esperanza*.

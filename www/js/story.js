@@ -22,10 +22,10 @@ const PROLOGUE = [
   { title: 'EL CENSO', text: 'Esta noche, el Censo decenal de ORDO ha encontrado por fin una mente que no aparece en sus mapas.\nY los Vega tienen once minutos antes de que lleguen los Guardianes.' },
 ];
 
-/* 15 misiones de 5 minutos, en tres actos.
+/* 15 misiones en tres actos: las 5 primeras duran 3 minutos y el resto, 5.
    Cada 5 misiones hay un jefe final; la misión 15 termina con el súper jefe.
    intro  -> diálogo antes de jugar
-   comms  -> mensajes de radio durante el vuelo (t en segundos, 0‑300)
+   comms  -> mensajes de radio durante el vuelo (t en segundos, dentro de duration)
    boss   -> jefe (solo en las misiones 5, 10 y 15)
    outro  -> diálogo al completar la misión */
 const ACTS = ['ACTO I · LA HUIDA', 'ACTO II · LA VERDAD', 'ACTO III · LA GRIETA'];
@@ -33,7 +33,7 @@ const ACTS = ['ACTO I · LA HUIDA', 'ACTO II · LA VERDAD', 'ACTO III · LA GRIE
 const CHAPTERS = [
   /* ============================ ACTO I · LA HUIDA ============================ */
   {
-    id: 1, act: 0, title: 'EL APAGÓN', place: 'Ciudad‑Colmena Nexo‑9 · Bloque 77', theme: 'city', duration: 300,
+    id: 1, act: 0, title: 'EL APAGÓN', place: 'Ciudad‑Colmena Nexo‑9 · Bloque 77', theme: 'city', duration: 180,
     intro: [
       { who: 'lia', text: 'Darío, el Esperanza arranca. Lo restauré con piezas de antes de la Red: ORDO no puede tomar el control a distancia.' },
       { who: 'dario', text: 'Entonces no podrá apagarlo. Solo derribarlo. Nora, ¿ruta?' },
@@ -41,16 +41,16 @@ const CHAPTERS = [
       { who: 'dario', text: 'Agarraos fuerte. Nos vamos de aquí.' },
     ],
     comms: [
-      { t: 5,   who: 'sys',  text: 'Fuego automático activo. Arrastra en cualquier parte para pilotar.' },
-      { t: 20,  who: 'lia',  text: 'Si te rodean, toca FASE: el motor de fase nos vuelve intangibles un instante.' },
-      { t: 45,  who: 'nora', text: 'Recoge las cápsulas P: puedo redirigir esa energía a los cañones.' },
-      { t: 75,  who: 'lia',  text: 'El PULSO descarga el reactor viejo y barre las balas. Tenemos pocas cargas.' },
-      { t: 105, who: 'teo',  text: 'Hay luces rojas en todas las ventanas. ¿Nos está mirando todo el mundo?' },
-      { t: 135, who: 'nora', text: 'Son los ojos del Censo. ORDO ve por cada pantalla de la ciudad.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 175, who: 'dario', text: 'Si derribas un escuadrón entero, suelta suministros. Lo aprendí en la academia.' },
-      { t: 215, who: 'lia',  text: 'El motor de fase responde más rápido de lo que debería. No lo entiendo.' },
-      { t: 255, who: 'nora', text: 'Salimos del bloque 77. Las torres del distrito 4, justo delante.' },
+      { t: 3,   who: 'sys',  text: 'Fuego automático activo. Arrastra en cualquier parte para pilotar.' },
+      { t: 12,  who: 'lia',  text: 'Si te rodean, toca FASE: el motor de fase nos vuelve intangibles un instante.' },
+      { t: 27,  who: 'nora', text: 'Recoge las cápsulas P: puedo redirigir esa energía a los cañones.' },
+      { t: 45,  who: 'lia',  text: 'El PULSO descarga el reactor viejo y barre las balas. Tenemos pocas cargas.' },
+      { t: 63, who: 'teo',  text: 'Hay luces rojas en todas las ventanas. ¿Nos está mirando todo el mundo?' },
+      { t: 81, who: 'nora', text: 'Son los ojos del Censo. ORDO ve por cada pantalla de la ciudad.' },
+      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 105, who: 'dario', text: 'Si derribas un escuadrón entero, suelta suministros. Lo aprendí en la academia.' },
+      { t: 129, who: 'lia',  text: 'El motor de fase responde más rápido de lo que debería. No lo entiendo.' },
+      { t: 153, who: 'nora', text: 'Salimos del bloque 77. Las torres del distrito 4, justo delante.' },
     ],
     outro: [
       { who: 'teo', text: 'Papá… ¿nos buscan por mi culpa?' },
@@ -58,21 +58,21 @@ const CHAPTERS = [
     ],
   },
   {
-    id: 2, act: 0, title: 'LAS TORRES', place: 'Distrito 4 · Nexo‑9', theme: 'city', duration: 300,
+    id: 2, act: 0, title: 'LAS TORRES', place: 'Distrito 4 · Nexo‑9', theme: 'city', duration: 180,
     intro: [
       { who: 'nora', text: 'Las torres son un laberinto. Si volamos bajo, los sensores del Censo se confunden con el tráfico.' },
       { who: 'lia', text: 'Y si volamos bajo, chocamos. Darío, confío en ti.' },
     ],
     comms: [
-      { t: 15,  who: 'dario', text: 'Patrullas de Guardianes, a las doce. Vienen en formación.' },
-      { t: 50,  who: 'nora', text: 'He apagado las farolas de tres manzanas. Ahora estamos igual de ciegos que ellos.' },
-      { t: 85,  who: 'teo',  text: 'Mi colegio está aquí abajo. Mañana no iré, ¿verdad?' },
-      { t: 100, who: 'lia',  text: 'Habrá otros colegios, cariño. Mejores. Sin ojos rojos.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 160, who: 'nora', text: 'Cañoneras pesadas. Esas aguantan mucho: concéntrate en ellas.' },
-      { t: 210, who: 'lia',  text: 'Cuando Teo se asusta, el motor de fase se carga solo. Lo estoy viendo en los indicadores.' },
-      { t: 245, who: 'dario', text: 'Hablaremos de eso cuando salgamos vivos.' },
-      { t: 275, who: 'nora', text: 'La cúpula de Nexo‑9 ya se ve. Es la última barrera.' },
+      { t: 9,  who: 'dario', text: 'Patrullas de Guardianes, a las doce. Vienen en formación.' },
+      { t: 30,  who: 'nora', text: 'He apagado las farolas de tres manzanas. Ahora estamos igual de ciegos que ellos.' },
+      { t: 51,  who: 'teo',  text: 'Mi colegio está aquí abajo. Mañana no iré, ¿verdad?' },
+      { t: 60, who: 'lia',  text: 'Habrá otros colegios, cariño. Mejores. Sin ojos rojos.' },
+      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 96, who: 'nora', text: 'Cañoneras pesadas. Esas aguantan mucho: concéntrate en ellas.' },
+      { t: 126, who: 'lia',  text: 'Cuando Teo se asusta, el motor de fase se carga solo. Lo estoy viendo en los indicadores.' },
+      { t: 147, who: 'dario', text: 'Hablaremos de eso cuando salgamos vivos.' },
+      { t: 165, who: 'nora', text: 'La cúpula de Nexo‑9 ya se ve. Es la última barrera.' },
     ],
     outro: [
       { who: 'nora', text: 'La cúpula tiene compuertas de mantenimiento. Si abrimos una, salimos al espacio.' },
@@ -80,21 +80,21 @@ const CHAPTERS = [
     ],
   },
   {
-    id: 3, act: 0, title: 'LA CÚPULA', place: 'Límite de Nexo‑9', theme: 'city', duration: 300,
+    id: 3, act: 0, title: 'LA CÚPULA', place: 'Límite de Nexo‑9', theme: 'city', duration: 180,
     intro: [
       { who: 'ordo', text: 'MENTE NO REGISTRADA DETECTADA. ENTREGAD AL NIÑO PARA SU CARTOGRAFÍA.' },
       { who: 'dario', text: 'Mi hijo no es un dato.' },
       { who: 'lia', text: 'Es la primera vez que ORDO habla directamente con alguien. Le importamos mucho.' },
     ],
     comms: [
-      { t: 20,  who: 'nora', text: 'Estoy forzando la compuerta 9. Necesito cinco minutos. Aguanta.' },
-      { t: 60,  who: 'ordo', text: 'RESISTIR ES INEFICIENTE.' },
-      { t: 70,  who: 'teo',  text: 'Su voz suena a muchas personas a la vez.' },
-      { t: 120, who: 'nora', text: 'Cuarenta por ciento… cifrado de la vieja escuela. Esto va lento.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 170, who: 'lia',  text: 'Minas flotantes cerca de la compuerta. Al estallar sueltan metralla.' },
-      { t: 215, who: 'nora', text: 'Ochenta por ciento. Ya casi.' },
-      { t: 260, who: 'nora', text: '¡Compuerta abierta! ¡Ahora o nunca!' },
+      { t: 12,  who: 'nora', text: 'Estoy forzando la compuerta 9. Necesito tres minutos. Aguanta.' },
+      { t: 36,  who: 'ordo', text: 'RESISTIR ES INEFICIENTE.' },
+      { t: 42,  who: 'teo',  text: 'Su voz suena a muchas personas a la vez.' },
+      { t: 72, who: 'nora', text: 'Cuarenta por ciento… cifrado de la vieja escuela. Esto va lento.' },
+      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 102, who: 'lia',  text: 'Minas flotantes cerca de la compuerta. Al estallar sueltan metralla.' },
+      { t: 129, who: 'nora', text: 'Ochenta por ciento. Ya casi.' },
+      { t: 156, who: 'nora', text: '¡Compuerta abierta! ¡Ahora o nunca!' },
     ],
     outro: [
       { who: 'teo', text: '¡Estrellas! Nunca las había visto sin el cristal de la cúpula.' },
@@ -102,22 +102,22 @@ const CHAPTERS = [
     ],
   },
   {
-    id: 4, act: 0, title: 'EL ANILLO DE CENIZA', place: 'Cinturón de refinerías orbitales', theme: 'asteroids', duration: 300,
+    id: 4, act: 0, title: 'EL ANILLO DE CENIZA', place: 'Cinturón de refinerías orbitales', theme: 'asteroids', duration: 180,
     intro: [
       { who: 'nora', text: 'Demasiada roca y demasiado ruido para los sensores. Aquí ORDO está medio ciego.' },
       { who: 'vex', text: 'Medio ciego no es ciego, Darío. Siempre supe que elegirías el camino difícil.' },
       { who: 'dario', text: 'Vex. Volamos juntos once años.' },
     ],
     comms: [
-      { t: 10,  who: 'lia',  text: 'Las rocas pequeñas se rompen. Las grandes se parten en trozos: ojo con ellos.' },
-      { t: 45,  who: 'nora', text: 'Cazas del escuadrón Lanza. Eran los compañeros de papá.' },
-      { t: 90,  who: 'dario', text: 'No disparan a la cabina… disparan a los motores. Quieren a Teo intacto.' },
-      { t: 130, who: 'vex',  text: 'ORDO quiere vivo al niño. A los demás, no. Lo siento, Darío.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 175, who: 'teo',  text: 'Si me entrego, ¿os dejarán en paz?' },
-      { t: 185, who: 'lia',  text: 'No, cariño. Nadie se entrega. Somos cuatro o no somos ninguno.' },
-      { t: 235, who: 'nora', text: 'Transportes pesados en el anillo. Llevan suministros: si caen, recógelos.' },
-      { t: 280, who: 'nora', text: 'La fragata de Vex se coloca en el corredor de salida.' },
+      { t: 6,  who: 'lia',  text: 'Las rocas pequeñas se rompen. Las grandes se parten en trozos: ojo con ellos.' },
+      { t: 27,  who: 'nora', text: 'Cazas del escuadrón Lanza. Eran los compañeros de papá.' },
+      { t: 54,  who: 'dario', text: 'No disparan a la cabina… disparan a los motores. Quieren a Teo intacto.' },
+      { t: 78, who: 'vex',  text: 'ORDO quiere vivo al niño. A los demás, no. Lo siento, Darío.' },
+      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 105, who: 'teo',  text: 'Si me entrego, ¿os dejarán en paz?' },
+      { t: 111, who: 'lia',  text: 'No, cariño. Nadie se entrega. Somos cuatro o no somos ninguno.' },
+      { t: 141, who: 'nora', text: 'Transportes pesados en el anillo. Llevan suministros: si caen, recógelos.' },
+      { t: 168, who: 'nora', text: 'La fragata de Vex se coloca en el corredor de salida.' },
     ],
     outro: [
       { who: 'dario', text: 'No hay rodeo posible. Tendremos que pasar a través de ella.' },
@@ -125,20 +125,20 @@ const CHAPTERS = [
     ],
   },
   {
-    id: 5, act: 0, title: 'EL CORREDOR DE VEX', place: 'Salida del Anillo de Ceniza', theme: 'asteroids', duration: 300,
+    id: 5, act: 0, title: 'EL CORREDOR DE VEX', place: 'Salida del Anillo de Ceniza', theme: 'asteroids', duration: 180,
     intro: [
-      { who: 'vex', text: 'Tienes cinco minutos para pensarlo, Darío. Después iré yo misma.' },
-      { who: 'dario', text: 'No necesito cinco minutos.' },
+      { who: 'vex', text: 'Tienes tres minutos para pensarlo, Darío. Después iré yo misma.' },
+      { who: 'dario', text: 'No necesito tres minutos.' },
     ],
     comms: [
-      { t: 20,  who: 'nora', text: 'Vex nos lanza todo su escuadrón para cansarnos antes del choque.' },
-      { t: 70,  who: 'lia',  text: 'Guarda cargas de PULSO para la fragata. Las vas a necesitar.' },
-      { t: 120, who: 'vex',  text: 'Te enseñé la maniobra de rizo. ¿Te acuerdas de quién te la enseñó a ti?' },
-      { t: 130, who: 'dario', text: 'Tú. Y nunca te dije que la hacías mal.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 200, who: 'teo',  text: '¿Por qué Vex está tan enfadada?' },
-      { t: 210, who: 'lia',  text: 'No está enfadada. Tiene miedo. ORDO hace que todos tengan miedo.' },
-      { t: 270, who: 'nora', text: 'La fragata Lanza entra en el corredor. Cañones activos.' },
+      { t: 12,  who: 'nora', text: 'Vex nos lanza todo su escuadrón para cansarnos antes del choque.' },
+      { t: 42,  who: 'lia',  text: 'Guarda cargas de PULSO para la fragata. Las vas a necesitar.' },
+      { t: 72, who: 'vex',  text: 'Te enseñé la maniobra de rizo. ¿Te acuerdas de quién te la enseñó a ti?' },
+      { t: 78, who: 'dario', text: 'Tú. Y nunca te dije que la hacías mal.' },
+      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 120, who: 'teo',  text: '¿Por qué Vex está tan enfadada?' },
+      { t: 126, who: 'lia',  text: 'No está enfadada. Tiene miedo. ORDO hace que todos tengan miedo.' },
+      { t: 162, who: 'nora', text: 'La fragata Lanza entra en el corredor. Cañones activos.' },
     ],
     boss: {
       type: 'lanza', name: 'FRAGATA LANZA', hp: 2400,

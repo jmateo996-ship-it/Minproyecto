@@ -9,10 +9,10 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
 
 ## Características
 
-- **15 misiones de 5 minutos** (unos 75 minutos de juego), repartidas en tres actos: *La Huida*, *La Verdad* y *La Grieta*.
+- **15 misiones** (unos 65 minutos de juego), repartidas en tres actos: *La Huida*, *La Verdad* y *La Grieta*. Las 5 primeras duran **3 minutos** y las 10 restantes, **5 minutos**.
 - **Jefe final cada 5 misiones**: la **Fragata Lanza** (misión 5) y la **Forja Madre** (misión 10).
 - **Súper jefe en la misión 15: ORDO PRIMORDIAL**, con 4 fases, 6 satélites que bloquean tus disparos, muros de balas y una fase final con el núcleo al descubierto.
-- Cada misión tiene 5 oleadas (una por minuto) y un **punto de control a los 2:30**: si caes, puedes seguir desde ahí con la potencia que llevabas.
+- Cada misión tiene una oleada de asalto por minuto y un **punto de control a mitad de misión** (1:30 en las de 3 minutos, 2:30 en las de 5): si caes, puedes seguir desde ahí con la potencia que llevabas.
 - Las misiones sin jefe terminan con **MISIÓN CUMPLIDA** y una bonificación según el escudo y las vidas que te queden.
 - **Historia narrada**: prólogo, diálogos con retratos al empezar y al acabar cada misión, más de 120 mensajes de radio durante el vuelo y epílogo.
 - 5 escenarios con fondo parallax y música propia: ciudad, cinturón de asteroides, nebulosa de cristal, forja y la Grieta.
