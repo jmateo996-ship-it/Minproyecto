@@ -77,15 +77,15 @@ const SFX = {
     const nodes = [];
     const outdoor = ['snow', 'docks', 'hangar'].includes(theme);
     // zumbido grave
-    [[outdoor ? 48 : 55, 0.06], [outdoor ? 48.7 : 82.5, 0.04]].forEach(([f, v]) => { const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f; const og = c.createGain(); og.gain.value = v; o.connect(og); og.connect(g); o.start(); nodes.push(o); });
+    [[outdoor ? 48 : 55, 0.035], [outdoor ? 48.7 : 82.5, 0.025]].forEach(([f, v]) => { const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f; const og = c.createGain(); og.gain.value = v; o.connect(og); og.connect(g); o.start(); nodes.push(o); });
     // viento / ventilación
     const s = c.createBufferSource(); s.buffer = this.nb; s.loop = true; const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = outdoor ? 500 : 180; f.Q.value = outdoor ? 0.7 : 1.5;
-    const sg = c.createGain(); sg.gain.value = outdoor ? 0.22 : 0.12; const l = c.createOscillator(); l.frequency.value = 0.08; const lg = c.createGain(); lg.gain.value = outdoor ? 260 : 60; l.connect(lg); lg.connect(f.frequency);
+    const sg = c.createGain(); sg.gain.value = outdoor ? 0.05 : 0.028; const l = c.createOscillator(); l.frequency.value = 0.08; const lg = c.createGain(); lg.gain.value = outdoor ? 260 : 60; l.connect(lg); lg.connect(f.frequency);
     s.connect(f); f.connect(sg); sg.connect(g); s.start(); l.start(); nodes.push(s, l);
-    if (theme === 'burning' || theme === 'reactor') { const s2 = c.createBufferSource(); s2.buffer = this.nb; s2.loop = true; const f2 = c.createBiquadFilter(); f2.type = 'lowpass'; f2.frequency.value = 300; const g2 = c.createGain(); g2.gain.value = 0.25; s2.connect(f2); f2.connect(g2); g2.connect(g); s2.start(); nodes.push(s2); }
+    if (theme === 'burning' || theme === 'reactor') { const s2 = c.createBufferSource(); s2.buffer = this.nb; s2.loop = true; const f2 = c.createBiquadFilter(); f2.type = 'lowpass'; f2.frequency.value = 300; const g2 = c.createGain(); g2.gain.value = 0.07; s2.connect(f2); f2.connect(g2); g2.connect(g); s2.start(); nodes.push(s2); }
     this.amb = { g, nodes };
     // ecos lejanos aleatorios
-    clearInterval(this.creak); this.creak = setInterval(() => { if (!this.ctx || Math.random() < 0.5) return; const t = c.currentTime, o = this.out(0.08, Math.random() * 2 - 1, 0.9); if (outdoor) this.noise(o, t, 2.5, 300 + Math.random() * 300, 3, 'bandpass', 0.6, 0.8); else this.tone(o, t, 1.5, 200 + Math.random() * 400, 150 + Math.random() * 100, 'sine', 0.4); }, 6000);
+    clearInterval(this.creak); this.creak = setInterval(() => { if (!this.ctx || Math.random() < 0.5) return; const t = c.currentTime, o = this.out(0.035, Math.random() * 2 - 1, 0.9); if (outdoor) this.noise(o, t, 2.5, 300 + Math.random() * 300, 3, 'bandpass', 0.6, 0.8); else this.tone(o, t, 1.5, 200 + Math.random() * 400, 150 + Math.random() * 100, 'sine', 0.4); }, 6000);
   },
   setMusic(level) { // 0 nada, 1 tensión, 2 alerta
     if (!this.ok()) return; const c = this.ctx;
