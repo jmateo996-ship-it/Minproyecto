@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#2a1a5e"/><stop offset=".6" stop-color="#0b0a24"/><stop offset="1" stop-color="#030208"/></radialGradient>
+    <linearGradient id="hull" x1="0" x2="1"><stop offset="0" stop-color="#9fb6cc"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#9fb6cc"/></linearGradient>
+    <linearGradient id="wing" x1="0" x2="1"><stop offset="0" stop-color="#1b3350"/><stop offset=".5" stop-color="#5d87b3"/><stop offset="1" stop-color="#1b3350"/></linearGradient>
+    <linearGradient id="rift" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#c46bff" stop-opacity="0"/></linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <path d="M512 40 C 500 200 530 300 505 470" stroke="url(#rift)" stroke-width="18" fill="none" filter="url(#glow)"/>
+  <g transform="translate(512 600) scale(7)" filter="url(#glow)">
+    <path d="M0 -10 L38 18 L40 30 L12 24 L0 30 L-12 24 L-40 30 L-38 18Z" fill="url(#wing)" stroke="#7ee8ff" stroke-width="1.5"/>
+    <path d="M0 -38 L10 -18 L12 20 L6 34 L-6 34 L-12 20 L-10 -18Z" fill="url(#hull)"/>
+    <path d="M0 -30 L6 -16 L4 -6 L-4 -6 L-6 -16Z" fill="#2ac8ff"/>
+    <rect x="-30" y="20" width="14" height="3" fill="#ffb347"/><rect x="16" y="20" width="14" height="3" fill="#ffb347"/>
+    <path d="M-8 36 L-4 36 L-6 52Z M4 36 L8 36 L6 52Z" fill="#7fd4ff"/>
+  </g>
+</svg>

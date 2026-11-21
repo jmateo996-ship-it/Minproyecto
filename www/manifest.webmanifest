@@ -1,0 +1,10 @@
+{
+  "name": "Éxodo 2942",
+  "short_name": "Éxodo 2942",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#05030f",
+  "theme_color": "#05030f",
+  "icons": [{ "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

@@ -1,0 +1,8 @@
+{
+  "appId": "com.minproyecto.exodo2942",
+  "appName": "Éxodo 2942",
+  "webDir": "www",
+  "backgroundColor": "#05030f",
+  "ios": { "contentInset": "never", "backgroundColor": "#05030f" },
+  "android": { "backgroundColor": "#05030f" }
+}
