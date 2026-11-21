@@ -86,9 +86,11 @@
     rockS:    { hp: 18, r: 14, score: 80, spr: 'rockS' },
     crystal:  { hp: 45, r: 18, score: 300, spr: 'crystal' },
   };
+  // Resistencia de los enemigos normales a las balas (1 = original, 1.8 = aguantan un 80 % más)
+  const ENEMY_TOUGHNESS = 1.8;
   function spawnEnemy(type, x, y, o = {}) {
     const d = EDEF[type];
-    const hpScale = 1 + (G.difficulty - 1) * 0.35;
+    const hpScale = ENEMY_TOUGHNESS * (1 + (G.difficulty - 1) * 0.35);
     const e = Object.assign({ type, x, y, vx: 0, vy: 0, t: 0, hp: d.hp * hpScale, maxHp: d.hp * hpScale, r: d.r, score: d.score,
       spr: d.spr, rot: 0, fireT: rand(0.6, 1.8), flash: 0, group: null }, o);
     if (type === 'rock' || type === 'rockS') { e.spr = d.spr + Math.floor(Math.random() * 4); e.spin = rand(-1.5, 1.5); }
@@ -456,6 +458,7 @@
       Sprites.draw(ctx, e.spr, e.x, e.y, e.rot || 0);
       if (e.flash > 0) { ctx.globalCompositeOperation = 'lighter'; Sprites.draw(ctx, e.spr, e.x, e.y, e.rot || 0, 1, 0.7); ctx.globalCompositeOperation = 'source-over'; }
       if (e.type === 'carrier' && e.hp < e.maxHp) drawBar(e.x - 50, e.y - 62, 100, 5, e.hp / e.maxHp, '#ff5c8a');
+      else if ((e.type === 'gunship' || e.type === 'rock') && e.hp < e.maxHp) drawBar(e.x - 30, e.y - 44, 60, 4, e.hp / e.maxHp, '#ffb347');
     }
     // Jefe
     const b = G.boss;
