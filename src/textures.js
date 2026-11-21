@@ -41,7 +41,7 @@ const TEXDEF = {
   panel:    { pat: 'panels', a: [78, 84, 88], b: [120, 126, 128], n: 0.45, rough: 0.6, bump: 2.5, stain: 0.45 },
   tilewall: { pat: 'tiles', cells: 8, a: [170, 186, 180], b: [214, 222, 218], n: 0.3, rough: 0.3, bump: 2, stain: 0.6, grout: [80, 90, 84] },
   brick:    { pat: 'bricks', a: [70, 40, 32], b: [120, 70, 52], n: 0.7, rough: 0.85, bump: 3.5, stain: 0.4 },
-  metalw:   { pat: 'panels', a: [46, 52, 58], b: [78, 86, 94], n: 0.5, rough: 0.45, bump: 3, stain: 0.4, metal: 0.6 },
+  metalw:   { pat: 'panels', a: [74, 80, 88], b: [116, 124, 132], n: 0.5, rough: 0.45, bump: 3, stain: 0.4, metal: 0.6 },
   crate:    { pat: 'planks', a: [62, 70, 44], b: [96, 104, 64], n: 0.6, rough: 0.75, bump: 3, stain: 0.3, text: 'HALDEN · THULE-7' },
   ice:      { pat: 'panels', a: [150, 176, 196], b: [200, 222, 236], n: 0.5, rough: 0.25, bump: 2, stain: 0.25, metal: 0.2 },
 };

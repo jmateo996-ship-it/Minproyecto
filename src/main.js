@@ -921,6 +921,8 @@ function update(dt) {
   separate();
   P.rig.g.position.set(P.x, 0, P.z);
   updPlants(dt);
+  // el fuego quema
+  for (const f of G.level.fires) { if (Math.hypot(f.position.x - P.x, f.position.z - P.z) < 1.1 && P.alive) { G.burnT = (G.burnT || 0) - dt; if (G.burnT <= 0) { G.burnT = 0.4; P.inv = 0; damagePlayer(5); } } }
   // alarma
   if (G.alarm) {
     const anySee = G.actors.some(a => a.alive && a.kind === 'guard' && a.seesP);
@@ -1193,4 +1195,4 @@ try {
   requestAnimationFrame(loop);
 } catch (err) { $('loading').textContent = 'ERROR: ' + err.message; console.error(err); }
 // gancho de depuración (consola): __PC.start(n) inicia la misión n (1-20)
-window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1) };
+window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true) };

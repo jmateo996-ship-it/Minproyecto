@@ -2,7 +2,7 @@
 // Audio procedural (Web Audio): ambiente, disparos, criaturas y música de alerta
 // ============================================================================
 const SFX = {
-  ctx: null, master: null, amb: null, music: null, musicOn: false, seqTimer: null, step: 0, nb: null,
+  ctx: null, master: null, amb: null, music: null, musicOn: false, seqTimer: null, seqStep: 0, nb: null,
   init() {
     if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
@@ -94,7 +94,7 @@ const SFX = {
     if (level && !this.seqTimer) {
       const bass = [41.2, 41.2, 43.65, 41.2, 41.2, 49, 46.25, 43.65];
       this.seqTimer = setInterval(() => {
-        const t = c.currentTime + 0.02, st = this.step++;
+        const t = c.currentTime + 0.02, st = this.seqStep++;
         const fast = this.musicLevel === 2;
         if (!fast && st % 2) return;
         const o = this.musicBus;
