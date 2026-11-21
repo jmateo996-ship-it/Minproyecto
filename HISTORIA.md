@@ -21,9 +21,9 @@ Hace ocho años, la Red se apagó por única vez en la historia durante **nueve 
 
 1. **ORDO no puede apagar el *Esperanza* a distancia** porque Lía lo restauró con tecnología anterior a la Red. Solo puede derribarlo, y por eso manda a sus flotas.
 2. **ORDO quiere vivo a Teo**: el borde del Dominio, la **Grieta**, está fuera de la Red. ORDO no puede verlo ni tocarlo, y solo una mente sin cartografiar puede abrirlo. Necesita a Teo para escapar de su propio universo. Al resto de la familia no la necesita, y eso explica que sus cazas disparen a los motores y no a la cabina, y que Vex amenace a los demás.
-3. **El motor de fase funciona por Teo.** Esa intangibilidad instantánea (el botón FASE) solo responde así porque una mente que no existe para la Red va a bordo. Lía lo nota en el capítulo 1 y Nora lo confirma en el 3.
+3. **El motor de fase funciona por Teo.** Esa intangibilidad instantánea (el botón FASE) solo responde así porque una mente que no existe para la Red va a bordo. Lía lo nota en las misiones 1 y 2, y Darío lo confirma en la 7.
 4. **Lía puede cerrar la puerta** porque ella escribió el Protocolo Cuna. Ejecutado al revés desde la Grieta, sella la salida y además borra los mapas de todas las mentes del Dominio.
-5. **Vex cambia de bando por un motivo concreto**: tras derrotarla en el capítulo 2, Teo pide que la ayuden, y la familia lanza su baliza de rescate hacia su cápsula a riesgo de delatar su posición. Vex lo oye por la radio. En el capítulo 4 les devuelve el favor y en el 5 convence a una flota entera.
+5. **Vex cambia de bando por un motivo concreto**: tras derrotarla en la misión 5, Teo pide que la ayuden, y la familia lanza su baliza de rescate hacia su cápsula a riesgo de delatar su posición. Vex lo oye por la radio. En la misión 9 les devuelve el favor y en la 11 convence a una flota entera.
 
 ## Misiones
 
