@@ -379,6 +379,11 @@ function buildLevel(M, scene) {
     const pool = new THREE.Mesh(new THREE.PlaneGeometry(7, 7), new THREE.MeshBasicMaterial({ map: poolTex, color: new THREE.Color(col).multiplyScalar(0.12 * power), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
     pool.rotation.x = -Math.PI / 2; pool.position.set(x, 0.03, z); G.add(pool);
     level.lamps[level.lamps.length - 1].pool = pool;
+    // haz volumétrico bajo la lámpara
+    const ly = th.outdoor ? 4.2 : th.wallH - 0.1;
+    const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 2.6, ly, 28, 1, true), makeShaftMat(col, 0.16 * power));
+    cone.position.set(x, ly / 2, z); cone.renderOrder = 4; G.add(cone);
+    level.lamps[level.lamps.length - 1].cone = cone;
   };
   map.rooms.forEach(room => {
     if (room.arena) { for (let a = 0; a < 3; a++) for (let b = 0; b < 2; b++) { const p = cellCenter(room.x + 3 + a * ((room.w - 6) / 2 | 0), room.y + 3 + b * (room.h - 6)); addLamp(p.x, p.z, th.lamp, 1.2, th.flicker ? 0.3 : 0); } return; }
@@ -391,6 +396,11 @@ function buildLevel(M, scene) {
   // lámpara de salida
   level.lamps.push({ x: exc.x, y: 2.5, z: exc.z, color: 0x50ff9a, power: 12, flick: 0, exit: true });
 
+  // ---- detalles en las paredes (tuberías, señales, rejillas, cuadros)
+  decorateWalls(map, th, G, R);
+  // ---- niebla rastrera
+  const mistCol = { snow: 0x9ab0d0, docks: 0x6a7a8a, sewer: 0x4a7a5a, spores: 0xff7a2a, burning: 0x6a3a20, cold: 0x9ad0f0, reactor: 0xa04030, hangar: 0x7a8a9a }[M.theme];
+  if (mistCol) { [0.25, 0.9].forEach((y, k) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(W * CS + 30, H * CS + 30), makeMistMat(mistCol, k)); m.rotation.x = -Math.PI / 2; m.position.set(W * CS / 2, y, H * CS / 2); m.renderOrder = 3; G.add(m); level.mists = (level.mists || []).concat(m); }); }
   // ---- fuego (misión final)
   if (th.fires) {
     for (let k = 0; k < 16; k++) { const room = map.rooms[R() * nRooms | 0], c = freeCell(room, { minStart: 4 }); if (!c) continue; const p = cellCenter(c[0], c[1]); const f = makeFire(); f.position.set(p.x, 0, p.z); G.add(f); level.fires.push(f); level.lamps.push({ x: p.x, y: 1.2, z: p.z, color: 0xff6a20, power: 22, flick: 2, fire: true }); occ.add(key(c[0], c[1])); }
@@ -475,10 +485,68 @@ function addCutaway(mat) {
       .replace('#include <clipping_planes_fragment>', `#include <clipping_planes_fragment>
       { vec2 d = vWP.xz - uPlayer.xz; float r = length(vec2(d.x*0.8, d.y));
         if (vWP.z > uPlayer.z + 0.2 && r < 5.0 && vWP.y > 0.5) {
-          float k = smoothstep(5.0, 2.2, r);
-          float dth = fract(sin(dot(floor(gl_FragCoord.xy), vec2(12.9898,78.233)))*43758.5453);
-          if (dth < k*0.92) discard;
+          float k = smoothstep(5.2, 3.0, r);
+          vec2 q = mod(floor(gl_FragCoord.xy * 0.5), 4.0);
+          float b = mod(q.x * 2.0 + q.y * 3.0 + q.x * q.y, 4.0) / 4.0 + mod(q.x + q.y * 2.0, 4.0) / 16.0;
+          if (b < k) discard;
         } }`);
   };
   mat.customProgramCacheKey = () => 'cutaway';
+}
+
+
+function makeShaftMat(col, op) {
+  return new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uCol: { value: new THREE.Color(col) }, uOp: { value: op }, uT: { value: 0 } },
+    vertexShader: 'varying float vY; varying vec3 vN; varying vec3 vV; void main(){ vY=uv.y; vec4 wp=modelMatrix*vec4(position,1.0); vN=normalize(mat3(modelMatrix)*normal); vV=normalize(cameraPosition-wp.xyz); gl_Position=projectionMatrix*viewMatrix*wp; }',
+    fragmentShader: 'uniform vec3 uCol; uniform float uOp; varying float vY; varying vec3 vN; varying vec3 vV; void main(){ float edge=pow(abs(dot(vN,vV)),1.6); float a=uOp*pow(vY,1.4)*edge; gl_FragColor=vec4(uCol*1.4,a); }',
+  });
+}
+function makeMistMat(col, layer) {
+  return new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false,
+    uniforms: { uCol: { value: new THREE.Color(col) }, uT: { value: 0 }, uL: { value: layer } },
+    vertexShader: 'varying vec2 vW; void main(){ vec4 wp=modelMatrix*vec4(position,1.0); vW=wp.xz; gl_Position=projectionMatrix*viewMatrix*wp; }',
+    fragmentShader: `uniform vec3 uCol; uniform float uT,uL; varying vec2 vW;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+      float fbm(vec2 p){float v=0.0,a=0.5;for(int i=0;i<5;i++){v+=a*n(p);p*=2.03;a*=0.5;}return v;}
+      void main(){ vec2 p=vW*0.09+vec2(uT*0.025*(1.0+uL),uT*0.012); float f=fbm(p+fbm(p*1.7+uT*0.02)); float a=smoothstep(0.42,0.85,f)*(0.20-uL*0.08); gl_FragColor=vec4(uCol*0.55,a); }`,
+  });
+}
+function decorateWalls(map, th, G, R) {
+  if (th.outdoor && th.wall === 'rock') return;
+  const M = mats(), W = map.W, H = map.H;
+  if (!MAT.decor) {
+    MAT.decor = {
+      pipe: M.metal.clone(), dark: M.dark.clone(), exit: new THREE.MeshStandardMaterial({ color: 0x0a2a14, emissive: 0x30ff70, emissiveIntensity: 3.5 }),
+      warn: new THREE.MeshStandardMaterial({ color: 0x2a0a06, emissive: 0xff3a1a, emissiveIntensity: 3 }), hazard: M.hazard.clone(), vent: new THREE.MeshStandardMaterial({ color: 0x2a2e32, roughness: 0.5, metalness: 0.6 }),
+    };
+    Object.values(MAT.decor).forEach(addCutaway);
+  }
+  const D = MAT.decor, hgt = th.wallH;
+  const pipeGeo = new THREE.CylinderGeometry(0.09, 0.09, CS, 10), boxGeo = new THREE.BoxGeometry(1, 1, 1);
+  const put = (geo, mat, x, y, z, sx, sy, sz, ry = 0, rz = 0) => { const o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); o.scale.set(sx, sy, sz); o.rotation.set(0, ry, rz); o.castShadow = true; o.receiveShadow = true; G.add(o); return o; };
+  for (let j = 1; j < H - 1; j++) for (let i = 1; i < W - 1; i++) {
+    if (map.g[j * W + i] !== 1) continue;
+    // cara sur (visible para la cámara) con suelo delante
+    if (map.g[(j + 1) * W + i] !== 0) continue;
+    const fz = (j + 1) * CS + 0.02, cx = i * CS + CS / 2, r = R();
+    if (r < 0.22) { // tuberías horizontales
+      put(pipeGeo, D.pipe, cx, hgt * 0.78, fz + 0.12, 1, 1, 1, 0, Math.PI / 2);
+      put(pipeGeo, D.pipe, cx, hgt * 0.68, fz + 0.12, 0.7, 1, 0.7, 0, Math.PI / 2);
+      if (R() < 0.4) put(boxGeo, D.dark, cx, hgt * 0.73, fz + 0.1, 0.12, 0.4, 0.12);
+    } else if (r < 0.28) { // señal de salida de emergencia
+      put(boxGeo, D.exit, cx, hgt * 0.85, fz + 0.04, 0.7, 0.26, 0.06);
+    } else if (r < 0.36) { // rejilla de ventilación
+      put(boxGeo, D.vent, cx, hgt * 0.35, fz + 0.04, 0.9, 0.6, 0.06);
+      for (let k = 0; k < 4; k++) put(boxGeo, D.dark, cx, hgt * 0.35 - 0.21 + k * 0.14, fz + 0.08, 0.82, 0.035, 0.04);
+    } else if (r < 0.43) { // cuadro eléctrico con piloto
+      put(boxGeo, D.dark, cx + (R() - 0.5) * 0.6, 1.4, fz + 0.12, 0.55, 0.75, 0.22);
+      put(boxGeo, R() < 0.5 ? D.warn : D.exit, cx + 0.12, 1.62, fz + 0.24, 0.07, 0.07, 0.03);
+    } else if (r < 0.48) { // franja de peligro
+      put(boxGeo, D.hazard, cx, 0.12, fz + 0.03, CS, 0.24, 0.05);
+    }
+  }
 }

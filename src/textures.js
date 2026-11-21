@@ -36,22 +36,23 @@ const TEXDEF = {
   wet:      { pat: 'bricks', a: [32, 40, 38], b: [62, 72, 66], n: 0.7, rough: 0.2, bump: 3, stain: 0.5, wet: 0.9 },
   metalf:   { pat: 'panels', a: [52, 56, 60], b: [92, 96, 100], n: 0.5, rough: 0.5, bump: 2.5, stain: 0.35, metal: 0.5 },
   lino:     { pat: 'tiles', cells: 4, a: [70, 78, 84], b: [96, 104, 108], n: 0.4, rough: 0.55, bump: 1.4, stain: 0.3, grout: [40, 44, 48] },
-  rock:     { pat: 'plain', a: [44, 48, 56], b: [100, 104, 112], n: 1.4, rough: 0.9, bump: 6, stain: 0.2 },
-  container:{ pat: 'ribs', a: [96, 40, 30], b: [150, 66, 44], n: 0.5, rough: 0.6, bump: 4, stain: 0.5, metal: 0.4 },
-  panel:    { pat: 'panels', a: [78, 84, 88], b: [120, 126, 128], n: 0.45, rough: 0.6, bump: 2.5, stain: 0.45 },
-  tilewall: { pat: 'tiles', cells: 8, a: [170, 186, 180], b: [214, 222, 218], n: 0.3, rough: 0.3, bump: 2, stain: 0.6, grout: [80, 90, 84] },
-  brick:    { pat: 'bricks', a: [70, 40, 32], b: [120, 70, 52], n: 0.7, rough: 0.85, bump: 3.5, stain: 0.4 },
-  metalw:   { pat: 'panels', a: [74, 80, 88], b: [116, 124, 132], n: 0.5, rough: 0.45, bump: 3, stain: 0.4, metal: 0.6 },
-  crate:    { pat: 'planks', a: [62, 70, 44], b: [96, 104, 64], n: 0.6, rough: 0.75, bump: 3, stain: 0.3, text: 'HALDEN · THULE-7' },
+  rock:     { small: 1, pat: 'plain', a: [44, 48, 56], b: [100, 104, 112], n: 1.4, rough: 0.9, bump: 6, stain: 0.2 },
+  container:{ wall: 1, pat: 'ribs', a: [96, 40, 30], b: [150, 66, 44], n: 0.5, rough: 0.6, bump: 4, stain: 0.5, metal: 0.4 },
+  panel:    { wall: 1, pat: 'panels', a: [78, 84, 88], b: [120, 126, 128], n: 0.45, rough: 0.6, bump: 2.5, stain: 0.45 },
+  tilewall: { wall: 1, pat: 'tiles', cells: 8, a: [170, 186, 180], b: [214, 222, 218], n: 0.3, rough: 0.3, bump: 2, stain: 0.6, grout: [80, 90, 84] },
+  brick:    { wall: 1, pat: 'bricks', a: [70, 40, 32], b: [120, 70, 52], n: 0.7, rough: 0.85, bump: 3.5, stain: 0.4 },
+  metalw:   { wall: 1, pat: 'panels', a: [74, 80, 88], b: [116, 124, 132], n: 0.5, rough: 0.45, bump: 3, stain: 0.4, metal: 0.6 },
+  crate:    { small: 1, pat: 'planks', a: [62, 70, 44], b: [96, 104, 64], n: 0.6, rough: 0.75, bump: 3, stain: 0.3, text: 'HALDEN · THULE-7' },
   ice:      { pat: 'panels', a: [150, 176, 196], b: [200, 222, 236], n: 0.5, rough: 0.25, bump: 2, stain: 0.25, metal: 0.2 },
 };
 
 const _texCache = {};
+let TEXSIZE = 512;
 function makeTex(kind, opts = {}) {
   const key = kind + JSON.stringify(opts);
   if (_texCache[key]) return _texCache[key];
   const d = Object.assign({}, TEXDEF[kind] || TEXDEF.concrete, opts);
-  const S = 512, N = tileNoise(S, (kind.length * 977 + (opts.seed || 1)) | 0), N2 = tileNoise(S, (kind.length * 313 + 7) | 0);
+  const S = d.small ? 512 : TEXSIZE, N = tileNoise(S, (kind.length * 977 + (opts.seed || 1)) | 0), N2 = tileNoise(S, (kind.length * 313 + 7) | 0);
   const R = rng(kind.length * 31 + 5);
   const H = new Float32Array(S * S), M = new Float32Array(S * S); // altura, máscara de surco
   const cells = d.cells || 4;
@@ -89,6 +90,7 @@ function makeTex(kind, opts = {}) {
     let x = R() * S, y = R() * S, a = R() * 6.28; const len = 20 + R() * 120;
     for (let k = 0; k < len; k++) { a += (R() - 0.5) * 0.3; x = (x + Math.cos(a) + S) % S; y = (y + Math.sin(a) + S) % S; const i = (y | 0) * S + (x | 0); H[i] -= 0.35; M[i] = Math.max(M[i], 0.35); }
   }
+  const drips = new Float32Array(S); if (d.wall) { for (let k = 0; k < 22; k++) { const x0 = R() * S | 0, w = 2 + R() * 6 | 0, len = 0.1 + R() * 0.45; for (let q = 0; q < w; q++) drips[(x0 + q) % S] = len * (0.7 + 0.3 * Math.sin(q)); } }
   const cv = document.createElement('canvas'); cv.width = cv.height = S; const cx = cv.getContext('2d');
   const img = cx.createImageData(S, S), px = img.data;
   const nv = document.createElement('canvas'); nv.width = nv.height = S; const nx = nv.getContext('2d');
@@ -100,7 +102,8 @@ function makeTex(kind, opts = {}) {
     const t = Math.min(1, Math.max(0, N[i] * 1.25 - 0.1));
     const stain = Math.max(0, (N2[i] - 0.5) * 2) * d.stain;
     let r = d.a[0] + (d.b[0] - d.a[0]) * t, g = d.a[1] + (d.b[1] - d.a[1]) * t, b = d.a[2] + (d.b[2] - d.a[2]) * t;
-    const dark = 1 - stain * 0.8;
+    let dark = 1 - stain * 0.8;
+    if (d.wall) { const vy = y / S; dark *= 1 - Math.max(0, (vy - 0.62) / 0.38) ** 1.6 * 0.6; const col = drips[x] || 0; if (col && vy > 0.25 && vy < 0.25 + col) dark *= 1 - 0.35 * (1 - (vy - 0.25) / col) * (0.6 + N2[i] * 0.8); }
     r *= dark; g *= dark * 0.98; b *= dark * 0.95;
     if (M[i] > 0) { const gc = d.grout || [r * 0.45, g * 0.45, b * 0.45]; const m = Math.min(1, M[i]); r += (gc[0] - r) * m; g += (gc[1] - g) * m; b += (gc[2] - b) * m; }
     px[o] = r; px[o + 1] = g; px[o + 2] = b; px[o + 3] = 255;
@@ -114,7 +117,7 @@ function makeTex(kind, opts = {}) {
     rp[o] = 255; rp[o + 1] = ro * 255; rp[o + 2] = (d.metal || 0) * 255 * (1 - stain); rp[o + 3] = 255;
   }
   cx.putImageData(img, 0, 0); nx.putImageData(nimg, 0, 0); rx.putImageData(rimg, 0, 0);
-  if (d.text) { cx.font = 'bold 34px Chakra Petch, sans-serif'; cx.fillStyle = 'rgba(20,20,14,.55)'; cx.textAlign = 'center'; cx.fillText(d.text, S / 2, S / 2 + 10); cx.font = 'bold 18px monospace'; cx.fillText('BIO-MAT. FRÁGIL ▲▲', S / 2, S / 2 + 40); }
+  if (d.text) { cx.save(); cx.scale(S / 512, S / 512); cx.font = 'bold 34px Chakra Petch, sans-serif'; cx.fillStyle = 'rgba(20,20,14,.55)'; cx.textAlign = 'center'; cx.fillText(d.text, 256, 266); cx.font = 'bold 18px monospace'; cx.fillText('BIO-MAT. FRÁGIL ▲▲', 256, 296); cx.restore(); }
   const mk = (c, srgb) => { const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
   const res = { map: mk(cv, true), normalMap: mk(nv), roughnessMap: mk(rv), metalnessMap: d.metal ? mk(rv) : null };
   _texCache[key] = res; return res;

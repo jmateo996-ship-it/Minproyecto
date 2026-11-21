@@ -3,8 +3,16 @@
 // ============================================================================
 const $ = (id) => document.getElementById(id);
 const canvas = $('game');
+const QUALITY = {
+  ultra: { name: 'Ultra', pr: 2, smaa: true, ao: true, shadow: 2048, spots: 2, tex: 1024 },
+  alta: { name: 'Alta', pr: 1.5, smaa: true, ao: false, shadow: 1024, spots: 1, tex: 1024 },
+  media: { name: 'Media', pr: 1, smaa: false, ao: false, shadow: 1024, spots: 0, tex: 512 },
+};
+let QKEY = 'ultra';
+try { const q = localStorage.getItem('protocolo-ceniza-q'); if (q && QUALITY[q]) QKEY = q; else if (matchMedia('(pointer: coarse)').matches) QKEY = 'media'; } catch (e) { }
+const Q = QUALITY[QKEY]; TEXSIZE = Q.tex;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
-let PR = Math.min(window.devicePixelRatio || 1, 1.5);
+let PR = Math.min(window.devicePixelRatio || 1, Q.pr);
 renderer.setPixelRatio(PR); renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
@@ -38,9 +46,22 @@ const GradeShader = {
 };
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.7, 0.55, 0.82);
+// oclusión ambiental (excluye volúmenes de luz, partículas y otros elementos transparentes)
+class AOPass extends GTAOPass {
+  overrideVisibility() { const c = this._visibilityCache; this.scene.traverse(o => { c.set(o, o.visible); if (o.isPoints || o.isLine || (o.material && (o.material.transparent || o.material.isShaderMaterial))) o.visible = false; }); }
+}
+let aoPass = null;
+if (Q.ao) {
+  aoPass = new AOPass(scene, camera, innerWidth, innerHeight);
+  aoPass.updateGtaoMaterial({ radius: 0.9, distanceExponent: 1.4, thickness: 1.2, scale: 1.25, samples: 12, distanceFallOff: 1, screenSpaceRadius: false });
+  aoPass.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 12 });
+  aoPass.blendIntensity = 0.9;
+  composer.addPass(aoPass);
+}
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.75, 0.55, 0.82);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
+let smaa = null; if (Q.smaa) { smaa = new SMAAPass(innerWidth * PR, innerHeight * PR); composer.addPass(smaa); }
 const grade = new ShaderPass(GradeShader); composer.addPass(grade);
 composer.setPixelRatio(PR); composer.setSize(innerWidth, innerHeight);
 
@@ -49,9 +70,11 @@ const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 0.4); scene.add(hemi)
 const moon = new THREE.DirectionalLight(0xa8c0ee, 1); moon.castShadow = true; moon.shadow.mapSize.set(2048, 2048);
 Object.assign(moon.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 90 }); moon.shadow.bias = -0.0006; moon.shadow.normalBias = 0.04;
 scene.add(moon, moon.target);
-const flash = new THREE.SpotLight(0xfff0d8, 110, 32, 0.5, 0.55, 1.3); flash.castShadow = true; flash.shadow.mapSize.set(1024, 1024);
+const flash = new THREE.SpotLight(0xfff0d8, 110, 32, 0.5, 0.55, 1.3); flash.castShadow = true; flash.shadow.mapSize.set(Q.shadow, Q.shadow);
 flash.shadow.camera.near = 0.3; flash.shadow.camera.far = 32; flash.shadow.bias = -0.0004; flash.shadow.normalBias = 0.03; scene.add(flash, flash.target);
 const LPOOL = []; for (let i = 0; i < 6; i++) { const L = new THREE.PointLight(0xffffff, 0, 16, 2); scene.add(L); LPOOL.push(L); }
+// lámparas de techo con sombra real (las más cercanas)
+const SPOOL = []; for (let i = 0; i < Q.spots; i++) { const L = new THREE.SpotLight(0xffffff, 0, 18, 1.15, 0.65, 2); L.castShadow = true; L.shadow.mapSize.set(Q.shadow / 2, Q.shadow / 2); L.shadow.camera.near = 0.3; L.shadow.camera.far = 18; L.shadow.bias = -0.0005; L.shadow.normalBias = 0.03; scene.add(L, L.target); SPOOL.push(L); }
 const muzzle = new THREE.PointLight(0xffc070, 0, 12, 2); scene.add(muzzle);
 const eMuzzle = new THREE.PointLight(0xffb060, 0, 12, 2); scene.add(eMuzzle);
 const blast = new THREE.PointLight(0xff8a30, 0, 34, 1.5); scene.add(blast);
@@ -853,15 +876,22 @@ function updLights(dt) {
   // reparto de las luces puntuales a las lámparas más cercanas
   const cx = camLook.x, cz = camLook.z;
   for (const l of L.lamps) l._d = (l.x - cx) ** 2 + (l.z - cz) ** 2 + (l.small ? 30 : 0);
-  const near = L.lamps.filter(l => l.power > 0).sort((a, b) => a._d - b._d).slice(0, LPOOL.length);
-  LPOOL.forEach((pl, i) => {
-    const l = near[i]; if (!l) { pl.intensity = 0; return; }
+  const sorted = L.lamps.filter(l => l.power > 0).sort((a, b) => a._d - b._d);
+  const shad = sorted.filter(l => !l.small && !l.exit && !l.fire).slice(0, SPOOL.length);
+  const near = sorted.filter(l => !shad.includes(l)).slice(0, LPOOL.length);
+  const flick = (l) => {
     let f = 1;
     if (l.flick === 1) { const h = Math.sin(Math.floor(t * 9 + l.x * 7) * 12.9898) * 43758.5453; f = (h - Math.floor(h)) > 0.82 ? 0.08 : 0.95 + Math.sin(t * 60) * 0.05; }
     else if (l.flick === 2) f = 0.75 + Math.sin(t * 17 + l.x) * 0.12 + Math.sin(t * 31 + l.z) * 0.1;
     if (l.exit) f = 0.8 + Math.sin(t * 3) * 0.2;
+    if (l.pool) l.pool.material.opacity = f; if (l.cone) l.cone.material.uniforms.uOp.value = 0.16 * f;
+    return f;
+  };
+  SPOOL.forEach((sl, i) => { const l = shad[i]; if (!l) { sl.intensity = 0; return; } const f = flick(l); sl.position.set(l.x, l.y - 0.05, l.z); sl.target.position.set(l.x, 0, l.z); sl.color.set(l.color); sl.intensity = l.power * 1.6 * f; });
+  LPOOL.forEach((pl, i) => {
+    const l = near[i]; if (!l) { pl.intensity = 0; return; }
+    const f = flick(l);
     pl.position.set(l.x, l.y, l.z); pl.color.set(l.color); pl.intensity = l.power * f; pl.distance = l.small ? 8 : 18;
-    if (l.pool) l.pool.material.opacity = f;
   });
 }
 
@@ -870,7 +900,7 @@ function loop(now) {
   requestAnimationFrame(loop);
   let dt = Math.min(0.05, (now - last) / 1000); last = now;
   fpsAcc += dt; fpsN++;
-  if (fpsAcc > 3) { const avg = fpsAcc / fpsN; if (avg > 0.028 && PR > 1) { PR = 1; renderer.setPixelRatio(PR); composer.setPixelRatio(PR); onResize(); } else if (avg > 0.034 && bloom.enabled && PR <= 1) { bloom.enabled = false; } fpsAcc = 0; fpsN = 0; }
+  if (fpsAcc > 3) { const avg = fpsAcc / fpsN; if (avg > 0.028 && aoPass && aoPass.enabled) { aoPass.enabled = false; } else if (avg > 0.028 && PR > 1) { PR = Math.max(1, PR - 0.5); renderer.setPixelRatio(PR); composer.setPixelRatio(PR); onResize(); } else if (avg > 0.034 && bloom.enabled && PR <= 1) { bloom.enabled = false; } fpsAcc = 0; fpsN = 0; }
   G.t += dt;
   grade.uniforms.uTime.value = G.t;
   if (G.mode === 'play' && !G.paused && G.level) update(dt);
@@ -878,6 +908,7 @@ function loop(now) {
   if (G.level) {
     mats().spore.emissiveIntensity = 2.6 + Math.sin(G.t * 2.5) * 1.1;
     G.level.fires.forEach(f => f.userData.mat.uniforms.uT.value = G.t + f.position.x);
+    if (G.level.mists) G.level.mists.forEach(m => m.material.uniforms.uT.value = G.t);
     if (G.level.exit) { const ex = G.level.exit.mesh.userData; ex.beamMat.uniforms.uT.value = G.t; const ready = G.M && curObjIsReach(); ex.beamMat.uniforms.uCol.value.set(ready ? 0x50ff9a : 0xff4030); ex.ring.material.color.set(ready ? 0x50ff9a : 0xff4030).multiplyScalar(2.5); ex.ring.scale.setScalar(1 + Math.sin(G.t * 3) * 0.06); }
     G.level.pickups.forEach(p => { if (!p.taken) { p.mesh.rotation.y += dt * 1.2; p.mesh.children[0].position.y = Math.sin(G.t * 3 + p.x) * 0.05; } });
     G.level.targets.forEach(t => t.mesh.traverse(o => { if (o.userData.spin) o.rotation[o.geometry.type === 'TorusGeometry' ? 'z' : 'y'] += dt * o.userData.spin * 10; }));
@@ -983,6 +1014,7 @@ function showTitle() {
       <button id="bNew">Nueva operación<small>Empieza desde el desembarco</small></button>
       <button id="bSel">Seleccionar misión<small>${SAVE.unlocked} de 20 desbloqueadas</small></button>
       <button id="bKeys">Controles</button>
+      <button id="bQ">Gráficos: ${Q.name}<small>Ultra · Alta · Media (reinicia la página)</small></button>
     </div></div>
     <div class="foot">THULE-7 · ISLA SÓLVEIG · 63°N</div>`, '');
   el.id = 'title';
@@ -990,6 +1022,7 @@ function showTitle() {
   $('bNew').onclick = () => { SFX.init(); SFX.ui(); showPrologue(); };
   $('bSel').onclick = () => { SFX.init(); SFX.ui(); showSelect(); };
   $('bKeys').onclick = () => { SFX.init(); SFX.ui(); showKeys(showTitle); };
+  $('bQ').onclick = () => { const ks = Object.keys(QUALITY), nk = ks[(ks.indexOf(QKEY) + 1) % ks.length]; try { localStorage.setItem('protocolo-ceniza-q', nk); } catch (e) { } location.reload(); };
   setTimeout(() => (cont ? $('bCont') : $('bNew')).focus(), 50);
 }
 function showKeys(back) {
@@ -1184,6 +1217,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
 function onResize() {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
+  if (smaa) smaa.setSize(innerWidth * PR, innerHeight * PR);
   grade.uniforms.uRes.value.set(innerWidth * PR, innerHeight * PR);
 }
 addEventListener('resize', onResize); onResize();
