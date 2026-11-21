@@ -1108,6 +1108,7 @@ function showKeys(back) {
       <kbd>E</kbd><span>Acción: activa objetivos con una pulsación, neutraliza guardias que no te han visto y usa el cuchillo con los infectados</span>
       <kbd>C</kbd><span>Agacharse: te mueves en silencio y te ven peor</span>
     </div>
+    <p class="hint">En móvil: el joystick izquierdo mueve a Sílex (mira hacia donde la mueves) y el botón rojo DISPARAR dispara hacia delante.</p>
     <div class="eyebrow" style="margin-top:16px">Extras</div>
     <div class="keys">
       <kbd>Mayús</kbd><span>Correr (hace ruido)</span><kbd>Q</kbd><span>Cambiar de arma</span>
@@ -1283,6 +1284,7 @@ addEventListener('wheel', (e) => { if (G.mode === 'play' && !G.paused && G.playe
 // táctil
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
   touch.on = matchMedia('(pointer: coarse)').matches;
+  if (touch.on) document.body.classList.add('touch');
   const stick = (id, cb) => {
     const el = $(id), knob = el.querySelector('i'); let pid = null, cx = 0, cy = 0;
     el.addEventListener('pointerdown', (e) => { SFX.init(); pid = e.pointerId; el.setPointerCapture(pid); const r = el.getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2; move(e); });
@@ -1292,7 +1294,11 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
   };
   stick('stickL', (x, y) => { touch.mx = x; touch.mz = y; });
-  stick('stickR', (x, y) => { touch.ax = x; touch.az = y; touch.fire = Math.hypot(x, y) > 0.75; });
+  // botón de disparo: dispara hacia donde mira Sílex (la dirección del joystick)
+  const fb = $('fireBtn');
+  const fireOn = (e) => { e.preventDefault(); SFX.init(); touch.fire = true; fb.classList.add('on'); try { fb.setPointerCapture(e.pointerId); } catch (_) { } };
+  const fireOff = () => { touch.fire = false; fb.classList.remove('on'); };
+  fb.addEventListener('pointerdown', fireOn); fb.addEventListener('pointerup', fireOff); fb.addEventListener('pointercancel', fireOff); fb.addEventListener('lostpointercapture', fireOff);
   document.querySelectorAll('.tbtns button').forEach(b => {
     b.addEventListener('pointerdown', (e) => { e.preventDefault(); const k = b.dataset.k; if (k === 'KeyE') { if (G.curT) G.autoT = G.curT; else if (G.mode === 'play' && !G.paused) doCQC(); return; } dispatchEvent(new KeyboardEvent('keydown', { code: k })); setTimeout(() => dispatchEvent(new KeyboardEvent('keyup', { code: k })), 60); });
     b.addEventListener('pointerup', () => { if (b.dataset.k === 'KeyE') touch.act = false; });

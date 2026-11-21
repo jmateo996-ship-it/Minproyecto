@@ -18,7 +18,7 @@ Abre `index.html` en un navegador moderno de escritorio (Chrome, Edge o Firefox)
 
 La recarga y los botiquines funcionan solos cuando hace falta (también con R y H).
 
-En pantallas táctiles aparecen dos joysticks y botones.
+En pantallas táctiles aparece un joystick para moverte (Sílex mira hacia donde la mueves), un botón grande DISPARAR y botones para el resto de acciones.
 
 ## Mecánicas
 

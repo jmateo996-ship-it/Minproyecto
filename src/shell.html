@@ -158,10 +158,20 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .stick{position:fixed;bottom:calc(30px + env(safe-area-inset-bottom,0px));width:130px;height:130px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.04);pointer-events:auto;touch-action:none}
 .stick i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:rgba(240,180,76,.3);border:1px solid var(--amber)}
 #stickL{left:max(24px,env(safe-area-inset-left,0px))}
-#stickR{right:max(24px,env(safe-area-inset-right,0px))}
+#fireBtn{position:fixed;right:max(24px,env(safe-area-inset-right,0px));bottom:calc(34px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;border:2px solid var(--red);background:radial-gradient(circle at 50% 40%,rgba(255,80,60,.45),rgba(120,16,10,.55));color:#fff;font-family:var(--f-ui);font-weight:700;font-size:15px;letter-spacing:.14em;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;box-shadow:0 0 24px rgba(255,59,48,.25)}
+#fireBtn.on{background:radial-gradient(circle at 50% 40%,rgba(255,120,90,.8),rgba(170,30,20,.8));transform:scale(.94)}
 .tbtns{position:fixed;right:max(170px,calc(env(safe-area-inset-right,0px) + 170px));bottom:calc(30px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(2,52px);gap:8px;pointer-events:auto}
 .tbtns button{width:52px;height:44px;background:rgba(9,14,20,.7);border:1px solid var(--line);color:var(--text);font-size:11px;font-weight:600;touch-action:none}
-#touch.on ~ #hud .hud-br{bottom:calc(180px + env(safe-area-inset-bottom,0px))}
+/* disposición táctil: vida arriba a la izquierda, munición sobre el botón de disparo, botones en dos filas compactas */
+body.touch .hud-bl{bottom:auto;top:calc(78px + env(safe-area-inset-top,0px));width:min(220px,40vw)}
+body.touch .inv{font-size:10px;gap:10px;white-space:nowrap}
+body.touch #radar{width:104px;height:104px}
+body.touch .hud-br{bottom:calc(166px + env(safe-area-inset-bottom,0px))}
+body.touch .ammo{font-size:30px}
+body.touch .wname{font-size:10px}
+body.touch .tbtns{grid-template-columns:repeat(4,48px);gap:6px;right:max(160px,calc(env(safe-area-inset-right,0px) + 160px));bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+body.touch .tbtns button{width:48px;height:38px;font-size:9.5px}
+body.touch #subs{bottom:calc(118px + env(safe-area-inset-bottom,0px));width:min(520px,calc(100% - 340px))}
 @media (max-width:640px){
   #radar{width:120px;height:120px}
   .ammo{font-size:32px}
@@ -209,7 +219,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 
 <div id="touch" class="layer">
   <div class="stick" id="stickL"><i></i></div>
-  <div class="stick" id="stickR"><i></i></div>
+  <button id="fireBtn" aria-label="Disparar">DISPARAR</button>
   <div class="tbtns">
     <button data-k="KeyE">ACCIÓN</button><button data-k="Space">CQC</button>
     <button data-k="KeyC">AGACH.</button><button data-k="KeyR">RECAR.</button>
