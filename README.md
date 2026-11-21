@@ -24,6 +24,9 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
 
 ## Probarlo ahora en el navegador
 
+**En el móvil, sin instalar nada:** abre [`Exodo2942.html`](Exodo2942.html) en el navegador. Es el juego completo en un solo archivo; se regenera con `python3 tools/build_single.py`.
+
+
 ```bash
 npm start            # sirve www/ en http://localhost:8080
 ```
