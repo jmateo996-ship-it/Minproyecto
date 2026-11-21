@@ -773,6 +773,7 @@ const SFX = {
     const rev = c.createConvolver(); rev.buffer = this.impulse(2.8); this.rev = c.createGain(); this.rev.gain.value = 0.35; this.rev.connect(rev); rev.connect(this.master);
     this.nb = c.createBuffer(1, c.sampleRate * 2, c.sampleRate); const d = this.nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     this.musicBus = c.createGain(); this.musicBus.gain.value = 0; this.musicBus.connect(this.master);
+    if (this.pendingMood) this.mystery(this.pendingMood);
   },
   impulse(sec) { const c = this.ctx, n = c.sampleRate * sec, b = c.createBuffer(2, n, c.sampleRate); for (let ch = 0; ch < 2; ch++) { const d = b.getChannelData(ch); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3); } return b; },
   out(vol = 1, pan = 0, wet = 0.3) {
@@ -850,7 +851,8 @@ const SFX = {
   setMusic(level) { // 0 nada, 1 tensión, 2 alerta
     if (!this.ok()) return; const c = this.ctx;
     this.musicBus.gain.cancelScheduledValues(c.currentTime);
-    this.musicBus.gain.linearRampToValueAtTime(level === 2 ? 0.5 : level === 1 ? 0.22 : 0, c.currentTime + (level ? 0.3 : 3));
+    this.musicBus.gain.linearRampToValueAtTime(!this.musicEnabled ? 0 : level === 2 ? 0.5 : level === 1 ? 0.22 : 0, c.currentTime + (level ? 0.3 : 3));
+    if (this.duck) this.duck(level > 0);
     this.musicLevel = level;
     if (level && !this.seqTimer) {
       const bass = [41.2, 41.2, 43.65, 41.2, 41.2, 49, 46.25, 43.65];
@@ -869,6 +871,78 @@ const SFX = {
     if (!level && this.seqTimer) { const tm = this.seqTimer; setTimeout(() => { if (!this.musicLevel) { clearInterval(tm); if (this.seqTimer === tm) this.seqTimer = null; } }, 3200); }
   },
 };
+
+// ============================================================================
+// Banda sonora de misterio (generativa)
+// ============================================================================
+const MOODS = {
+  // acordes en notas MIDI; escala para la melodía; densidad de notas; motivo fijo opcional
+  title:   { chords: [[50, 53, 57], [46, 50, 53], [43, 46, 50], [45, 49, 52]], scale: [62, 64, 65, 67, 69, 70, 73, 74], dens: 0.0, beat: 0.42, vol: 0.55,
+             motif: [74, 77, 81, 79, 77, 76, 73, 74, null, 69, 70, 69, 67, 65, 64, 65, null, null] },
+  brief:   { chords: [[50, 57, 64], [46, 53, 62], [43, 50, 58], [45, 52, 61]], scale: [69, 72, 74, 76], dens: 0.12, beat: 0.8, vol: 0.32 },
+  explore: { chords: [[50, 53, 57], [51, 55, 58], [50, 53, 57], [49, 52, 55]], scale: [62, 63, 65, 67, 69, 70, 74, 75], dens: 0.22, beat: 0.7, vol: 0.42 },
+  lab:     { chords: [[50, 54, 58], [52, 56, 60], [48, 52, 56], [51, 55, 59]], scale: [62, 64, 66, 68, 70, 72, 74, 76], dens: 0.2, beat: 0.62, vol: 0.4 },
+  cold:    { chords: [[50, 57, 62], [48, 55, 62], [46, 53, 60], [45, 52, 57]], scale: [69, 72, 74, 76, 77, 81], dens: 0.16, beat: 0.9, vol: 0.4 },
+  debrief: { chords: [[50, 53, 57], [53, 57, 60], [46, 50, 53], [45, 50, 54]], scale: [65, 69, 72, 74, 77], dens: 0.25, beat: 0.6, vol: 0.45 },
+  fail:    { chords: [[38, 45, 50], [39, 46, 51]], scale: [62, 63], dens: 0.06, beat: 1.1, vol: 0.38 },
+};
+Object.assign(SFX, {
+  musicEnabled: (() => { try { return localStorage.getItem('protocolo-ceniza-music') !== 'off'; } catch (e) { return true; } })(),
+  mood: null, mBus: null, mTimer: null, mNext: 0, mBeat: 0, ducked: false,
+  midi(m) { return 440 * Math.pow(2, (m - 69) / 12); },
+  mysteryInit() {
+    if (this.mBus || !this.ctx) return; const c = this.ctx;
+    this.mBus = c.createGain(); this.mBus.gain.value = 0; this.mBus.connect(this.master);
+    const wet = c.createGain(); wet.gain.value = 0.9; this.mBus.connect(wet); wet.connect(this.rev);
+    // eco para la melodía
+    this.mDelay = c.createDelay(2); this.mDelay.delayTime.value = 0.48; const fb = c.createGain(); fb.gain.value = 0.42; const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    this.mDelay.connect(lp); lp.connect(fb); fb.connect(this.mDelay); lp.connect(this.mBus);
+  },
+  mystery(mood) {
+    this.pendingMood = mood;
+    if (!this.ctx) return;
+    this.mysteryInit();
+    const c = this.ctx, M = MOODS[mood];
+    if (mood !== this.mood) { this.mood = mood; this.mBeat = 0; this.mNext = Math.max(this.mNext, c.currentTime + 0.1); }
+    this.mBus.gain.cancelScheduledValues(c.currentTime); this.mBus.gain.setValueAtTime(this.mBus.gain.value, c.currentTime);
+    this.mBus.gain.linearRampToValueAtTime(this.musicEnabled && !this.ducked && M ? M.vol : 0, c.currentTime + 2.5);
+    if (!this.mTimer) this.mTimer = setInterval(() => this.mysteryTick(), 150);
+  },
+  duck(on) { this.ducked = on; if (this.mood) this.mystery(this.mood); },
+  toggleMusic() { this.musicEnabled = !this.musicEnabled; try { localStorage.setItem('protocolo-ceniza-music', this.musicEnabled ? 'on' : 'off'); } catch (e) { } if (this.mood) this.mystery(this.mood); if (this.musicBus) this.musicBus.gain.value = this.musicEnabled ? this.musicBus.gain.value : 0; return this.musicEnabled; },
+  mysteryTick() {
+    const c = this.ctx, M = MOODS[this.mood]; if (!c || !M) return;
+    while (this.mNext < c.currentTime + 0.5) {
+      const t = this.mNext, b = this.mBeat++, per = 16, ci = Math.floor(b / per) % M.chords.length, chord = M.chords[ci];
+      if (b % per === 0) { this.pad(chord, t, M.beat * per + 2.5); this.bass(chord[0] - 12, t, M.beat * per); }
+      if (M.motif) { const n = M.motif[b % M.motif.length]; if (n) this.musicBox(n, t); }
+      else if (Math.random() < M.dens && b % 2 === 0) { const n = M.scale[Math.random() * M.scale.length | 0]; this.celesta(n, t, 0.11 + Math.random() * 0.06); }
+      if (Math.random() < 0.025 && !M.motif) this.glass(M.scale[M.scale.length - 1] + 12 + (Math.random() < 0.5 ? 1 : 0), t);
+      if (b % (per * 2) === per && Math.random() < 0.5) this.swell(chord[2] + 12, t, M.beat * 6);
+      this.mNext += M.beat;
+    }
+  },
+  pad(chord, t, dur) {
+    const c = this.ctx, out = c.createGain(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(0.05, t + 3); out.gain.setValueAtTime(0.05, t + dur - 3); out.gain.linearRampToValueAtTime(0, t + dur);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 650; lp.Q.value = 2;
+    const lfo = c.createOscillator(); lfo.frequency.value = 0.07 + Math.random() * 0.05; const lg = c.createGain(); lg.gain.value = 280; lfo.connect(lg); lg.connect(lp.frequency);
+    lp.connect(out); out.connect(this.mBus); lfo.start(t); lfo.stop(t + dur);
+    chord.forEach(m => [-7, 7].forEach(dt => { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = this.midi(m); o.detune.value = dt; const g = c.createGain(); g.gain.value = 0.35; o.connect(g); g.connect(lp); o.start(t); o.stop(t + dur); }));
+  },
+  bass(m, t, dur) { const c = this.ctx, o = c.createOscillator(); o.type = 'sine'; o.frequency.value = this.midi(m); const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.16, t + 1.5); g.gain.linearRampToValueAtTime(0, t + dur); o.connect(g); g.connect(this.mBus); o.start(t); o.stop(t + dur + 0.1); },
+  celesta(m, t, v) {
+    const c = this.ctx, f = this.midi(m), g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0005, t + 2.6);
+    [[1, 1], [2, 0.25], [4.01, 0.08]].forEach(([k, a]) => { const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f * k; const og = c.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 2.7); });
+    g.connect(this.mBus); g.connect(this.mDelay);
+  },
+  musicBox(m, t) {
+    const c = this.ctx, f = this.midi(m), g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.09, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0005, t + 1.8);
+    [[1, 1, 'triangle'], [3, 0.18, 'sine'], [5.4, 0.05, 'sine']].forEach(([k, a, ty]) => { const o = c.createOscillator(); o.type = ty; o.frequency.value = f * k; o.detune.value = (Math.random() - 0.5) * 12; const og = c.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 1.9); });
+    g.connect(this.mBus); g.connect(this.mDelay);
+  },
+  glass(m, t) { const c = this.ctx, o = c.createOscillator(); o.type = 'sine'; o.frequency.value = this.midi(m); const o2 = c.createOscillator(); o2.type = 'sine'; o2.frequency.value = this.midi(m) * 1.007; const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.025, t + 1.2); g.gain.linearRampToValueAtTime(0, t + 4); o.connect(g); o2.connect(g); g.connect(this.mBus); g.connect(this.mDelay); o.start(t); o2.start(t); o.stop(t + 4.1); o2.stop(t + 4.1); },
+  swell(m, t, dur) { const c = this.ctx, o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = this.midi(m); const v = c.createOscillator(); v.frequency.value = 5; const vg = c.createGain(); vg.gain.value = 3; v.connect(vg); vg.connect(o.detune); const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1200; const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.03, t + dur * 0.6); g.gain.linearRampToValueAtTime(0, t + dur); o.connect(lp); lp.connect(g); g.connect(this.mBus); o.start(t); v.start(t); o.stop(t + dur); v.stop(t + dur); },
+});
 
 // ---- world.js
 // ============================================================================
@@ -2594,7 +2668,7 @@ function hideScreen() { UI.innerHTML = ''; }
 function setHUD(on) { $('hud').classList.toggle('on', on); $('cursor').hidden = !on || touch.on; canvas.style.cursor = on ? 'none' : 'default'; $('touch').classList.toggle('on', on && touch.on); if (!on) { $('tags').innerHTML = ''; delete tagEls.prompt; } }
 
 function showTitle() {
-  G.mode = 'title'; G.paused = false; setHUD(false); SFX.setMusic(0);
+  G.mode = 'title'; G.paused = false; setHUD(false); SFX.setMusic(0); SFX.mystery('title');
   loadMission(0, true);
   const cont = SAVE.unlocked > 1;
   const el = screen(`<div class="wrap">
@@ -2606,6 +2680,7 @@ function showTitle() {
       <button id="bNew">Nueva operación<small>Empieza desde el desembarco</small></button>
       <button id="bSel">Seleccionar misión<small>${SAVE.unlocked} de 20 desbloqueadas</small></button>
       <button id="bKeys">Controles</button>
+      <button id="bMus">Música: ${SFX.musicEnabled ? 'Sí' : 'No'}<small>También con la tecla M</small></button>
       <button id="bQ">Gráficos: ${Q.name}<small>Ultra · Alta · Media (reinicia la página)</small></button>
     </div></div>
     <div class="foot">THULE-7 · ISLA SÓLVEIG · 63°N</div>`, '');
@@ -2614,6 +2689,7 @@ function showTitle() {
   $('bNew').onclick = () => { SFX.init(); SFX.ui(); showPrologue(); };
   $('bSel').onclick = () => { SFX.init(); SFX.ui(); showSelect(); };
   $('bKeys').onclick = () => { SFX.init(); SFX.ui(); showKeys(showTitle); };
+  $('bMus').onclick = () => { SFX.init(); const on = SFX.toggleMusic(); $('bMus').firstChild.textContent = 'Música: ' + (on ? 'Sí' : 'No'); };
   $('bQ').onclick = () => { const ks = Object.keys(QUALITY), nk = ks[(ks.indexOf(QKEY) + 1) % ks.length]; try { localStorage.setItem('protocolo-ceniza-q', nk); } catch (e) { } location.reload(); };
   setTimeout(() => (cont ? $('bCont') : $('bNew')).focus(), 50);
 }
@@ -2629,7 +2705,7 @@ function showKeys(back) {
     <div class="eyebrow" style="margin-top:16px">Extras</div>
     <div class="keys">
       <kbd>Mayús</kbd><span>Correr (hace ruido)</span><kbd>Q</kbd><span>Cambiar de arma</span>
-      <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span>
+      <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span><kbd>M</kbd><span>Activar o silenciar la música</span>
       <kbd>R · H</kbd><span>Recargar y curarse a mano (las dos cosas también ocurren solas)</span>
     </div>
     <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Los anillos en el suelo muestran cuánto ruido haces.</p>
@@ -2665,7 +2741,7 @@ function radioSequence(container, lines, done) {
 
 function showBriefing(idx) {
   G.mode = 'brief'; setHUD(false);
-  loadMission(idx, true); SFX.ambient(MISSIONS[idx].theme); SFX.setMusic(0);
+  loadMission(idx, true); SFX.ambient(MISSIONS[idx].theme); SFX.setMusic(0); SFX.mystery('brief');
   const M = MISSIONS[idx];
   const el = screen(`<div class="card"><div class="eyebrow">Misión ${String(M.id).padStart(2, '0')} / 20 · Enlace de radio</div><h2>${M.title}</h2>
     <div class="meta"><span>Lugar <b>${M.place}</b></span><span>Hora <b>${M.time}</b></span>${SAVE.ranks[M.id] ? `<span>Mejor rango <b>${SAVE.ranks[M.id]}</b></span>` : ''}</div>
@@ -2688,6 +2764,7 @@ function startMission(idx) {
     loadMission(idx, false); hideScreen(); G.mode = 'play'; G.paused = false; G.hintDone = false; hudCache = {};
     buildRadarMap(); setHUD(true); updHUDObjective(); toast(`${String(G.M.id).padStart(2, '0')} · ${G.M.title.toUpperCase()}`);
     SFX.setMusic(G.M.boss || G.M.survive || G.M.escape ? 2 : 0);
+    const th = G.M.theme; SFX.mystery(['lab', 'server', 'spores', 'cold', 'vault', 'medical', 'reactor'].includes(th) ? 'lab' : ['snow', 'docks', 'hangar'].includes(th) ? 'cold' : 'explore');
   });
 }
 function fade(fn) { const f = $('fade'); f.classList.add('on'); setTimeout(() => { fn(); setTimeout(() => f.classList.remove('on'), 80); }, 550); }
@@ -2701,7 +2778,7 @@ function rankOf() {
   return [r, names[r]];
 }
 function missionComplete() {
-  if (G.done) return; G.done = true; SFX.objective(); SFX.setMusic(0);
+  if (G.done) return; G.done = true; SFX.objective(); SFX.setMusic(0); SFX.mystery('debrief');
   const [r, rn] = rankOf(); const M = G.M;
   const order = ['D', 'C', 'B', 'A', 'S'];
   if (!SAVE.ranks[M.id] || order.indexOf(r) > order.indexOf(SAVE.ranks[M.id])) SAVE.ranks[M.id] = r;
@@ -2726,7 +2803,7 @@ function missionComplete() {
   }, 1200);
 }
 function fail(reason) {
-  if (G.done) return; G.done = true; SFX.setMusic(0);
+  if (G.done) return; G.done = true; SFX.setMusic(0); SFX.mystery('fail');
   setTimeout(() => {
     G.mode = 'dead'; setHUD(false);
     screen(`<div class="card" style="width:min(560px,100%)"><div class="eyebrow red">Señal perdida</div><h2 class="red">Misión fallida</h2><p class="prose">${reason}</p>
@@ -2738,7 +2815,7 @@ function fail(reason) {
   }, 900);
 }
 function showEpilogue() {
-  G.mode = 'brief'; setHUD(false);
+  G.mode = 'brief'; setHUD(false); SFX.mystery('debrief');
   const el = screen(`<div class="card" style="width:min(780px,100%)"><div class="eyebrow">Epílogo</div><h2>Ceniza</h2><div class="prose" id="pr"></div>
     <p class="hint" style="margin-top:18px">PROTOCOLO CENIZA · Una historia original de infiltración y supervivencia.</p>
     <div class="btnrow"><button class="btn" id="bT">Volver al inicio</button><button class="btn ghost" id="bS">Seleccionar misión</button></div></div>`);
@@ -2773,6 +2850,7 @@ addEventListener('keydown', (e) => {
   if ((G.mode === 'brief' || G.mode === 'debrief') && G.briefNext && (e.code === 'Space' || e.code === 'Enter') && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && !document.activeElement.hidden && e.code === 'Enter')) { e.preventDefault(); G.briefNext(); return; }
   if (e.repeat) { keys[e.code] = true; return; }
   keys[e.code] = true; SFX.init();
+  if (e.code === 'KeyM') { const on = SFX.toggleMusic(); if (G.mode === 'play') subLine('SYS', null, on ? 'Música activada' : 'Música desactivada'); return; }
   if (e.code === 'Escape' || e.code === 'KeyP') { pause(); return; }
   if (G.mode !== 'play' || G.paused) return;
   const P = G.player; if (!P || !P.alive) return;
@@ -2785,6 +2863,7 @@ addEventListener('keydown', (e) => {
   if ((e.code === 'KeyQ' || e.code === 'Digit1' || e.code === 'Digit2') && P.hasShotgun) { const w = e.code === 'Digit1' ? 'pistol' : e.code === 'Digit2' ? 'shotgun' : (P.weapon === 'pistol' ? 'shotgun' : 'pistol'); if (w !== P.weapon) { P.weapon = w; P.reloadT = 0; P.fireT = 0.35; SFX.reload(); } }
 });
 addEventListener('keyup', (e) => { keys[e.code] = false; });
+addEventListener('pointerdown', () => SFX.init());
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.left = mouse.right = false; });
 addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; const c = $('cursor'); c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; });
 canvas.addEventListener('mousedown', (e) => { SFX.init(); if (e.button === 0) mouse.left = true; if (e.button === 2) mouse.right = true; });
@@ -2826,7 +2905,7 @@ try {
   requestAnimationFrame(loop);
 } catch (err) { $('loading').textContent = 'ERROR: ' + err.message; console.error(err); }
 // gancho de depuración (consola): __PC.start(n) inicia la misión n (1-20)
-window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r) };
+window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r), SFX };
 
 </script>
 

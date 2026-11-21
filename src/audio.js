@@ -12,6 +12,7 @@ const SFX = {
     const rev = c.createConvolver(); rev.buffer = this.impulse(2.8); this.rev = c.createGain(); this.rev.gain.value = 0.35; this.rev.connect(rev); rev.connect(this.master);
     this.nb = c.createBuffer(1, c.sampleRate * 2, c.sampleRate); const d = this.nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     this.musicBus = c.createGain(); this.musicBus.gain.value = 0; this.musicBus.connect(this.master);
+    if (this.pendingMood) this.mystery(this.pendingMood);
   },
   impulse(sec) { const c = this.ctx, n = c.sampleRate * sec, b = c.createBuffer(2, n, c.sampleRate); for (let ch = 0; ch < 2; ch++) { const d = b.getChannelData(ch); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3); } return b; },
   out(vol = 1, pan = 0, wet = 0.3) {
@@ -89,7 +90,8 @@ const SFX = {
   setMusic(level) { // 0 nada, 1 tensión, 2 alerta
     if (!this.ok()) return; const c = this.ctx;
     this.musicBus.gain.cancelScheduledValues(c.currentTime);
-    this.musicBus.gain.linearRampToValueAtTime(level === 2 ? 0.5 : level === 1 ? 0.22 : 0, c.currentTime + (level ? 0.3 : 3));
+    this.musicBus.gain.linearRampToValueAtTime(!this.musicEnabled ? 0 : level === 2 ? 0.5 : level === 1 ? 0.22 : 0, c.currentTime + (level ? 0.3 : 3));
+    if (this.duck) this.duck(level > 0);
     this.musicLevel = level;
     if (level && !this.seqTimer) {
       const bass = [41.2, 41.2, 43.65, 41.2, 41.2, 49, 46.25, 43.65];
@@ -108,3 +110,75 @@ const SFX = {
     if (!level && this.seqTimer) { const tm = this.seqTimer; setTimeout(() => { if (!this.musicLevel) { clearInterval(tm); if (this.seqTimer === tm) this.seqTimer = null; } }, 3200); }
   },
 };
+
+// ============================================================================
+// Banda sonora de misterio (generativa)
+// ============================================================================
+const MOODS = {
+  // acordes en notas MIDI; escala para la melodía; densidad de notas; motivo fijo opcional
+  title:   { chords: [[50, 53, 57], [46, 50, 53], [43, 46, 50], [45, 49, 52]], scale: [62, 64, 65, 67, 69, 70, 73, 74], dens: 0.0, beat: 0.42, vol: 0.55,
+             motif: [74, 77, 81, 79, 77, 76, 73, 74, null, 69, 70, 69, 67, 65, 64, 65, null, null] },
+  brief:   { chords: [[50, 57, 64], [46, 53, 62], [43, 50, 58], [45, 52, 61]], scale: [69, 72, 74, 76], dens: 0.12, beat: 0.8, vol: 0.32 },
+  explore: { chords: [[50, 53, 57], [51, 55, 58], [50, 53, 57], [49, 52, 55]], scale: [62, 63, 65, 67, 69, 70, 74, 75], dens: 0.22, beat: 0.7, vol: 0.42 },
+  lab:     { chords: [[50, 54, 58], [52, 56, 60], [48, 52, 56], [51, 55, 59]], scale: [62, 64, 66, 68, 70, 72, 74, 76], dens: 0.2, beat: 0.62, vol: 0.4 },
+  cold:    { chords: [[50, 57, 62], [48, 55, 62], [46, 53, 60], [45, 52, 57]], scale: [69, 72, 74, 76, 77, 81], dens: 0.16, beat: 0.9, vol: 0.4 },
+  debrief: { chords: [[50, 53, 57], [53, 57, 60], [46, 50, 53], [45, 50, 54]], scale: [65, 69, 72, 74, 77], dens: 0.25, beat: 0.6, vol: 0.45 },
+  fail:    { chords: [[38, 45, 50], [39, 46, 51]], scale: [62, 63], dens: 0.06, beat: 1.1, vol: 0.38 },
+};
+Object.assign(SFX, {
+  musicEnabled: (() => { try { return localStorage.getItem('protocolo-ceniza-music') !== 'off'; } catch (e) { return true; } })(),
+  mood: null, mBus: null, mTimer: null, mNext: 0, mBeat: 0, ducked: false,
+  midi(m) { return 440 * Math.pow(2, (m - 69) / 12); },
+  mysteryInit() {
+    if (this.mBus || !this.ctx) return; const c = this.ctx;
+    this.mBus = c.createGain(); this.mBus.gain.value = 0; this.mBus.connect(this.master);
+    const wet = c.createGain(); wet.gain.value = 0.9; this.mBus.connect(wet); wet.connect(this.rev);
+    // eco para la melodía
+    this.mDelay = c.createDelay(2); this.mDelay.delayTime.value = 0.48; const fb = c.createGain(); fb.gain.value = 0.42; const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    this.mDelay.connect(lp); lp.connect(fb); fb.connect(this.mDelay); lp.connect(this.mBus);
+  },
+  mystery(mood) {
+    this.pendingMood = mood;
+    if (!this.ctx) return;
+    this.mysteryInit();
+    const c = this.ctx, M = MOODS[mood];
+    if (mood !== this.mood) { this.mood = mood; this.mBeat = 0; this.mNext = Math.max(this.mNext, c.currentTime + 0.1); }
+    this.mBus.gain.cancelScheduledValues(c.currentTime); this.mBus.gain.setValueAtTime(this.mBus.gain.value, c.currentTime);
+    this.mBus.gain.linearRampToValueAtTime(this.musicEnabled && !this.ducked && M ? M.vol : 0, c.currentTime + 2.5);
+    if (!this.mTimer) this.mTimer = setInterval(() => this.mysteryTick(), 150);
+  },
+  duck(on) { this.ducked = on; if (this.mood) this.mystery(this.mood); },
+  toggleMusic() { this.musicEnabled = !this.musicEnabled; try { localStorage.setItem('protocolo-ceniza-music', this.musicEnabled ? 'on' : 'off'); } catch (e) { } if (this.mood) this.mystery(this.mood); if (this.musicBus) this.musicBus.gain.value = this.musicEnabled ? this.musicBus.gain.value : 0; return this.musicEnabled; },
+  mysteryTick() {
+    const c = this.ctx, M = MOODS[this.mood]; if (!c || !M) return;
+    while (this.mNext < c.currentTime + 0.5) {
+      const t = this.mNext, b = this.mBeat++, per = 16, ci = Math.floor(b / per) % M.chords.length, chord = M.chords[ci];
+      if (b % per === 0) { this.pad(chord, t, M.beat * per + 2.5); this.bass(chord[0] - 12, t, M.beat * per); }
+      if (M.motif) { const n = M.motif[b % M.motif.length]; if (n) this.musicBox(n, t); }
+      else if (Math.random() < M.dens && b % 2 === 0) { const n = M.scale[Math.random() * M.scale.length | 0]; this.celesta(n, t, 0.11 + Math.random() * 0.06); }
+      if (Math.random() < 0.025 && !M.motif) this.glass(M.scale[M.scale.length - 1] + 12 + (Math.random() < 0.5 ? 1 : 0), t);
+      if (b % (per * 2) === per && Math.random() < 0.5) this.swell(chord[2] + 12, t, M.beat * 6);
+      this.mNext += M.beat;
+    }
+  },
+  pad(chord, t, dur) {
+    const c = this.ctx, out = c.createGain(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(0.05, t + 3); out.gain.setValueAtTime(0.05, t + dur - 3); out.gain.linearRampToValueAtTime(0, t + dur);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 650; lp.Q.value = 2;
+    const lfo = c.createOscillator(); lfo.frequency.value = 0.07 + Math.random() * 0.05; const lg = c.createGain(); lg.gain.value = 280; lfo.connect(lg); lg.connect(lp.frequency);
+    lp.connect(out); out.connect(this.mBus); lfo.start(t); lfo.stop(t + dur);
+    chord.forEach(m => [-7, 7].forEach(dt => { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = this.midi(m); o.detune.value = dt; const g = c.createGain(); g.gain.value = 0.35; o.connect(g); g.connect(lp); o.start(t); o.stop(t + dur); }));
+  },
+  bass(m, t, dur) { const c = this.ctx, o = c.createOscillator(); o.type = 'sine'; o.frequency.value = this.midi(m); const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.16, t + 1.5); g.gain.linearRampToValueAtTime(0, t + dur); o.connect(g); g.connect(this.mBus); o.start(t); o.stop(t + dur + 0.1); },
+  celesta(m, t, v) {
+    const c = this.ctx, f = this.midi(m), g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0005, t + 2.6);
+    [[1, 1], [2, 0.25], [4.01, 0.08]].forEach(([k, a]) => { const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f * k; const og = c.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 2.7); });
+    g.connect(this.mBus); g.connect(this.mDelay);
+  },
+  musicBox(m, t) {
+    const c = this.ctx, f = this.midi(m), g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.09, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0005, t + 1.8);
+    [[1, 1, 'triangle'], [3, 0.18, 'sine'], [5.4, 0.05, 'sine']].forEach(([k, a, ty]) => { const o = c.createOscillator(); o.type = ty; o.frequency.value = f * k; o.detune.value = (Math.random() - 0.5) * 12; const og = c.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 1.9); });
+    g.connect(this.mBus); g.connect(this.mDelay);
+  },
+  glass(m, t) { const c = this.ctx, o = c.createOscillator(); o.type = 'sine'; o.frequency.value = this.midi(m); const o2 = c.createOscillator(); o2.type = 'sine'; o2.frequency.value = this.midi(m) * 1.007; const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.025, t + 1.2); g.gain.linearRampToValueAtTime(0, t + 4); o.connect(g); o2.connect(g); g.connect(this.mBus); g.connect(this.mDelay); o.start(t); o2.start(t); o.stop(t + 4.1); o2.stop(t + 4.1); },
+  swell(m, t, dur) { const c = this.ctx, o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = this.midi(m); const v = c.createOscillator(); v.frequency.value = 5; const vg = c.createGain(); vg.gain.value = 3; v.connect(vg); vg.connect(o.detune); const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1200; const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.03, t + dur * 0.6); g.gain.linearRampToValueAtTime(0, t + dur); o.connect(lp); lp.connect(g); g.connect(this.mBus); o.start(t); v.start(t); o.stop(t + dur); v.stop(t + dur); },
+});

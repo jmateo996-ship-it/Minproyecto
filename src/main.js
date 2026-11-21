@@ -1029,7 +1029,7 @@ function hideScreen() { UI.innerHTML = ''; }
 function setHUD(on) { $('hud').classList.toggle('on', on); $('cursor').hidden = !on || touch.on; canvas.style.cursor = on ? 'none' : 'default'; $('touch').classList.toggle('on', on && touch.on); if (!on) { $('tags').innerHTML = ''; delete tagEls.prompt; } }
 
 function showTitle() {
-  G.mode = 'title'; G.paused = false; setHUD(false); SFX.setMusic(0);
+  G.mode = 'title'; G.paused = false; setHUD(false); SFX.setMusic(0); SFX.mystery('title');
   loadMission(0, true);
   const cont = SAVE.unlocked > 1;
   const el = screen(`<div class="wrap">
@@ -1041,6 +1041,7 @@ function showTitle() {
       <button id="bNew">Nueva operación<small>Empieza desde el desembarco</small></button>
       <button id="bSel">Seleccionar misión<small>${SAVE.unlocked} de 20 desbloqueadas</small></button>
       <button id="bKeys">Controles</button>
+      <button id="bMus">Música: ${SFX.musicEnabled ? 'Sí' : 'No'}<small>También con la tecla M</small></button>
       <button id="bQ">Gráficos: ${Q.name}<small>Ultra · Alta · Media (reinicia la página)</small></button>
     </div></div>
     <div class="foot">THULE-7 · ISLA SÓLVEIG · 63°N</div>`, '');
@@ -1049,6 +1050,7 @@ function showTitle() {
   $('bNew').onclick = () => { SFX.init(); SFX.ui(); showPrologue(); };
   $('bSel').onclick = () => { SFX.init(); SFX.ui(); showSelect(); };
   $('bKeys').onclick = () => { SFX.init(); SFX.ui(); showKeys(showTitle); };
+  $('bMus').onclick = () => { SFX.init(); const on = SFX.toggleMusic(); $('bMus').firstChild.textContent = 'Música: ' + (on ? 'Sí' : 'No'); };
   $('bQ').onclick = () => { const ks = Object.keys(QUALITY), nk = ks[(ks.indexOf(QKEY) + 1) % ks.length]; try { localStorage.setItem('protocolo-ceniza-q', nk); } catch (e) { } location.reload(); };
   setTimeout(() => (cont ? $('bCont') : $('bNew')).focus(), 50);
 }
@@ -1064,7 +1066,7 @@ function showKeys(back) {
     <div class="eyebrow" style="margin-top:16px">Extras</div>
     <div class="keys">
       <kbd>Mayús</kbd><span>Correr (hace ruido)</span><kbd>Q</kbd><span>Cambiar de arma</span>
-      <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span>
+      <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span><kbd>M</kbd><span>Activar o silenciar la música</span>
       <kbd>R · H</kbd><span>Recargar y curarse a mano (las dos cosas también ocurren solas)</span>
     </div>
     <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Los anillos en el suelo muestran cuánto ruido haces.</p>
@@ -1100,7 +1102,7 @@ function radioSequence(container, lines, done) {
 
 function showBriefing(idx) {
   G.mode = 'brief'; setHUD(false);
-  loadMission(idx, true); SFX.ambient(MISSIONS[idx].theme); SFX.setMusic(0);
+  loadMission(idx, true); SFX.ambient(MISSIONS[idx].theme); SFX.setMusic(0); SFX.mystery('brief');
   const M = MISSIONS[idx];
   const el = screen(`<div class="card"><div class="eyebrow">Misión ${String(M.id).padStart(2, '0')} / 20 · Enlace de radio</div><h2>${M.title}</h2>
     <div class="meta"><span>Lugar <b>${M.place}</b></span><span>Hora <b>${M.time}</b></span>${SAVE.ranks[M.id] ? `<span>Mejor rango <b>${SAVE.ranks[M.id]}</b></span>` : ''}</div>
@@ -1123,6 +1125,7 @@ function startMission(idx) {
     loadMission(idx, false); hideScreen(); G.mode = 'play'; G.paused = false; G.hintDone = false; hudCache = {};
     buildRadarMap(); setHUD(true); updHUDObjective(); toast(`${String(G.M.id).padStart(2, '0')} · ${G.M.title.toUpperCase()}`);
     SFX.setMusic(G.M.boss || G.M.survive || G.M.escape ? 2 : 0);
+    const th = G.M.theme; SFX.mystery(['lab', 'server', 'spores', 'cold', 'vault', 'medical', 'reactor'].includes(th) ? 'lab' : ['snow', 'docks', 'hangar'].includes(th) ? 'cold' : 'explore');
   });
 }
 function fade(fn) { const f = $('fade'); f.classList.add('on'); setTimeout(() => { fn(); setTimeout(() => f.classList.remove('on'), 80); }, 550); }
@@ -1136,7 +1139,7 @@ function rankOf() {
   return [r, names[r]];
 }
 function missionComplete() {
-  if (G.done) return; G.done = true; SFX.objective(); SFX.setMusic(0);
+  if (G.done) return; G.done = true; SFX.objective(); SFX.setMusic(0); SFX.mystery('debrief');
   const [r, rn] = rankOf(); const M = G.M;
   const order = ['D', 'C', 'B', 'A', 'S'];
   if (!SAVE.ranks[M.id] || order.indexOf(r) > order.indexOf(SAVE.ranks[M.id])) SAVE.ranks[M.id] = r;
@@ -1161,7 +1164,7 @@ function missionComplete() {
   }, 1200);
 }
 function fail(reason) {
-  if (G.done) return; G.done = true; SFX.setMusic(0);
+  if (G.done) return; G.done = true; SFX.setMusic(0); SFX.mystery('fail');
   setTimeout(() => {
     G.mode = 'dead'; setHUD(false);
     screen(`<div class="card" style="width:min(560px,100%)"><div class="eyebrow red">Señal perdida</div><h2 class="red">Misión fallida</h2><p class="prose">${reason}</p>
@@ -1173,7 +1176,7 @@ function fail(reason) {
   }, 900);
 }
 function showEpilogue() {
-  G.mode = 'brief'; setHUD(false);
+  G.mode = 'brief'; setHUD(false); SFX.mystery('debrief');
   const el = screen(`<div class="card" style="width:min(780px,100%)"><div class="eyebrow">Epílogo</div><h2>Ceniza</h2><div class="prose" id="pr"></div>
     <p class="hint" style="margin-top:18px">PROTOCOLO CENIZA · Una historia original de infiltración y supervivencia.</p>
     <div class="btnrow"><button class="btn" id="bT">Volver al inicio</button><button class="btn ghost" id="bS">Seleccionar misión</button></div></div>`);
@@ -1208,6 +1211,7 @@ addEventListener('keydown', (e) => {
   if ((G.mode === 'brief' || G.mode === 'debrief') && G.briefNext && (e.code === 'Space' || e.code === 'Enter') && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && !document.activeElement.hidden && e.code === 'Enter')) { e.preventDefault(); G.briefNext(); return; }
   if (e.repeat) { keys[e.code] = true; return; }
   keys[e.code] = true; SFX.init();
+  if (e.code === 'KeyM') { const on = SFX.toggleMusic(); if (G.mode === 'play') subLine('SYS', null, on ? 'Música activada' : 'Música desactivada'); return; }
   if (e.code === 'Escape' || e.code === 'KeyP') { pause(); return; }
   if (G.mode !== 'play' || G.paused) return;
   const P = G.player; if (!P || !P.alive) return;
@@ -1220,6 +1224,7 @@ addEventListener('keydown', (e) => {
   if ((e.code === 'KeyQ' || e.code === 'Digit1' || e.code === 'Digit2') && P.hasShotgun) { const w = e.code === 'Digit1' ? 'pistol' : e.code === 'Digit2' ? 'shotgun' : (P.weapon === 'pistol' ? 'shotgun' : 'pistol'); if (w !== P.weapon) { P.weapon = w; P.reloadT = 0; P.fireT = 0.35; SFX.reload(); } }
 });
 addEventListener('keyup', (e) => { keys[e.code] = false; });
+addEventListener('pointerdown', () => SFX.init());
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.left = mouse.right = false; });
 addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; const c = $('cursor'); c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; });
 canvas.addEventListener('mousedown', (e) => { SFX.init(); if (e.button === 0) mouse.left = true; if (e.button === 2) mouse.right = true; });
@@ -1261,4 +1266,4 @@ try {
   requestAnimationFrame(loop);
 } catch (err) { $('loading').textContent = 'ERROR: ' + err.message; console.error(err); }
 // gancho de depuración (consola): __PC.start(n) inicia la misión n (1-20)
-window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r) };
+window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r), SFX };

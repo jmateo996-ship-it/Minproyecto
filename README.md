@@ -14,7 +14,7 @@ Abre `index.html` en un navegador moderno de escritorio (Chrome, Edge o Firefox)
 | Apuntar y disparar (con puntería asistida) | Ratón + clic |
 | Acción: activar objetivos, neutralizar guardias, cuchillo | E |
 | Agacharse (silencio, menos visibilidad) | C |
-| Correr · cambiar arma · linterna · pausa | Mayús · Q · F · Esc |
+| Correr · cambiar arma · linterna · pausa · música | Mayús · Q · F · Esc · M |
 
 La recarga y los botiquines funcionan solos cuando hace falta (también con R y H).
 
@@ -27,6 +27,7 @@ En pantallas táctiles aparecen dos joysticks y botones.
 - **Horror:** los infectados ven poco pero oyen todo, y la linterna los atrae. Hay variantes rápidas y gigantes, y en algunas zonas están latentes hasta que algo los despierta.
 - **Facciones:** los mercenarios y los infectados también se atacan entre sí.
 - **Misiones variadas:** infiltración, sabotaje, recogida de pruebas, C4, escolta, defensa contra oleadas, jefe final y huida contrarreloj.
+- **Música:** banda sonora de misterio generada en tiempo real (cajita de música en el título, temas distintos para exteriores, laboratorios e interiores) que cede el paso a la música de acción durante las alertas.
 - **Rangos:** cada misión termina con un rango (S–D) según alertas, bajas, daño y tiempo. El progreso se guarda en el navegador.
 
 ## Desarrollo
