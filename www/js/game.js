@@ -6,7 +6,8 @@
 'use strict';
 
 (() => {
-  const { CHARACTERS, PROLOGUE, CHAPTERS, ENDING } = window.STORY;
+  const { CHARACTERS, PROLOGUE, CHAPTERS, ENDING, ACTS } = window.STORY;
+  const CHECKPOINT_T = 150; // punto de control a mitad de cada misión (2:30)
   const A = window.GameAudio;
   const TAU = Math.PI * 2;
   const $ = id => document.getElementById(id);
@@ -66,6 +67,7 @@
     for (let i = 0; i < n; i++) { const a = ang + (i - (n - 1) / 2) * spread; G.shot(x, y, Math.cos(a) * sp, Math.sin(a) * sp, kind); }
   };
   G.spawnEnemy = (type, x, y, opts) => spawnEnemy(type, x, y, opts);
+  G.explode = (x, y, size, color) => { explosion(x, y, size, color); A.sfx.bigExplode(); G.shake = Math.max(G.shake, 12); };
 
   /* ------------------------------ Jugador ------------------------------ */
   function newPlayer() {
@@ -332,7 +334,21 @@
       G.levelT += dt;
       G.bg.progress = clamp(G.levelT / G.chapter.duration, 0, 1);
       G.waveT -= dt;
-      if (G.waveT <= 0 && G.levelT < G.chapter.duration - 3) {
+      // Punto de control a mitad de misión
+      if (!G.checkpoint && G.levelT >= CHECKPOINT_T) {
+        const p0 = G.player;
+        G.checkpoint = { score: G.score, power: p0.power, drones: p0.drones, bombs: p0.bombs };
+        floatText(G.W / 2, G.H * 0.35, 'PUNTO DE CONTROL', '#9dff6a');
+      }
+      // Cada minuto, una oleada de asalto (y un respiro justo después)
+      const minute = Math.floor(G.levelT / 60);
+      if (minute > G.lastAssault && G.levelT < G.chapter.duration - 10) {
+        G.lastAssault = minute;
+        G.banner = { text: 'OLEADA ' + (minute + 1) + '/5', sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
+        FORMATIONS[G.chapter.theme === 'asteroids' ? 'rocks' : 'sweep'](); FORMATIONS.carrier();
+        G.waveT = 4;
+      }
+      if (G.waveT <= 0 && G.levelT < G.chapter.duration - 3 && G.enemies.length < 45) {
         const set = WAVE_SETS[G.chapter.theme];
         let f = set[Math.floor(Math.random() * set.length)];
         if (f === 'carrier' && G.levelT < 25) f = 'sweep';
@@ -344,7 +360,10 @@
       }
       // Comunicaciones de radio
       while (G.commIdx < G.chapter.comms.length && G.chapter.comms[G.commIdx].t <= G.levelT) showComm(G.chapter.comms[G.commIdx++]);
-      if (G.levelT >= G.chapter.duration && G.enemies.length === 0) { G.phaseState = 'warning'; startBossSequence(); }
+      if (G.levelT >= G.chapter.duration && G.enemies.length === 0) {
+        G.phaseState = 'warning';
+        if (G.chapter.boss) startBossSequence(); else missionComplete();
+      }
       if (G.levelT >= G.chapter.duration + 8) { for (const e of G.enemies) e.vy += 200; }
     }
 
@@ -362,6 +381,14 @@
     const b = G.boss;
     if (b && !b.dead) {
       b.update(dt); b.flash = Math.max(0, b.flash - dt);
+      if (!b.entering) {
+        const ph = b.phase();
+        if (b.shownPh === undefined) b.shownPh = ph;
+        if (ph !== b.shownPh) {
+          b.shownPh = ph; G.eBullets.length = 0; G.flash = 0.6; G.shake = 14;
+          if (b.isSuper) G.banner = { text: ph === 3 ? '¡NÚCLEO AL DESCUBIERTO!' : 'FASE ' + (ph + 1) + '/4', sub: b.name, t: 0, dur: 2.2, color: '#ff2a5a' };
+        }
+      }
       if (p.dead <= 0) {
         for (const hb of b.hitboxes()) if (dist2(hb, p) < (hb.r * 0.8 + p.r) ** 2) hurtPlayer();
         if (b.bodyHitboxes) for (const hb of b.bodyHitboxes()) if (dist2(hb, p) < (hb.r + p.r) ** 2) hurtPlayer();
@@ -497,7 +524,12 @@
     ctx.fillText(String(G.score).padStart(8, '0'), 20, top);
     ctx.shadowBlur = 0;
     ctx.font = '600 14px system-ui, sans-serif'; ctx.fillStyle = 'rgba(232,244,255,0.6)';
-    ctx.fillText('CAP. ' + G.chapter.id + ' · ' + G.chapter.title, 20, top + 32);
+    ctx.fillText('MISIÓN ' + G.chapter.id + '/' + CHAPTERS.length + ' · ' + G.chapter.title, 20, top + 32);
+    if (G.phaseState === 'level') {
+      ctx.textAlign = 'right'; ctx.font = '800 22px system-ui, sans-serif'; ctx.fillStyle = '#ffb347';
+      ctx.fillText(fmtTime(Math.max(0, G.chapter.duration - G.levelT)), G.W - 76, top + 6);
+      ctx.textAlign = 'left';
+    }
     // Vidas
     for (let i = 0; i < p.lives; i++) Sprites.draw(ctx, 'player', 34 + i * 34, top + 74, 0, 0.36);
     // Escudo
@@ -515,7 +547,8 @@
       const y = top + 140;
       ctx.textAlign = 'center'; ctx.font = '800 14px system-ui, sans-serif'; ctx.fillStyle = '#ffd0da';
       ctx.fillText(b.name, G.W / 2, y);
-      drawBar(60, y + 20, G.W - 120, 10, b.hp / b.maxHp, '#ff2a5a');
+      drawBar(60, y + 20, G.W - 120, b.isSuper ? 14 : 10, b.hp / b.maxHp, b.isSuper ? '#ff2a4f' : '#ff2a5a');
+      if (b.phases) { ctx.fillStyle = '#fff'; for (let i = 1; i < b.phases; i++) ctx.fillRect(60 + (G.W - 120) * i / b.phases - 1, y + 17, 2, 20); }
     }
     // Progreso del nivel
     if (G.phaseState === 'level') {
@@ -528,7 +561,9 @@
       const bn = G.banner, a = Math.min(1, bn.t * 3, (bn.dur - bn.t) * 3);
       ctx.globalAlpha = a;
       ctx.fillStyle = 'rgba(80,0,20,0.55)'; ctx.fillRect(0, G.H * 0.42, G.W, 110);
-      ctx.fillStyle = bn.color; ctx.font = '900 52px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.font = '900 52px system-ui, sans-serif';
+      const fs = Math.min(52, Math.floor(52 * (G.W - 60) / ctx.measureText(bn.text).width));
+      ctx.fillStyle = bn.color; ctx.font = `900 ${fs}px system-ui, sans-serif`; ctx.textAlign = 'center';
       ctx.shadowColor = bn.color; ctx.shadowBlur = 20 * G.R;
       ctx.fillText(bn.text, G.W / 2, G.H * 0.42 + 14);
       ctx.shadowBlur = 0; ctx.font = '700 16px system-ui, sans-serif'; ctx.fillStyle = '#fff';
@@ -683,27 +718,35 @@
     G.boss = null; G.banner = null; G.pulseWave = null; groups.clear();
   }
 
-  async function startChapter(idx, keepPlayer) {
+  /* opts: { keep: conserva la nave de la misión anterior,
+             snap: restaura potencia/drones/pulsos guardados,
+             fromCheckpoint: empieza en el minuto 2:30 } */
+  async function startChapter(idx, opts = {}) {
     const id = ++runId;
-    G.chapterIdx = idx; G.chapter = CHAPTERS[idx]; G.difficulty = 1 + idx * 0.5;
+    G.chapterIdx = idx; G.chapter = CHAPTERS[idx]; G.difficulty = 1 + idx * 0.15;
     resetField();
-    if (!keepPlayer || !G.player) G.player = newPlayer();
+    if (!opts.keep || !G.player) G.player = newPlayer();
     else { const p = G.player; p.x = G.W / 2; p.y = G.H - 200; p.inv = 2; p.dead = 0; p.lives = Math.max(p.lives, 3); p.shield = p.maxShield; p.bombs = Math.max(p.bombs, 3); }
-    G.chapterStartScore = G.score;
+    if (opts.snap) Object.assign(G.player, { power: opts.snap.power, drones: opts.snap.drones, bombs: Math.max(3, opts.snap.bombs) });
+    const p = G.player;
+    if (!opts.fromCheckpoint) { G.chapterStartScore = G.score; G.missionSnap = { power: p.power, drones: p.drones, bombs: p.bombs }; G.checkpoint = null; }
     G.bg = Backgrounds.create(G.chapter.theme, G.W, G.H, G.R);
-    G.levelT = 0; G.waveT = 3; G.commIdx = 0; G.lastFreeDrop = 0; G.phaseState = 'level';
+    G.levelT = opts.fromCheckpoint ? CHECKPOINT_T : 0; G.waveT = 3; G.lastFreeDrop = G.levelT;
+    G.lastAssault = Math.floor(G.levelT / 60);
+    G.commIdx = G.chapter.comms.filter(c => c.t <= G.levelT).length;
+    G.phaseState = 'level';
     G.mode = 'dialog'; G.paused = false;
     A.music(G.chapter.theme);
 
-    // Tarjeta de capítulo
-    $('cardNum').textContent = 'CAPÍTULO ' + G.chapter.id;
+    // Tarjeta de misión
+    $('cardNum').textContent = ACTS[G.chapter.act] + ' · MISIÓN ' + G.chapter.id + '/' + CHAPTERS.length;
     $('cardTitle').textContent = G.chapter.title;
-    $('cardPlace').textContent = G.chapter.place;
+    $('cardPlace').textContent = opts.fromCheckpoint ? 'Desde el punto de control · 2:30 restantes' : G.chapter.place + (G.chapter.boss ? (G.chapter.boss.super ? ' · SÚPER JEFE' : ' · JEFE FINAL') : '');
     show('card');
     await sleep(2600);
     if (id !== runId) return;
     hideAll();
-    await dialog(G.chapter.intro);
+    if (!opts.fromCheckpoint) await dialog(G.chapter.intro);
     if (id !== runId) return;
     G.mode = 'play';
     $('controls').classList.add('show');
@@ -726,7 +769,8 @@
   async function bossDefeated() {
     const b = G.boss; if (b.dead) return;
     b.dead = true; const id = runId;
-    G.score += 20000 * G.chapter.id;
+    const bonus = (b.isSuper ? 50000 : 20000) * Math.ceil(G.chapter.id / 5);
+    G.score += bonus;
     G.eBullets.length = 0; G.phaseState = 'cleared';
     // Cadena de explosiones
     for (let i = 0; i < 12; i++) {
@@ -739,20 +783,42 @@
     G.boss = null;
     for (const e of G.enemies) killEnemy(e);
     G.enemies = [];
-    floatText(G.W / 2, G.H * 0.45, '+' + (20000 * G.chapter.id), '#ffe066');
+    floatText(G.W / 2, G.H * 0.45, '+' + bonus, '#ffe066');
     await sleep(1200);
     if (id !== runId) return;
     $('controls').classList.remove('show');
     await dialog(G.chapter.outro);
     if (id !== runId) return;
     G.player.inv = 0;
+    nextMission();
+  }
+
+  function nextMission() {
     save.hiscore = Math.max(save.hiscore, G.score);
     const next = G.chapterIdx + 1;
     save.unlocked = Math.max(save.unlocked, Math.min(CHAPTERS.length, next + 1));
     persist();
-    if (next < CHAPTERS.length) startChapter(next, true);
+    if (next < CHAPTERS.length) startChapter(next, { keep: true });
     else ending();
   }
+
+  /* Misión sin jefe: superviviste los 5 minutos */
+  async function missionComplete() {
+    const id = runId;
+    clearComms();
+    const p = G.player, bonus = 5000 + p.shield * 1000 + p.lives * 2000;
+    G.score += bonus; p.inv = 99;
+    G.banner = { text: 'MISIÓN CUMPLIDA', sub: 'Bonificación +' + bonus, t: 0, dur: 3, color: '#9dff6a' };
+    A.sfx.power();
+    await sleep(3200);
+    if (id !== runId) return;
+    $('controls').classList.remove('show');
+    await dialog(G.chapter.outro);
+    if (id !== runId) return;
+    p.inv = 0;
+    nextMission();
+  }
+  const fmtTime = s => { s = Math.ceil(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
   async function ending() {
     G.mode = 'menu'; $('controls').classList.remove('show');
@@ -777,6 +843,7 @@
       if (id !== runId) return;
       G.mode = 'over'; $('controls').classList.remove('show');
       $('goQuote').textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      $('btnCheckpoint').style.display = G.checkpoint ? '' : 'none';
       save.hiscore = Math.max(save.hiscore, G.score); persist();
       show('gameover');
     }, 1600);
@@ -797,16 +864,21 @@
     hideAll();
     await storySlides(PROLOGUE);
     save.seenPrologue = true; persist();
-    startChapter(0, false);
+    startChapter(0);
   }
 
   function buildChapterList() {
     const list = $('chapterList'); list.innerHTML = '';
     CHAPTERS.forEach((c, i) => {
+      if (i === 0 || CHAPTERS[i - 1].act !== c.act) {
+        const h = document.createElement('div'); h.className = 'act-title'; h.textContent = ACTS[c.act]; list.appendChild(h);
+      }
+      const locked = i + 1 > save.unlocked;
       const b = document.createElement('button');
-      b.className = 'btn' + (i + 1 > save.unlocked ? ' locked' : '');
-      b.innerHTML = `${c.id}. ${c.title}<small>${i + 1 > save.unlocked ? 'Bloqueado' : c.place}</small>`;
-      b.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; hideAll(); startChapter(i, false); });
+      b.className = 'btn' + (locked ? ' locked' : '') + (c.boss ? (c.boss.super ? ' super' : ' boss') : '');
+      const tag = c.boss ? `<em>${c.boss.super ? 'SÚPER JEFE' : 'JEFE'}</em>` : '';
+      b.innerHTML = `${c.id}. ${c.title}${tag}<small>${locked ? 'Bloqueada' : c.place + ' · 5 min'}</small>`;
+      b.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; hideAll(); startChapter(i); });
       list.appendChild(b);
     });
   }
@@ -818,7 +890,8 @@
   $('btnSound2').addEventListener('click', toggleSound);
   $('btnResume').addEventListener('click', () => { G.paused = false; hideAll(); });
   $('btnQuit').addEventListener('click', toTitle);
-  $('btnRetry').addEventListener('click', () => { G.score = G.chapterStartScore; hideAll(); startChapter(G.chapterIdx, false); });
+  $('btnRetry').addEventListener('click', () => { G.score = G.chapterStartScore; hideAll(); startChapter(G.chapterIdx, { snap: G.missionSnap }); });
+  $('btnCheckpoint').addEventListener('click', () => { G.score = G.checkpoint.score; hideAll(); startChapter(G.chapterIdx, { snap: G.checkpoint, fromCheckpoint: true }); });
   $('btnMenu').addEventListener('click', toTitle);
 
   /* ------------------------------- Bucle ------------------------------- */
@@ -845,5 +918,5 @@
 
   // Exponer para depuración / pruebas automáticas
   window.__G = G;
-  window.__debug = { startChapter, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; } };
+  window.__debug = { startChapter, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
 })();

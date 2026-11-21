@@ -1,6 +1,6 @@
 /* =========================================================================
-   Jefes: Guardián del Censo · Fragata Lanza · Leviatán Vítreo ·
-   Forja Madre · ORDO. Cada uno con fases y patrones de balas propios.
+   Jefes: Fragata Lanza (misión 5) · Forja Madre (misión 10) ·
+   súper jefe ORDO PRIMORDIAL (misión 15). Cada uno con fases propias.
    ========================================================================= */
 'use strict';
 
@@ -37,56 +37,7 @@ const Bosses = (() => {
     };
   }
 
-  /* ====================== 1 · GUARDIÁN DEL CENSO ====================== */
-  function censor(G, def) {
-    const b = base(G, def);
-    b.body = img(300, 150, (g, glow) => {
-      glow('#ff2a5a', 26);
-      g.fillStyle = lg(g, -150, 0, 150, 0, ['#2a0612', '#6a1430', '#2a0612']);
-      poly(g, [-90, -70, 90, -70, 150, -10, 120, 50, 40, 75, -40, 75, -120, 50, -150, -10]); g.fill();
-      g.shadowBlur = 0; g.strokeStyle = '#ff6c8f'; g.lineWidth = 2.5; g.stroke();
-      g.strokeStyle = 'rgba(255,108,143,0.3)'; g.lineWidth = 1.5;
-      for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(i * 30, -60); g.lineTo(i * 22, 66); g.stroke(); }
-      g.fillStyle = '#0c0206'; g.beginPath(); g.ellipse(0, 6, 54, 38, 0, 0, TAU); g.fill();
-      g.strokeStyle = '#ff2a5a'; g.lineWidth = 3; g.stroke();
-    });
-    b.turret = img(60, 60, (g, glow) => {
-      glow('#ff8a2a', 16); g.fillStyle = '#3a1406'; g.beginPath(); g.arc(0, 0, 26, 0, TAU); g.fill();
-      g.strokeStyle = '#ffb36b'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ffb36b'; g.fillRect(-5, 0, 10, 30);
-    });
-    b.parts = [{ ox: -112, oy: 24, r: 28, hp: 260, max: 260, alive: true }, { ox: 112, oy: 24, r: 28, hp: 260, max: 260, alive: true }];
-    b.spiral = 0;
-    b.update = function (dt) {
-      this.t += dt;
-      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.6; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
-      this.x = G.W / 2 + Math.sin(this.t * 0.55) * 170;
-      const ph = this.phase();
-      for (const p of this.parts) if (p.alive) {
-        this.every('t' + p.ox, ph === 0 ? 1.4 : 1.0, () => G.fan(this.x + p.ox, this.y + p.oy + 20, G.aim(this.x + p.ox, this.y + p.oy), ph === 0 ? 3 : 5, 0.22, 230, 'bOrange'));
-      }
-      this.every('ring', ph === 2 ? 1.4 : 2.4, () => G.ring(this.x, this.y + 10, ph === 0 ? 14 : 20, 170, this.t, 'bRed'));
-      if (ph >= 1) this.every('spiral', 0.09, () => { this.spiral += 0.37; G.shot(this.x, this.y + 10, Math.cos(this.spiral) * 200, Math.sin(this.spiral) * 200, 'bViolet'); });
-    };
-    b.hitboxes = function () {
-      const hb = [{ x: this.x, y: this.y + 6, r: 52, part: null }];
-      for (const p of this.parts) if (p.alive) hb.push({ x: this.x + p.ox, y: this.y + p.oy, r: p.r, part: p });
-      return hb;
-    };
-    b.draw = function (ctx) {
-      put(ctx, this.body, this.x, this.y);
-      for (const p of this.parts) if (p.alive) put(ctx, this.turret, this.x + p.ox, this.y + p.oy, G.aim(this.x + p.ox, this.y + p.oy) - Math.PI / 2);
-      // Ojo que escanea
-      const ex = this.x + Math.sin(this.t * 2) * 26;
-      ctx.save(); ctx.globalCompositeOperation = 'lighter';
-      const gr = ctx.createRadialGradient(ex, this.y + 6, 0, ex, this.y + 6, 30);
-      gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, '#ff2a5a'); gr.addColorStop(1, 'rgba(255,0,60,0)');
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(ex, this.y + 6, 30, 0, TAU); ctx.fill();
-      ctx.restore();
-    };
-    return b;
-  }
-
-  /* ========================= 2 · FRAGATA LANZA ======================== */
+  /* ========================= MISIÓN 5 · FRAGATA LANZA======================== */
   function lanza(G, def) {
     const b = base(G, def);
     b.targetY = 275;
@@ -144,64 +95,7 @@ const Bosses = (() => {
     return b;
   }
 
-  /* ======================== 3 · LEVIATÁN VÍTREO ======================= */
-  function leviathan(G, def) {
-    const b = base(G, def);
-    b.y = -100; b.targetY = 380;
-    b.head = img(120, 130, (g, glow) => {
-      glow('#6ff', 26);
-      g.fillStyle = lg(g, -60, -60, 60, 60, ['#d8ffff', '#2a90c0', '#0a2a4a']);
-      poly(g, [0, 64, 40, 30, 58, -10, 36, -56, 0, -40, -36, -56, -58, -10, -40, 30]); g.fill();
-      g.shadowBlur = 0; g.strokeStyle = '#e0ffff'; g.lineWidth = 2; g.stroke();
-      glow('#ff2a5a', 18); g.fillStyle = '#ff2a5a';
-      g.beginPath(); g.ellipse(-20, 6, 9, 5, 0.4, 0, TAU); g.ellipse(20, 6, 9, 5, -0.4, 0, TAU); g.fill();
-    });
-    b.seg = img(70, 70, (g, glow) => {
-      glow('#5ff', 18);
-      g.fillStyle = lg(g, -30, -30, 30, 30, ['rgba(200,255,255,0.9)', 'rgba(40,140,200,0.85)', 'rgba(10,40,80,0.9)']);
-      poly(g, [0, -30, 30, 0, 0, 30, -30, 0]); g.fill();
-      g.shadowBlur = 0; g.strokeStyle = '#cff'; g.lineWidth = 1.5; g.stroke();
-      g.fillStyle = 'rgba(255,255,255,0.5)'; poly(g, [0, -18, 10, 0, 0, 18, -10, 0]); g.fill();
-    });
-    b.trail = []; b.segs = 14; b.ang = Math.PI / 2;
-    b.update = function (dt) {
-      this.t += dt;
-      const ph = this.phase();
-      const sp = 0.55 + ph * 0.2;
-      const tx = G.W / 2 + Math.sin(this.t * sp) * (G.W * 0.36);
-      const ty = (this.entering ? 380 : 370) + Math.sin(this.t * sp * 1.7) * 160;
-      const px = this.x, py = this.y;
-      this.x += (tx - this.x) * dt * 1.8; this.y += (ty - this.y) * dt * 1.8;
-      this.ang = Math.atan2(this.y - py, this.x - px) || this.ang;
-      this.trail.unshift({ x: this.x, y: this.y });
-      if (this.trail.length > this.segs * 7 + 2) this.trail.pop();
-      if (this.t > 2.5) this.entering = false;
-      if (this.entering) return;
-      this.every('shard', ph === 0 ? 1.3 : 0.8, () => G.fan(this.x, this.y, G.aim(this.x, this.y), ph === 2 ? 7 : 5, 0.18, 240, 'bCyan'));
-      this.every('segShot', ph === 0 ? 2.2 : 1.4, () => {
-        for (let i = 2; i < this.segs; i += 3) { const p = this.trail[i * 7]; if (p) G.ring(p.x, p.y, 6, 130, this.t + i, 'bViolet'); }
-      });
-      if (ph === 2) this.every('spray', 0.2, () => G.shot(this.x, this.y, Math.cos(this.ang) * 260 + (Math.random() - 0.5) * 120, Math.sin(this.ang) * 260 + (Math.random() - 0.5) * 120, 'bCyan'));
-    };
-    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 46, part: null }]; };
-    b.bodyHitboxes = function () {
-      const hb = [];
-      for (let i = 1; i < this.segs; i++) { const p = this.trail[i * 7]; if (p) hb.push({ x: p.x, y: p.y, r: 22 }); }
-      return hb;
-    };
-    b.draw = function (ctx) {
-      for (let i = this.segs - 1; i >= 1; i--) {
-        const p = this.trail[i * 7]; if (!p) continue;
-        const s = 1 - i / this.segs * 0.45;
-        put(ctx, this.seg, p.x, p.y, this.t * 0.6 + i * 0.4, 0.95);
-        if (s < 1) { /* escala implícita por el orden */ }
-      }
-      put(ctx, this.head, this.x, this.y, this.ang - Math.PI / 2);
-    };
-    return b;
-  }
-
-  /* ========================== 4 · FORJA MADRE ========================= */
+  /* ========================== MISIÓN 10 · FORJA MADRE========================= */
   function forge(G, def) {
     const b = base(G, def);
     b.targetY = 390;
@@ -265,72 +159,103 @@ const Bosses = (() => {
     return b;
   }
 
-  /* ============================== 5 · ORDO ============================ */
-  function ordo(G, def) {
+  /* ================== MISIÓN 15 · SÚPER JEFE: ORDO PRIMORDIAL ==================
+     Cuatro fases (75 % / 50 % / 25 %). Seis satélites que bloquean los disparos;
+     en la última fase los satélites estallan y el núcleo queda al desnudo. */
+  function superordo(G, def) {
     const b = base(G, def);
-    b.targetY = 380;
-    b.eye = img(220, 220, (g, glow) => {
-      glow('#ff2a4f', 40);
-      const gr = g.createRadialGradient(0, 0, 10, 0, 0, 100);
-      gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.2, '#ff6a8a'); gr.addColorStop(0.55, '#7a0a2a'); gr.addColorStop(1, '#14020a');
-      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 100, 0, TAU); g.fill();
-      g.shadowBlur = 0; g.strokeStyle = '#ff9db6'; g.lineWidth = 3; g.stroke();
-      g.strokeStyle = 'rgba(255,157,182,0.35)'; g.lineWidth = 1.5;
-      for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; g.beginPath(); g.moveTo(Math.cos(a) * 40, Math.sin(a) * 40); g.lineTo(Math.cos(a) * 96, Math.sin(a) * 96); g.stroke(); }
+    b.targetY = 400; b.phases = 4; b.isSuper = true;
+    b.phase = function () { const r = this.hp / this.maxHp; return r > 0.75 ? 0 : r > 0.5 ? 1 : r > 0.25 ? 2 : 3; };
+    b.eye = img(300, 300, (g, glow) => {
+      glow('#ff2a4f', 50);
+      const gr = g.createRadialGradient(0, 0, 12, 0, 0, 135);
+      gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.18, '#ff6a8a'); gr.addColorStop(0.5, '#7a0a2a'); gr.addColorStop(1, '#14020a');
+      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 135, 0, TAU); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ff9db6'; g.lineWidth = 4; g.stroke();
+      g.strokeStyle = 'rgba(255,157,182,0.35)'; g.lineWidth = 2;
+      for (let i = 0; i < 18; i++) { const a = i / 18 * TAU; g.beginPath(); g.moveTo(Math.cos(a) * 52, Math.sin(a) * 52); g.lineTo(Math.cos(a) * 130, Math.sin(a) * 130); g.stroke(); }
+      g.strokeStyle = 'rgba(255,220,230,0.5)'; g.lineWidth = 1.5; g.beginPath(); g.arc(0, 0, 100, 0, TAU); g.stroke();
     });
-    b.halo = img(460, 460, (g, glow) => {
-      glow('#c46bff', 20); g.strokeStyle = 'rgba(196,107,255,0.8)'; g.lineWidth = 3;
-      for (let i = 0; i < 3; i++) { g.beginPath(); g.arc(0, 0, 150 + i * 28, i * 0.7, i * 0.7 + TAU * 0.8); g.stroke(); }
+    b.halo = img(620, 620, (g, glow) => {
+      glow('#c46bff', 24); g.strokeStyle = 'rgba(196,107,255,0.85)'; g.lineWidth = 4;
+      for (let i = 0; i < 4; i++) { g.beginPath(); g.arc(0, 0, 190 + i * 30, i * 0.9, i * 0.9 + TAU * 0.78); g.stroke(); }
       g.fillStyle = '#e8c8ff';
-      for (let i = 0; i < 16; i++) { const a = i / 16 * TAU; g.fillRect(Math.cos(a) * 206 - 3, Math.sin(a) * 206 - 3, 6, 6); }
+      for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; g.fillRect(Math.cos(a) * 292 - 4, Math.sin(a) * 292 - 4, 8, 8); }
+      glow('#ff2a4f', 16); g.strokeStyle = 'rgba(255,42,79,0.6)'; g.lineWidth = 2;
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; g.beginPath(); g.moveTo(Math.cos(a) * 150, Math.sin(a) * 150); g.lineTo(Math.cos(a) * 280, Math.sin(a) * 280); g.stroke(); }
     });
-    b.sat = img(56, 56, (g, glow) => {
-      glow('#c46bff', 16); g.fillStyle = '#1a0830'; g.beginPath(); g.arc(0, 0, 22, 0, TAU); g.fill();
-      g.strokeStyle = '#d49bff'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ff2a4f'; g.beginPath(); g.arc(0, 0, 6, 0, TAU); g.fill();
+    b.sat = img(66, 66, (g, glow) => {
+      glow('#c46bff', 18); g.fillStyle = '#1a0830'; g.beginPath(); g.arc(0, 0, 26, 0, TAU); g.fill();
+      g.strokeStyle = '#d49bff'; g.lineWidth = 3; g.stroke();
+      g.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; g[i ? 'lineTo' : 'moveTo'](Math.cos(a) * 16, Math.sin(a) * 16); } g.closePath(); g.stroke();
+      g.fillStyle = '#ff2a4f'; g.beginPath(); g.arc(0, 0, 7, 0, TAU); g.fill();
     });
-    b.rot = 0; b.sats = 4;
+    b.rot = 0; b.sats = 6; b.satR = 200; b.lastPh = 0;
+    const wall = () => {
+      const gx = clampX(G.player.x + (Math.random() - 0.5) * 260);
+      for (let x = 18; x < G.W; x += 34) if (Math.abs(x - gx) > 85) G.shot(x, -12, 0, 150, 'bOrange');
+    };
+    const clampX = x => Math.max(100, Math.min(G.W - 100, x));
     b.update = function (dt) {
       this.t += dt;
-      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.2; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 0.9; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
       const ph = this.phase();
-      this.rot += dt * (0.8 + ph * 0.4);
-      this.x = G.W / 2 + Math.sin(this.t * 0.35) * 90;
+      if (ph !== this.lastPh) {
+        this.lastPh = ph;
+        if (ph === 3) { for (const s of this.satPos()) G.explode(s.x, s.y, 2.2, '#c46bff'); this.sats = 0; }
+      }
+      this.rot += dt * (0.7 + ph * 0.35);
+      this.x = G.W / 2 + Math.sin(this.t * (ph === 3 ? 0.8 : 0.35)) * (ph === 3 ? 190 : 100);
       if (ph === 0) {
-        this.every('ring', 1.1, () => G.ring(this.x, this.y, 22, 160, this.t * 0.7, 'bRed', 0.35));
-        this.every('aim', 1.5, () => G.fan(this.x, this.y + 60, G.aim(this.x, this.y), 5, 0.12, 280, 'bViolet'));
+        this.every('ring', 1.0, () => G.ring(this.x, this.y, 26, 165, this.t * 0.7, 'bRed', 0.25));
+        this.every('aim', 1.3, () => G.fan(this.x, this.y + 80, G.aim(this.x, this.y), 5, 0.12, 290, 'bViolet'));
       } else if (ph === 1) {
         this.every('sp', 0.08, () => {
           const a = this.t * 2.3;
           for (let k = 0; k < 3; k++) { const aa = a + k * TAU / 3; G.shot(this.x, this.y, Math.cos(aa) * 200, Math.sin(aa) * 200, 'bViolet'); }
           for (let k = 0; k < 2; k++) { const aa = -a * 0.8 + k * Math.PI; G.shot(this.x, this.y, Math.cos(aa) * 170, Math.sin(aa) * 170, 'bRed'); }
         });
-        this.every('kami', 3.2, () => { G.spawnEnemy('kamikaze', 80, -20); G.spawnEnemy('kamikaze', G.W - 80, -20); });
+        this.every('kami', 3, () => { G.spawnEnemy('kamikaze', 80, -20); G.spawnEnemy('kamikaze', G.W - 80, -20); });
+      } else if (ph === 2) {
+        this.every('wall', 2.4, wall);
+        this.every('flower', 1.1, () => { for (let k = 0; k < 24; k++) { const a = k / 24 * TAU + this.t; const s = 140 + 50 * Math.sin(k * 3); G.shot(this.x, this.y, Math.cos(a) * s, Math.sin(a) * s, k % 2 ? 'bRed' : 'bViolet'); } });
+        this.every('big', 1.6, () => G.fan(this.x, this.y, G.aim(this.x, this.y), 3, 0.3, 200, 'bBig'));
       } else {
-        this.every('flower', 0.6, () => { for (let k = 0; k < 28; k++) { const a = k / 28 * TAU + this.t; const s = 150 + 60 * Math.sin(k * 3); G.shot(this.x, this.y, Math.cos(a) * s, Math.sin(a) * s, k % 2 ? 'bRed' : 'bViolet'); } });
-        this.every('big', 1.2, () => G.fan(this.x, this.y, G.aim(this.x, this.y), 3, 0.3, 200, 'bBig'));
-        this.every('kami', 4, () => G.spawnEnemy('kamikaze', G.W / 2, -20));
+        // Núcleo al desnudo: furia final
+        this.every('sp4', 0.07, () => {
+          const a = this.t * 1.9;
+          for (let k = 0; k < 4; k++) { const aa = a + k * TAU / 4; G.shot(this.x, this.y, Math.cos(aa) * 165, Math.sin(aa) * 165, k % 2 ? 'bRed' : 'bViolet'); }
+        });
+        this.every('burst', 1.3, () => G.fan(this.x, this.y, G.aim(this.x, this.y), 5, 0.22, 230, 'bBig'));
+        this.every('ring', 2.2, () => G.ring(this.x, this.y, 20, 130, this.t, 'bCyan', 0.2));
+        this.every('kami', 3.5, () => G.spawnEnemy('kamikaze', G.player.x < G.W / 2 ? G.W - 60 : 60, -20));
       }
     };
     b.satPos = function () {
       const out = [];
-      for (let i = 0; i < this.sats; i++) { const a = this.rot * 1.4 + i / this.sats * TAU; out.push({ x: this.x + Math.cos(a) * 150, y: this.y + Math.sin(a) * 150 }); }
+      for (let i = 0; i < this.sats; i++) { const a = this.rot * 1.3 + i / this.sats * TAU; out.push({ x: this.x + Math.cos(a) * this.satR, y: this.y + Math.sin(a) * this.satR * 0.85 }); }
       return out;
     };
-    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 90, part: null }]; };
-    b.shields = function () { return this.satPos().map(p => ({ x: p.x, y: p.y, r: 24 })); };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 118, part: null }]; };
+    b.shields = function () { return this.satPos().map(p => ({ x: p.x, y: p.y, r: 30 })); };
     b.draw = function (ctx) {
-      put(ctx, this.halo, this.x, this.y, this.rot * 0.5);
-      const pulse = 1 + 0.05 * Math.sin(this.t * 5) + (this.phase() === 2 ? 0.05 * Math.sin(this.t * 17) : 0);
+      const ph = this.phase();
+      put(ctx, this.halo, this.x, this.y, this.rot * 0.4, ph === 3 ? 0.35 + 0.2 * Math.sin(this.t * 12) : 1);
+      const pulse = 1 + 0.05 * Math.sin(this.t * 5) + (ph >= 2 ? 0.05 * Math.sin(this.t * 17) : 0);
       ctx.save(); ctx.translate(this.x, this.y); ctx.scale(pulse, pulse); put(ctx, this.eye, 0, 0); ctx.restore();
-      // Pupila que sigue al jugador
-      const a = G.aim(this.x, this.y), px = this.x + Math.cos(a) * 30, py = this.y + Math.sin(a) * 30;
-      ctx.fillStyle = '#050005'; ctx.beginPath(); ctx.ellipse(px, py, 14, 26, a + Math.PI / 2, 0, TAU); ctx.fill();
+      const a = G.aim(this.x, this.y), px = this.x + Math.cos(a) * 42, py = this.y + Math.sin(a) * 42;
+      ctx.fillStyle = '#050005'; ctx.beginPath(); ctx.ellipse(px, py, 18, ph === 3 ? 12 : 34, a + Math.PI / 2, 0, TAU); ctx.fill();
+      if (ph === 3) {
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        ctx.strokeStyle = `rgba(255,42,79,${0.5 + 0.4 * Math.sin(this.t * 20)})`; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.arc(this.x, this.y, 150 + 10 * Math.sin(this.t * 9), 0, TAU); ctx.stroke(); ctx.restore();
+      }
       for (const s of this.satPos()) put(ctx, this.sat, s.x, s.y, this.t * 2);
     };
     return b;
   }
 
-  const TYPES = { censor, lanza, leviathan, forge, ordo };
+  const TYPES = { lanza, forge, superordo };
   function create(G, def) { return TYPES[def.type](G, def); }
   return { create };
 })();

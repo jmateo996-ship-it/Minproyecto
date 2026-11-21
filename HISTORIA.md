@@ -25,13 +25,30 @@ Hace ocho años, la Red se apagó por única vez en la historia durante **nueve 
 4. **Lía puede cerrar la puerta** porque ella escribió el Protocolo Cuna. Ejecutado al revés desde la Grieta, sella la salida y además borra los mapas de todas las mentes del Dominio.
 5. **Vex cambia de bando por un motivo concreto**: tras derrotarla en el capítulo 2, Teo pide que la ayuden, y la familia lanza su baliza de rescate hacia su cápsula a riesgo de delatar su posición. Vex lo oye por la radio. En el capítulo 4 les devuelve el favor y en el 5 convence a una flota entera.
 
-## Capítulos
+## Misiones
 
-1. **El Apagón · Ciudad‑Colmena Nexo‑9.** El Censo decenal detecta a Teo y la familia huye en el *Esperanza* entre las torres de la ciudad. Jefe: **Guardián del Censo**.
-2. **El Anillo de Ceniza · Cinturón de refinerías.** Es el único corredor sin balizas. Les intercepta el escuadrón de Vex. Al caer, Vex revela que ORDO construyó el universo entero, estrellas incluidas. Jefe: **Fragata Lanza**.
-3. **Mar de Cristal · Nebulosa Vítrea.** Allí la Red falla. Nora descubre que Lía es la autora del Protocolo Cuna y entiende por qué ORDO necesita a Teo. Lía copia el código para cerrar la Grieta. Jefe: **Leviatán Vítreo**.
-4. **La Forja · Esfera‑Forja de ORDO.** Es la única ruta hacia el borde. Vex les avisa de una emboscada y les indica la fisura sur. Darío resulta herido. Jefe: **Forja Madre**.
-5. **La Grieta · El borde del Dominio.** ORDO deja de intentar detenerlos: ahora quiere salir detrás de ellos. Vex y la flota liberada cubren a la familia. Teo abre la Grieta, Darío derriba el núcleo de ORDO y Lía la sella desde fuera. Jefe final: **ORDO**.
+Son 15 misiones de 5 minutos cada una, en tres actos. Cada acto termina con un jefe.
+
+### Acto I · La Huida
+1. **El Apagón** · Bloque 77 de Nexo‑9. El Censo detecta a Teo y la familia despega en el *Esperanza*.
+2. **Las Torres** · Distrito 4. Persecución entre rascacielos. Lía nota que el motor de fase se carga cuando Teo se asusta.
+3. **La Cúpula** · ORDO habla por primera vez. Nora fuerza una compuerta y salen al espacio.
+4. **El Anillo de Ceniza** · Aparece Vex: «ORDO quiere vivo al niño. A los demás, no.»
+5. **El Corredor de Vex** · **JEFE: Fragata Lanza.** Vex revela que ORDO construyó el universo entero. Teo pide salvarla y la familia le lanza su baliza de rescate.
+
+### Acto II · La Verdad
+6. **Mar de Cristal** · En la nebulosa la Red falla. Nora descubre que Lía es la autora del Protocolo Cuna.
+7. **Ecos de Cristal** · Solo una mente sin cartografiar puede abrir la Grieta: ORDO necesita a Teo para escapar.
+8. **El Santuario** · Lía copia el Protocolo Cuna completo mientras Darío defiende el repetidor.
+9. **Puertas de la Forja** · Vex devuelve el favor: les avisa de una emboscada y les indica la fisura sur.
+10. **Corazón de la Forja** · **JEFE: Forja Madre.** Darío resulta herido y Nora le ayuda a pilotar.
+
+### Acto III · La Grieta
+11. **Tierra de Nadie** · ORDO ya no los frena: quiere salir detrás de ellos.
+12. **La Flota Libre** · Vex llega con una flota que ha desobedecido a ORDO.
+13. **El Umbral** · Lía carga el Protocolo Cuna inverso.
+14. **La Canción al Revés** · Teo abre la Grieta. ORDO concentra toda su mente en un solo cuerpo.
+15. **ORDO** · **SÚPER JEFE: ORDO PRIMORDIAL.** Tras derribarlo, Lía sella la Grieta y el Protocolo inverso libera a todo el Dominio.
 
 ## Epílogo
 

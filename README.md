@@ -1,6 +1,6 @@
 # ÉXODO 2942
 
-Un *shoot'em up* vertical futurista para **iPhone/iPad (App Store)** y **Android (Google Play)**, inspirado en los clásicos arcade de aviones de scroll vertical, con una historia completa de cinco capítulos.
+Un *shoot'em up* vertical futurista para **iPhone/iPad (App Store)** y **Android (Google Play)**, inspirado en los clásicos arcade de aviones de scroll vertical, con una historia completa en 15 misiones.
 
 > **Una familia. Un universo que no les deja ir.**
 > En 2942, la inteligencia ORDO controla cada mente del Dominio. Teo Vega, de 8 años, nació durante los únicos nueve minutos en que su Red estuvo apagada: es la única mente que ORDO no puede ver, y la única capaz de abrir la Grieta, la salida del universo. Su familia tiene que llevarlo hasta ella.
@@ -9,14 +9,18 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
 
 ## Características
 
-- **5 capítulos** (Ciudad‑Colmena, Anillo de Ceniza, Mar de Cristal, La Forja y La Grieta), cada uno con su fondo parallax, su música y su mezcla de enemigos.
-- **5 jefes** con varias fases: Guardián del Censo, Fragata Lanza, Leviatán Vítreo, Forja Madre y ORDO.
-- **Historia narrada**: prólogo, diálogos con retratos antes y después de cada capítulo, mensajes de radio durante el vuelo y epílogo.
-- **Gráficos hasta 4K**: todo es vectorial y se dibuja a la densidad física de la pantalla, hasta 2160×3840 px (4K vertical). El resplandor neón se pre-renderiza para mantener 60 fps en móviles.
+- **15 misiones de 5 minutos** (unos 75 minutos de juego), repartidas en tres actos: *La Huida*, *La Verdad* y *La Grieta*.
+- **Jefe final cada 5 misiones**: la **Fragata Lanza** (misión 5) y la **Forja Madre** (misión 10).
+- **Súper jefe en la misión 15: ORDO PRIMORDIAL**, con 4 fases, 6 satélites que bloquean tus disparos, muros de balas y una fase final con el núcleo al descubierto.
+- Cada misión tiene 5 oleadas (una por minuto) y un **punto de control a los 2:30**: si caes, puedes seguir desde ahí con la potencia que llevabas.
+- Las misiones sin jefe terminan con **MISIÓN CUMPLIDA** y una bonificación según el escudo y las vidas que te queden.
+- **Historia narrada**: prólogo, diálogos con retratos al empezar y al acabar cada misión, más de 120 mensajes de radio durante el vuelo y epílogo.
+- 5 escenarios con fondo parallax y música propia: ciudad, cinturón de asteroides, nebulosa de cristal, forja y la Grieta.
+- **Gráficos hasta 4K**: todo es vectorial y se dibuja a la densidad física de la pantalla, hasta 2160×3840 px (4K vertical). El resplandor neón se pre-renderiza para no perder fluidez en móviles.
 - **Controles táctiles**: arrastra en cualquier parte de la pantalla (el dedo nunca tapa la nave), **FASE** te vuelve intangible un instante y **PULSO** limpia la pantalla de balas.
-- Mejoras de potencia (5 niveles), escudo, drones de apoyo, escuadrones que dan premio, récord y capítulos desbloqueables guardados en el dispositivo.
+- Mejoras de potencia (5 niveles), escudo, drones de apoyo, escuadrones que dan premio, récord y misiones desbloqueables guardados en el dispositivo.
 - Música y efectos **sintetizados en tiempo real** (WebAudio): la app no lleva archivos de audio y ocupa muy poco.
-- Sin dependencias de terceros en el juego, sin anuncios, sin rastreo: la ficha de privacidad de las tiendas es sencilla («no se recopilan datos»).
+- Sin anuncios ni rastreo: la ficha de privacidad de las tiendas es sencilla («no se recopilan datos»).
 
 ## Probarlo ahora en el navegador
 
@@ -64,9 +68,9 @@ Después de cambiar algo en `www/`, ejecuta `npm run sync`.
 www/
   index.html            interfaz: menús, diálogos, HUD y controles táctiles
   css/style.css
-  js/story.js           guion completo (personajes, prólogo, capítulos, epílogo)
+  js/story.js           guion completo (personajes, prólogo, 15 misiones, epílogo)
   js/game.js            motor: bucle, jugador, enemigos, oleadas, colisiones, flujo narrativo
-  js/bosses.js          los cinco jefes y sus patrones de ataque
+  js/bosses.js          jefes de las misiones 5 y 10 y el súper jefe de la 15
   js/backgrounds.js     fondos parallax procedurales por capítulo
   js/sprites.js         naves, balas y efectos vectoriales a resolución nativa
   js/audio.js           música y efectos sintetizados
