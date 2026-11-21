@@ -137,6 +137,17 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15px;margin-top:10px}
 .keys kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);padding:3px 8px;background:#0a1018;color:var(--amber);white-space:nowrap;justify-self:start}
 .red{color:var(--red)}
+.notes{margin-top:14px;padding:12px 14px;background:#0a1018;border:1px solid var(--line);font-family:var(--f-mono);font-size:13px;line-height:1.6;color:var(--text)}
+.notes .eyebrow{margin-bottom:4px}
+.keypad{width:min(420px,100%)}
+.kpdisp{font-family:var(--f-mono);font-size:34px;letter-spacing:.12em;text-align:center;padding:14px;margin:10px 0 6px;background:#03100a;color:#6dffb0;border:1px solid #1c4a32;text-shadow:0 0 12px rgba(80,255,160,.5);font-variant-numeric:tabular-nums}
+.kpmsg{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;text-align:center;color:var(--dim);margin-bottom:12px}
+.kpmsg.bad{color:var(--red)}.kpmsg.okc{color:var(--ok)}
+.kpgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpgrid button{background:#111a22;border:1px solid var(--line);color:var(--text);font-size:22px;font-weight:600;padding:12px 0}
+.kpgrid button:hover{border-color:var(--amber);color:var(--amber)}
+.kpgrid button.ok{background:var(--amber);color:#1a1206;border-color:var(--amber)}
+.kpgrid button[data-k="del"]{font-size:13px;letter-spacing:.1em;text-transform:uppercase}
 #fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .6s}
 #fade.on{opacity:1}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--ink);font-family:var(--f-mono);letter-spacing:.3em;color:var(--dim);font-size:12px;z-index:100}

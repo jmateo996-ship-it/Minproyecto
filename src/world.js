@@ -203,6 +203,9 @@ function makeTarget(type) {
     case 'console': add(box(1.6, 1.1, 1, M.dark, 0, 0.55, 0)); const c = add(box(1.4, 0.5, 0.06, M.led, 0, 1.25, -0.2)); c.rotation.x = -0.6; add(cyl(0.12, 0.12, 0.2, M.hazard, 0.4, 1.15, 0.2)); light = 0xff3020; break;
     case 'emitter': add(cyl(0.6, 0.9, 0.5, M.dark, 0, 0.25, 0)); add(cyl(0.15, 0.2, 3.6, M.steel, 0, 2.2, 0, 8)); for (let k = 0; k < 3; k++) { const r = add(new THREE.Mesh(new THREE.TorusGeometry(0.6 - k * 0.12, 0.05, 8, 24), M.sporeGlow)); r.position.y = 2.4 + k * 0.6; r.rotation.x = Math.PI / 2; r.userData.spin = 1 + k; } light = 0xff7a1a; h = 2.2; break;
     case 'fuel': add(cyl(0.9, 0.9, 2.6, M.red, 0, 1.3, 0)); add(cyl(0.95, 0.95, 0.1, M.dark, 0, 2.2, 0)); add(cyl(0.95, 0.95, 0.1, M.dark, 0, 0.5, 0)); add(box(0.4, 0.3, 0.02, M.hazard, 0, 1.5, 0.91)); light = 0xffb040; break;
+    case 'valve': add(cyl(0.25, 0.25, 1.6, M.metal, 0, 0.8, 0, 10)); { const p = add(cyl(0.2, 0.2, 1.8, M.metal, 0, 1.1, 0, 10)); p.rotation.z = Math.PI / 2; } { const w = add(new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.06, 8, 24), M.red)); w.position.set(0, 1.75, 0.15); w.userData.spinOnDone = 1; } add(box(0.08, 0.84, 0.08, M.red, 0, 1.75, 0.15)); light = 0xffb020; h = 1.9; break;
+    case 'floodgate': add(box(1.9, 2.2, 0.4, M.metal, 0, 1.1, 0)); add(box(1.7, 0.1, 0.45, M.hazard, 0, 0.3, 0)); { const w = add(new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.07, 8, 24), M.yellow)); w.position.set(0, 1.4, 0.3); } light = 0x30ff70; h = 2.2; break;
+    case 'fusebox': add(box(1.2, 1.6, 0.6, M.dark, 0, 0.9, 0)); add(box(1, 1.2, 0.04, M.sheet, 0, 0.95, 0.31)); add(box(0.5, 0.12, 0.05, M.hazard, 0, 1.55, 0.32)); for (let k = 0; k < 3; k++) add(box(0.12, 0.3, 0.05, M.led, -0.25 + k * 0.25, 0.9, 0.33)); light = 0xff3020; break;
     case 'heli': { const b = add(box(1.6, 1.4, 3.4, M.dark, 0, 1.2, 0)); add(box(1.4, 0.8, 1.1, M.glass, 0, 1.5, 1.7)); add(box(0.4, 0.4, 3.2, M.dark, 0, 1.4, -3)); add(box(0.08, 1, 0.6, M.dark, 0, 1.9, -4.5)); const rot = add(box(7.5, 0.05, 0.25, M.metal, 0, 2.1, 0)); rot.userData.spin = 0.3; const rot2 = add(box(0.25, 0.05, 7.5, M.metal, 0, 2.1, 0)); rot2.userData.spin = 0.3; add(box(0.1, 0.1, 3.6, M.metal, 0.75, 0.2, 0)); add(box(0.1, 0.1, 3.6, M.metal, -0.75, 0.2, 0)); light = 0xff3020; break; }
   }
   g.traverse(o => { if (o.isMesh) { if (o.castShadow !== false) o.castShadow = true; o.receiveShadow = true; } });
@@ -219,6 +222,8 @@ function makePickup(type) {
     case 'medkit': g.add(box(0.55, 0.3, 0.4, M.white, 0, 0.15, 0)); g.add(box(0.3, 0.02, 0.08, S(0xff2020, 1.5), 0, 0.31, 0)); g.add(box(0.08, 0.02, 0.3, S(0xff2020, 1.5), 0, 0.31, 0)); col = 0x69e0a0; break;
     case 'keycard': g.add(box(0.4, 0.02, 0.26, S(0x40a0ff, 2.5), 0, 0.4, 0)); col = 0x40a0ff; break;
     case 'tape': g.add(box(0.36, 0.1, 0.24, S(0x202020, 0.1), 0, 0.3, 0)); g.add(box(0.2, 0.11, 0.1, S(0xff9a30, 2.5), 0, 0.3, 0)); col = 0xff9a30; break;
+    case 'key': g.add(box(0.08, 0.04, 0.34, S(0xffc040, 2.2), 0, 0.35, 0)); { const r = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.03, 8, 16), S(0xffc040, 2.2)); r.rotation.x = Math.PI / 2; r.position.set(0, 0.35, -0.22); g.add(r); } g.add(box(0.1, 0.04, 0.05, S(0xffc040, 2.2), 0.06, 0.35, 0.12)); col = 0xffc040; break;
+    case 'fuse': g.add(cyl(0.07, 0.07, 0.3, S(0xff9a30, 1.6), 0, 0.3, 0, 10)); g.add(cyl(0.08, 0.08, 0.06, M.steel, 0, 0.45, 0, 10)); g.add(cyl(0.08, 0.08, 0.06, M.steel, 0, 0.15, 0, 10)); col = 0xff9a30; break;
     case 'code': case 'doc': g.add(box(0.36, 0.01, 0.48, S(0xe8e0c8, type === 'code' ? 1.8 : 1.0), 0, 0.3, 0)); col = type === 'code' ? 0xffe080 : 0xe8e0c8; break;
   }
   g.traverse(o => { if (o.isMesh) o.castShadow = true; });
@@ -252,6 +257,33 @@ function buildLevel(M, scene) {
   { // garantizar que la salida es alcanzable
     let d = bfsField(map, map.start.x, map.start.y);
     if (d[key(ex[0], ex[1])] < 0) { let i = ex[0]; while (i > 1 && d[key(i, ex[1])] < 0) { map.g[key(i, ex[1])] = 0; map.g[key(i, ex[1] + 1)] = map.g[key(i, ex[1] + 1)] === 1 && ex[1] + 1 < H - 1 ? 0 : map.g[key(i, ex[1] + 1)]; i--; } }
+  }
+  // ---- puerta cerrada que corta el camino a la salida (se crea el cuello de botella si hace falta)
+  const doorStage = M.objectives.findIndex(o => (o.type === 'door' || o.type === 'keypad') && o.where === 'choke');
+  if (doorStage >= 0) delete M.objectives[doorStage]._where;
+  let choke = null;
+  if (doorStage >= 0 && M.layout === 'rooms') {
+    const inRoom = (i, j) => map.rooms.some(r => i >= r.x && i < r.x + r.w && j >= r.y && j < r.y + r.h);
+    const allOpen = v => v === 0 || v === 3;
+    const roomsOk = () => { const d = bfsField(map, map.start.x, map.start.y, allOpen); return map.rooms.every(r => d[key(r.cx, r.cy)] >= 0) && d[key(ex[0], ex[1])] >= 0; };
+    let floorN = 0; for (let k = 0; k < W * H; k++) if (map.g[k] === 0) floorN++;
+    const path = findPath(map, map.start.x, map.start.y, ex[0], ex[1]) || [];
+    const cands = path.map((c, k) => ({ c, f: k / path.length })).filter(o => o.f > 0.3 && o.f < 0.85 && !inRoom(o.c.x, o.c.y)).sort((a, b) => Math.abs(a.f - 0.55) - Math.abs(b.f - 0.55));
+    for (const { c } of cands.slice(0, 8)) {
+      const saved = map.g.slice(); map.g[key(c.x, c.y)] = 3;
+      let ok = true;
+      for (let it = 0; it < 10; it++) {
+        if (bfsField(map, map.start.x, map.start.y)[key(ex[0], ex[1])] < 0) break;
+        const alt = findPath(map, map.start.x, map.start.y, ex[0], ex[1]) || [];
+        const cor = alt.filter(q => !inRoom(q.x, q.y)); let sealed = false;
+        for (const q of cor.sort(() => R() - 0.5)) { const kq = key(q.x, q.y); map.g[kq] = 1; if (roomsOk()) { sealed = true; break; } map.g[kq] = 0; }
+        if (!sealed) { ok = false; break; }
+      }
+      const d = bfsField(map, map.start.x, map.start.y); let near = 0; for (let k = 0; k < W * H; k++) if (d[k] >= 0) near++;
+      if (ok && d[key(ex[0], ex[1])] < 0 && near > floorN * 0.25 && near < floorN * 0.9 && roomsOk()) { choke = c; break; }
+      map.g.set(saved);
+    }
+    if (!choke) M.objectives[doorStage]._where = 'exit';
   }
   // ---- muros (instanciados, solo los visibles)
   const wallCells = [];
@@ -301,7 +333,7 @@ function buildLevel(M, scene) {
   };
   const placeSolid = (i, j) => { // bloquea la celda solo si no rompe la conectividad
     map.g[key(i, j)] = 2;
-    const d = bfsField(map, map.start.x, map.start.y);
+    const d = bfsField(map, map.start.x, map.start.y, v => v === 0 || v === 3);
     let ok = true; for (let k = 0; k < W * H; k++) if (map.g[k] === 0 && d[k] < 0) { ok = false; break; }
     if (!ok) { map.g[key(i, j)] = 0; return false; }
     occ.add(key(i, j)); return true;
@@ -314,17 +346,70 @@ function buildLevel(M, scene) {
   level.exit = { x: exc.x, z: exc.z, mesh: makeExitMarker() };
   level.exit.mesh.position.set(exc.x, 0, exc.z); G.add(level.exit.mesh);
 
+  const nearD = bfsField(map, map.start.x, map.start.y);
+  map.rooms.forEach(r => { r.near = nearD[key(r.cx, r.cy)] >= 0; });
+  level.code = ''; for (let k = 0; k < 4; k++) level.code += (Math.random() * 10 | 0);
+
   // ---- objetivos
   const midRooms = roomsByDist.filter(r => r !== exitRoom && r !== map.startRoom);
-  const pickRooms = (n, from = 0.25) => { const pool = midRooms.length ? midRooms : roomsByDist; const out = []; for (let k = 0; k < n; k++) { const t = from + (1 - from) * ((k + 0.5) / n); out.push(pool[Math.min(pool.length - 1, Math.floor(t * pool.length))]); } return out; };
+  const pickRooms = (n, from = 0.25, region) => {
+    let pool = midRooms.length ? midRooms : roomsByDist;
+    if (region && choke) { const f = pool.filter(r => region === 'near' ? r.near : !r.near); if (f.length) pool = f; else if (region === 'near') pool = roomsByDist.filter(r => r.near); }
+    const out = []; for (let k = 0; k < n; k++) { const t = from + (1 - from) * ((k + 0.5) / n); out.push(pool[Math.min(pool.length - 1, Math.floor(t * pool.length))]); } return out;
+  };
+  const regionOf = (stage) => doorStage < 0 ? null : stage <= doorStage ? 'near' : 'far';
+  const placeTarget = (room, type, stage, extra = {}) => {
+    let c = null;
+    for (let t = 0; t < 30 && !c; t++) { const cc = freeCell(room, { interior: true, minStart: 5 }); if (cc && placeSolid(cc[0], cc[1])) c = cc; }
+    if (!c) for (let t = 0; t < 30 && !c; t++) { const cc = freeCell(room, {}); if (cc && placeSolid(cc[0], cc[1])) c = cc; }
+    if (!c) return null;
+    const p = cellCenter(c[0], c[1]), mesh = makeTarget(type);
+    mesh.position.set(p.x, 0, p.z); mesh.rotation.y = (R() * 4 | 0) * Math.PI / 2; G.add(mesh);
+    const tg = Object.assign({ type, stage, x: p.x, z: p.z, mesh, done: false, progress: 0 }, extra);
+    level.targets.push(tg);
+    level.lamps.push({ x: p.x, y: 1.8, z: p.z, color: mesh.userData.light, power: 10, flick: 0, small: true });
+    return tg;
+  };
+  const placeDoc = (doc, region, from = 0.2) => { const room = pickRooms(1, from, region)[0] || roomsByDist[0]; const c = freeCell(room) || freeCell(room) || [map.start.x + 1, map.start.y]; occ.add(key(c[0], c[1])); level.pickups.push({ type: 'doc', doc, ...cellCenter(c[0], c[1]) }); };
+  const SEQCOL = [['ROJA', 0xff3020], ['AMBAR', 0xffb020], ['VERDE', 0x30ff70], ['AZUL', 0x3a8aff]];
   M.objectives.forEach((ob, stage) => {
+    const region = regionOf(stage);
     if (ob.type === 'collect') {
-      pickRooms(ob.count, 0.3 + stage * 0.05).forEach(room => {
+      const isFrag = ob.item === 'code';
+      if (isFrag) { level.code = ''; for (let k = 0; k < ob.count * 2; k++) level.code += (Math.random() * 10 | 0); }
+      pickRooms(ob.count, 0.3 + stage * 0.05, region).forEach((room, k) => {
         const c = freeCell(room, { minStart: 6 }) || freeCell(room); if (!c) return; occ.add(key(c[0], c[1]));
-        level.pickups.push({ type: ob.item, stage, ...cellCenter(c[0], c[1]) });
+        const pk = { type: ob.item, stage, ...cellCenter(c[0], c[1]) };
+        if (isFrag) { pk.frag = k; pk.fragN = ob.count; pk.digits = level.code.slice(k * 2, k * 2 + 2); }
+        level.pickups.push(pk);
       });
+    } else if (ob.type === 'door' || ob.type === 'keypad') {
+      const where = ob._where || ob.where;
+      let tg = null;
+      if (where === 'choke' && choke) {
+        const p = cellCenter(choke.x, choke.y), mesh = makeDoor(ob.type, map, choke.x, choke.y); mesh.position.set(p.x, 0, p.z); G.add(mesh);
+        tg = { type: ob.type, stage, x: p.x, z: p.z, mesh, done: false, progress: 0, cell: [choke.x, choke.y] };
+        level.targets.push(tg); level.lamps.push({ x: p.x, y: 2.6, z: p.z, color: ob.type === 'door' ? 0xffb020 : 0x3a8aff, power: 12, flick: 0, small: true });
+      } else if (where === 'room') {
+        tg = placeTarget(pickRooms(1, 0.7, region)[0] || roomsByDist[roomsByDist.length - 1], ob.mesh || 'vault', stage, { lock: ob.type });
+        if (tg) tg.type = ob.type, tg.meshType = ob.mesh;
+      } else { // en la propia salida
+        const mesh = makeDoor(ob.type, null); mesh.position.set(exc.x, 0, exc.z); G.add(mesh);
+        tg = { type: ob.type, stage, x: exc.x, z: exc.z, mesh, done: false, progress: 0, atExit: true }; level.targets.push(tg);
+      }
+      if (tg) { tg.key = ob.key; tg.code = ob.code; }
+      if (ob.type === 'door') { const room = pickRooms(1, 0.75, 'near')[0] || roomsByDist[0]; const c = freeCell(room, { minStart: 6 }) || freeCell(room); if (c) { occ.add(key(c[0], c[1])); level.pickups.push({ type: 'key', name: ob.key, stage, ...cellCenter(c[0], c[1]) }); } }
+      if (ob.type === 'keypad' && ob.code === 'doc' && ob.doc) level.codeDoc = ob.doc;
+    } else if (ob.type === 'sequence') {
+      const order = [0, 1, 2, 3].slice(0, ob.count); for (let k = order.length - 1; k > 0; k--) { const r = Math.random() * (k + 1) | 0; [order[k], order[r]] = [order[r], order[k]]; }
+      pickRooms(ob.count, 0.3 + stage * 0.08, region).forEach((room, k) => {
+        const tg = placeTarget(room, ob.target, stage, { seq: k, colName: SEQCOL[k][0] });
+        if (tg) { tg.order = order.indexOf(k); const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8), new THREE.MeshStandardMaterial({ color: 0x111111, emissive: SEQCOL[k][1], emissiveIntensity: 3 })); bulb.position.y = (tg.mesh.userData.h || 1.6) + 0.45; tg.mesh.add(bulb); tg.bulb = bulb; level.lamps[level.lamps.length - 1].color = SEQCOL[k][1]; }
+      });
+      level.seqOrder = order.map(k => SEQCOL[k][0]).join(' → ');
+      if (ob.doc) placeDoc({ title: ob.doc.title, body: ob.doc.body.replace('{ORDER}', level.seqOrder), note: (ob.noteLabel || 'Orden') + ': ' + level.seqOrder }, region, 0.15);
     } else if (ob.type === 'interact' || ob.type === 'plant') {
-      const rooms = M.layout === 'arena' ? [roomsByDist[0]] : pickRooms(ob.count, 0.35 + stage * 0.1);
+      const rooms = M.layout === 'arena' ? [roomsByDist[0]] : pickRooms(ob.count, 0.35 + stage * 0.1, region);
       rooms.forEach(room => {
         let c = null;
         for (let t = 0; t < 30 && !c; t++) { const cc = freeCell(room, { interior: true, minStart: 5 }); if (cc && placeSolid(cc[0], cc[1])) c = cc; }
@@ -338,10 +423,8 @@ function buildLevel(M, scene) {
     }
   });
   // ---- documentos
-  (M.docs || []).forEach((doc, k) => {
-    const room = pickRooms(1, 0.15 + k * 0.2)[0] || roomsByDist[0]; const c = freeCell(room) || [map.start.x + 1, map.start.y];
-    occ.add(key(c[0], c[1])); level.pickups.push({ type: 'doc', doc, ...cellCenter(c[0], c[1]) });
-  });
+  (M.docs || []).forEach((doc, k) => placeDoc(doc, 'near', 0.15 + k * 0.2));
+  if (level.codeDoc) placeDoc({ title: level.codeDoc.title, body: level.codeDoc.body.split('{CODE}').join(level.code), note: (level.codeDoc.note || level.codeDoc.title) + ': ' + level.code }, 'near', 0.45);
   // ---- suministros
   const nRooms = map.rooms.length;
   const supply = (type, n) => { for (let k = 0; k < n; k++) { const room = map.rooms[R() * nRooms | 0]; const c = freeCell(room); if (c) { occ.add(key(c[0], c[1])); level.pickups.push({ type, ...cellCenter(c[0], c[1]) }); } } };
@@ -549,4 +632,25 @@ function decorateWalls(map, th, G, R) {
       put(boxGeo, D.hazard, cx, 0.12, fz + 0.03, CS, 0.24, 0.05);
     }
   }
+}
+
+
+// puerta física (o compuerta en la salida) con cerradura de llave o teclado
+function makeDoor(kind, map, i, j) {
+  const M = mats(), g = new THREE.Group();
+  const col = kind === 'door' ? 0xffb020 : 0x3a8aff;
+  const along = map ? (map.g[j * map.W + i - 1] !== 0 && map.g[j * map.W + i + 1] !== 0) : true; // pasillo norte-sur: puerta a lo ancho (eje x)
+  const slab = new THREE.Group(); g.add(slab);
+  const leaf = box(CS, 2.9, 0.32, M.steel, 0, 1.45, 0); slab.add(leaf);
+  for (let k = 0; k < 4; k++) slab.add(box(CS * 0.9, 0.06, 0.36, M.dark, 0, 0.5 + k * 0.65, 0));
+  slab.add(box(CS * 0.92, 0.18, 0.36, M.hazard, 0, 0.18, 0));
+  const lockM = new THREE.MeshStandardMaterial({ color: 0x111111, emissive: col, emissiveIntensity: 3 });
+  const lock = box(0.28, 0.4, 0.42, M.dark, 0.6, 1.3, 0); slab.add(lock);
+  const led = box(0.12, 0.12, 0.46, lockM, 0.6, 1.4, 0); slab.add(led);
+  if (kind === 'keypad') for (let k = 0; k < 6; k++) slab.add(box(0.05, 0.05, 0.46, M.metal, 0.54 + (k % 2) * 0.1, 1.25 - (k >> 1) * 0.07, 0));
+  // marco
+  g.add(box(0.25, 3.2, 0.5, M.dark, -CS / 2, 1.6, 0)); g.add(box(0.25, 3.2, 0.5, M.dark, CS / 2, 1.6, 0)); g.add(box(CS + 0.25, 0.3, 0.5, M.dark, 0, 3.05, 0));
+  if (!along) g.rotation.y = Math.PI / 2;
+  g.userData = { slab, led, lockM, h: 2.4 };
+  return g;
 }

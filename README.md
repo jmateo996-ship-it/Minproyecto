@@ -26,6 +26,7 @@ En pantallas táctiles aparecen dos joysticks y botones.
 - **Ruido:** cada disparo, carrera o generador emite un anillo de ruido. La pistola lleva silenciador; la escopeta no.
 - **Horror:** los infectados ven poco pero oyen todo, y la linterna los atrae. Hay variantes rápidas y gigantes, y en algunas zonas están latentes hasta que algo los despierta.
 - **Facciones:** los mercenarios y los infectados también se atacan entre sí.
+- **Puzles:** puertas que cortan el camino y piden una llave escondida, teclados numéricos cuyo código (distinto en cada partida) aparece en documentos, fragmentos o por radio, válvulas y compuertas que deben activarse en el orden de un manual (si te equivocas, el estruendo atrae enemigos) y fusibles para devolver la corriente. Los códigos y pistas se apuntan solos en tus notas (Esc). El código de la Bóveda se reúne en una misión y se usa en la siguiente.
 - **Misiones variadas:** infiltración, sabotaje, recogida de pruebas, C4, escolta, defensa contra oleadas, jefe final y huida contrarreloj.
 - **Música:** banda sonora de misterio generada en tiempo real (cajita de música en el título, temas distintos para exteriores, laboratorios e interiores) que cede el paso a la música de acción durante las alertas.
 - **Rangos:** cada misión termina con un rango (S–D) según alertas, bajas, daño y tiempo. El progreso se guarda en el navegador.

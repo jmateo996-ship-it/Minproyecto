@@ -144,6 +144,17 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15px;margin-top:10px}
 .keys kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);padding:3px 8px;background:#0a1018;color:var(--amber);white-space:nowrap;justify-self:start}
 .red{color:var(--red)}
+.notes{margin-top:14px;padding:12px 14px;background:#0a1018;border:1px solid var(--line);font-family:var(--f-mono);font-size:13px;line-height:1.6;color:var(--text)}
+.notes .eyebrow{margin-bottom:4px}
+.keypad{width:min(420px,100%)}
+.kpdisp{font-family:var(--f-mono);font-size:34px;letter-spacing:.12em;text-align:center;padding:14px;margin:10px 0 6px;background:#03100a;color:#6dffb0;border:1px solid #1c4a32;text-shadow:0 0 12px rgba(80,255,160,.5);font-variant-numeric:tabular-nums}
+.kpmsg{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;text-align:center;color:var(--dim);margin-bottom:12px}
+.kpmsg.bad{color:var(--red)}.kpmsg.okc{color:var(--ok)}
+.kpgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpgrid button{background:#111a22;border:1px solid var(--line);color:var(--text);font-size:22px;font-weight:600;padding:12px 0}
+.kpgrid button:hover{border-color:var(--amber);color:var(--amber)}
+.kpgrid button.ok{background:var(--amber);color:#1a1206;border-color:var(--amber)}
+.kpgrid button[data-k="del"]{font-size:13px;letter-spacing:.1em;text-transform:uppercase}
 #fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .6s}
 #fade.on{opacity:1}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--ink);font-family:var(--f-mono);letter-spacing:.3em;color:var(--dim);font-size:12px;z-index:100}
@@ -606,6 +617,139 @@ const EPILOGUE = [
   'Sección Nueve sigue sin existir. Su agente, tampoco.',
 ];
 
+// ============================================================================
+// PUZLES — cerraduras, códigos, secuencias y fusibles integrados en el guion.
+// Cada entrada sustituye los objetivos de la misión y añade diálogos/documentos.
+//   door     → puerta con llave (where: 'choke' corta el camino; 'exit' en la salida)
+//   keypad   → teclado numérico (code: 'doc' | 'fragments' | 'vault' | 'radio')
+//   sequence → activar N elementos en el orden indicado en un documento
+// ============================================================================
+const PUZZLES = {
+  1: {
+    objectives: [
+      { type: 'door', key: 'Llave de la escotilla', where: 'exit', label: 'La escotilla tiene candado: encuentra su llave y ábrela' },
+      { type: 'reach', label: 'Entra por la escotilla de servicio' } ],
+    introAdd: [['IBA', 'Un detalle: la escotilla tiene un candado de obra. Los guardias del perímetro guardan la llave en alguna de las garitas.']],
+    stageRadio: { 1: [['SIL', 'Candado abierto. Bajo.']] },
+  },
+  2: {
+    objectives: [
+      { type: 'collect', item: 'keycard', count: 1, label: 'Consigue la tarjeta de acceso N1 en la oficina del capataz' },
+      { type: 'keypad', where: 'choke', code: 'doc', doc: { title: 'Pósit en una taquilla', note: 'Puerta del almacén 3', body: 'Brandt:\n\nEl código de la puerta del almacén 3 es {CODE}.\nApréndetelo de una vez y deja de pegarlo en las taquillas.\n\n— El capataz' }, label: 'La puerta del almacén 3 va con código: averigua cuál es' },
+      { type: 'reach', label: 'Entra en el puesto de control' } ],
+    stageRadio: { 1: [['IBA', 'Tienes la tarjeta. Pero la puerta del almacén 3 va con código. Alguien lo tendrá apuntado.']], 2: [['IBA', 'Dentro. El puesto de control está al otro lado.']] },
+  },
+  3: {
+    objectives: [
+      { type: 'interact', target: 'relay', count: 2, label: 'Sabotea los 2 relés de la alarma general' },
+      { type: 'keypad', where: 'choke', code: 'doc', doc: { title: 'Cuaderno del vigilante', note: 'Paso a barracones', body: 'Turno de noche.\n\nCódigo de paso a barracones (cambia cada día): {CODE}\n\nHaller sigue encerrado en los vestuarios. Golpea la puerta cada vez que alguien pasa.\nNo vamos a abrir.' }, label: 'Abre el paso a los barracones con el código del día' },
+      { type: 'reach', label: 'Cruza hacia los barracones' } ],
+    stageRadio: { 1: [['IBA', 'Alarma general fuera de servicio. Ahora pueden verte, pero no pueden avisar al resto del complejo.']], 2: [['SIL', 'Código aceptado.']] },
+  },
+  4: {
+    objectives: [
+      { type: 'collect', item: 'tape', count: 1, label: 'Encuentra la grabación de radio de Novak' },
+      { type: 'door', key: 'Llave de la armería', where: 'choke', label: 'La armería corta el paso: encuentra la llave del sargento Brandt' },
+      { type: 'reach', label: 'Avanza hacia el ala médica' } ],
+    stageRadio: { 2: [['SIL', 'La armería. Hay una escopeta táctica. Me la llevo.'], ['IBA', 'Úsala con cabeza: no lleva silenciador.']] },
+  },
+  5: {
+    objectives: [
+      { type: 'collect', item: 'keycard', count: 1, label: 'Recupera la tarjeta N2 del jefe médico' },
+      { type: 'keypad', where: 'choke', code: 'doc', doc: { title: 'Pizarra de enfermería', note: 'Puerta de aislamiento', body: 'TURNO C — CUARENTENA\n\n· Cama 3: la sedación no hace efecto.\n· Cama 7: trasladado a aislamiento.\n· Código de la puerta de aislamiento: {CODE}\n  (NO dárselo a seguridad).\n\nSi los pacientes de fase 3 se levantan, NO abráis.' }, label: 'Abre la puerta de aislamiento (el código está apuntado en la enfermería)' },
+      { type: 'reach', label: 'Llega al ascensor de servicio' } ],
+    stageRadio: { 2: [['MAR', 'Aislamiento abierto. Lo que hubiera dentro ya no está encerrado. Cuidado.']] },
+  },
+  6: {
+    objectives: [
+      { type: 'collect', item: 'fuse', count: 2, label: 'Encuentra 2 fusibles de repuesto para el cuadro del ascensor' },
+      { type: 'interact', target: 'fusebox', count: 1, label: 'Coloca los fusibles en el cuadro eléctrico' },
+      { type: 'interact', target: 'generator', count: 3, label: 'Arranca los 3 generadores auxiliares' },
+      { type: 'reach', label: 'Sube al ascensor de servicio' } ],
+    docsAdd: [{ title: 'Aviso de mantenimiento', body: 'Los fusibles del cuadro del ascensor B se fundieron con la sobrecarga del día −2.\n\nHay repuestos en el almacén técnico y en la taquilla del turno de noche.\nSin fusibles, los generadores no alimentan el ascensor.' }],
+    introAdd: [['MAR', 'Y otra cosa: el cuadro del ascensor tiene los fusibles fundidos. Sin repuestos, los generadores no servirán de nada.']],
+    stageRadio: { 1: [['IBA', 'Tienes los fusibles. Ahora, el cuadro eléctrico.']], 2: [['SIL', 'Cuadro reparado. Faltan los generadores.']], 3: [['IBA', 'Energía restablecida. Los infectados van a ir hacia ese ruido. Sal de ahí.']] },
+  },
+  7: {
+    objectives: [
+      { type: 'interact', target: 'terminal', count: 3, label: 'Descarga los datos de 3 terminales del programa ATLAS' },
+      { type: 'door', key: 'Tarjeta del archivero', where: 'choke', label: 'El paso a la galería está cerrado: busca la tarjeta del archivero' },
+      { type: 'reach', label: 'Continúa hacia la galería de cultivo' } ],
+    stageRadio: { 1: [['SIL', 'Maren. Aquí pone que CENIZA deriva de un fungicida. Autora: I. Maren.'], ['MAR', 'Creé un hongo que mataba plagas de langosta. Halden lo convirtió en esto. Por eso me fui. Por eso estoy ayudando.'], ['IBA', 'Sesenta por ciento de la financiación está censurado. Alguien con mucho dinero quería esto. Sigue, Sílex.']] },
+  },
+  8: {
+    objectives: [
+      { type: 'sequence', target: 'valve', count: 3, noteLabel: 'Válvulas de ventilación B-2', doc: { title: 'Protocolo de ventilación B-2', body: 'En caso de incidente en la galería, cerrar las válvulas de ventilación en este orden EXACTO:\n\n{ORDER}\n\nUn orden incorrecto provoca una descarga de presión. Es ruidosa. Muy ruidosa.\n\nCon la ventilación cerrada, nada de lo que ocurra en la galería llegará a la superficie.' }, label: 'Cierra las 3 válvulas de ventilación en el orden del protocolo' },
+      { type: 'plant', target: 'tank', count: 3, label: 'Coloca C4 en los 3 tanques de esporas' },
+      { type: 'reach', label: 'Baja al laboratorio B-3' } ],
+    introAdd: [['MAR', 'Antes de volar nada, cierre la ventilación. Si no, la explosión empujará las esporas a la superficie. Debe de haber un protocolo con el orden de las válvulas.']],
+    stageRadio: { 1: [['MAR', 'Ventilación cerrada. Ahora sí: los tanques.']], 2: [['IBA', 'Galería destruida. Y has despertado a todo el corral. Muévete.']] },
+    fail: 'La válvula silba con una descarga de presión. Todo el sector la ha oído.',
+  },
+  9: {
+    objectives: [
+      { type: 'collect', item: 'code', count: 2, label: 'Encuentra las 2 mitades del código del laboratorio' },
+      { type: 'keypad', where: 'exit', code: 'fragments', label: 'Introduce el código en la puerta sellada del laboratorio B-3' },
+      { type: 'reach', label: 'Entra y encuentra a Novak' } ],
+    stageRadio: { 1: [['SIL', 'Tengo las dos mitades. Las he apuntado.']] },
+  },
+  12: {
+    objectives: [
+      { type: 'collect', item: 'fuse', count: 2, label: 'La antena no tiene corriente: encuentra 2 fusibles' },
+      { type: 'interact', target: 'antenna', count: 1, label: 'Instala el inhibidor de señal en la antena principal' },
+      { type: 'reach', label: 'Vuelve al interior por la escalera de servicio' } ],
+    introAdd: [['MAR', 'La antena lleva apagada desde la brecha: necesitará dos fusibles. Los guardias de la azotea tienen material en sus casetas.']],
+    stageRadio: { 1: [['MAR', 'Bien. Ahora instale el inhibidor en la antena.']], 2: [['MAR', 'Ya podemos hablar. Lea el mensaje que intercepté. Ibarra lo recibió hace cuatro horas.'], ['SIL', 'El sesenta por ciento censurado… era nuestro propio Ministerio.'], ['MAR', 'Le han cambiado la misión sin decírselo. Quieren CENIZA para ellos. Yo solo quiero que desaparezca.'], ['SIL', 'Ibarra me lo habría contado.'], ['MAR', 'Pregúnteselo. Cuando esté preparada.']] },
+  },
+  13: {
+    objectives: [
+      { type: 'collect', item: 'code', count: 3, label: 'Recupera los 3 fragmentos del código de la Bóveda' },
+      { type: 'door', key: 'Tarjeta de criogenia', where: 'choke', label: 'La salida de la cámara está bloqueada: busca la tarjeta de criogenia' },
+      { type: 'reach', label: 'Dirígete a la Bóveda' } ],
+    saveCode: 'vaultCode',
+    stageRadio: { 1: [['SIL', 'Tengo los tres fragmentos. Los he apuntado. Ibarra ha tardado un segundo de más en responderme.'], ['MAR', 'Lo he oído.']] },
+  },
+  14: {
+    objectives: [
+      { type: 'keypad', where: 'room', mesh: 'vault', code: 'vault', label: 'Abre la Bóveda con el código de seis cifras (consulta tus notas)' },
+      { type: 'reach', label: '¡Emboscada! Escapa hacia los túneles de drenaje' } ],
+  },
+  15: {
+    objectives: [
+      { type: 'collect', item: 'tape', count: 1, label: 'Encuentra el diario de voz de Varek' },
+      { type: 'sequence', target: 'floodgate', count: 3, noteLabel: 'Compuertas del colector', doc: { title: 'Plano del colector principal', body: 'Para vaciar el colector y pasar al hangar, abrir las compuertas en este orden:\n\n{ORDER}\n\nEn cualquier otro orden el agua retrocede de golpe. El estruendo se oye en todo el subsuelo.' }, label: 'Abre las 3 compuertas del colector en el orden correcto' },
+      { type: 'reach', label: 'Llega al hangar' } ],
+    stageRadio: { 2: [['IBA', 'El colector se vacía. El camino al hangar está libre.']] },
+    fail: 'El agua retrocede con un estruendo. Algo ahí abajo lo ha oído.',
+  },
+  17: {
+    objectives: [
+      { type: 'interact', target: 'emitter', count: 3, label: 'Desactiva los 3 emisores PASTOR' },
+      { type: 'door', key: 'Llave del sector del reactor', where: 'exit', label: 'El sector del reactor está cerrado: la llave la llevaba un técnico' },
+      { type: 'reach', label: 'Entra en el sector del reactor' } ],
+  },
+  18: {
+    objectives: [
+      { type: 'sequence', target: 'console', count: 3, noteLabel: 'Bombas de refrigeración', doc: { title: 'Manual de emergencia — Reactor', body: 'PARADA DE REFRIGERACIÓN\n(solo personal autorizado)\n\nDesactivar las bombas en este orden:\n\n{ORDER}\n\nCualquier otro orden dispara el bloqueo de seguridad y reinicia las tres bombas.' }, label: 'Desactiva las 3 bombas de refrigeración en el orden del manual' },
+      { type: 'reach', label: 'Entra en la sala de turbinas' } ],
+    fail: 'Bloqueo de seguridad: las bombas se reinician con un estruendo.',
+  },
+  20: {
+    objectives: [
+      { type: 'keypad', where: 'exit', code: 'radio', label: 'Abre la puerta del muelle con el código que te da Ibarra' },
+      { type: 'reach', label: 'Sube al pesquero antes de la fusión del núcleo' } ],
+    radioCode: [['IBA', 'Sílex, la puerta del muelle tiene cierre de emergencia. Código: {CODE}. Repito: {CODE}. Está en tus notas.']],
+  },
+};
+for (const [id, P] of Object.entries(PUZZLES)) {
+  const M = MISSIONS[id - 1];
+  M.objectives = P.objectives;
+  if (P.introAdd) M.intro = M.intro.concat(P.introAdd);
+  if (P.docsAdd) M.docs = (M.docs || []).concat(P.docsAdd);
+  if (P.stageRadio) M.stageRadio = Object.assign({}, M.stageRadio, P.stageRadio);
+  ['saveCode', 'radioCode', 'fail'].forEach(k => { if (P[k]) M[k] = P[k]; });
+}
+
 // ---- textures.js
 // ============================================================================
 // Texturas procedurales (color + normal + rugosidad) generadas en canvas
@@ -830,6 +974,8 @@ const SFX = {
   },
   caution() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.35, 0, 0.4); this.tone(o, t, 0.35, 660, 640, 'triangle', 0.5); this.tone(o, t + 0.18, 0.35, 495, 480, 'triangle', 0.5); },
   heartbeat() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.6, 0, 0); this.tone(o, t, 0.15, 60, 40, 'sine', 1); this.tone(o, t + 0.22, 0.15, 55, 38, 'sine', 0.8); },
+  door() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.5, 0, 0.5); this.noise(o, t, 1.4, 220, 1, 'lowpass', 0.9, 0.2); this.tone(o, t, 1.3, 90, 70, 'sawtooth', 0.15); this.noise(o, t + 1.3, 0.2, 600, 2, 'bandpass', 0.8); },
+  buzz() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.4, 0, 0.2); this.tone(o, t, 0.45, 110, 105, 'square', 0.35); this.tone(o, t, 0.45, 116, 110, 'square', 0.3); },
   beep() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.25, 0, 0.2); this.tone(o, t, 0.1, 2000, 0, 'square', 0.4); },
   ambient(theme) {
     if (!this.ok()) return; const c = this.ctx;
@@ -1150,6 +1296,9 @@ function makeTarget(type) {
     case 'console': add(box(1.6, 1.1, 1, M.dark, 0, 0.55, 0)); const c = add(box(1.4, 0.5, 0.06, M.led, 0, 1.25, -0.2)); c.rotation.x = -0.6; add(cyl(0.12, 0.12, 0.2, M.hazard, 0.4, 1.15, 0.2)); light = 0xff3020; break;
     case 'emitter': add(cyl(0.6, 0.9, 0.5, M.dark, 0, 0.25, 0)); add(cyl(0.15, 0.2, 3.6, M.steel, 0, 2.2, 0, 8)); for (let k = 0; k < 3; k++) { const r = add(new THREE.Mesh(new THREE.TorusGeometry(0.6 - k * 0.12, 0.05, 8, 24), M.sporeGlow)); r.position.y = 2.4 + k * 0.6; r.rotation.x = Math.PI / 2; r.userData.spin = 1 + k; } light = 0xff7a1a; h = 2.2; break;
     case 'fuel': add(cyl(0.9, 0.9, 2.6, M.red, 0, 1.3, 0)); add(cyl(0.95, 0.95, 0.1, M.dark, 0, 2.2, 0)); add(cyl(0.95, 0.95, 0.1, M.dark, 0, 0.5, 0)); add(box(0.4, 0.3, 0.02, M.hazard, 0, 1.5, 0.91)); light = 0xffb040; break;
+    case 'valve': add(cyl(0.25, 0.25, 1.6, M.metal, 0, 0.8, 0, 10)); { const p = add(cyl(0.2, 0.2, 1.8, M.metal, 0, 1.1, 0, 10)); p.rotation.z = Math.PI / 2; } { const w = add(new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.06, 8, 24), M.red)); w.position.set(0, 1.75, 0.15); w.userData.spinOnDone = 1; } add(box(0.08, 0.84, 0.08, M.red, 0, 1.75, 0.15)); light = 0xffb020; h = 1.9; break;
+    case 'floodgate': add(box(1.9, 2.2, 0.4, M.metal, 0, 1.1, 0)); add(box(1.7, 0.1, 0.45, M.hazard, 0, 0.3, 0)); { const w = add(new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.07, 8, 24), M.yellow)); w.position.set(0, 1.4, 0.3); } light = 0x30ff70; h = 2.2; break;
+    case 'fusebox': add(box(1.2, 1.6, 0.6, M.dark, 0, 0.9, 0)); add(box(1, 1.2, 0.04, M.sheet, 0, 0.95, 0.31)); add(box(0.5, 0.12, 0.05, M.hazard, 0, 1.55, 0.32)); for (let k = 0; k < 3; k++) add(box(0.12, 0.3, 0.05, M.led, -0.25 + k * 0.25, 0.9, 0.33)); light = 0xff3020; break;
     case 'heli': { const b = add(box(1.6, 1.4, 3.4, M.dark, 0, 1.2, 0)); add(box(1.4, 0.8, 1.1, M.glass, 0, 1.5, 1.7)); add(box(0.4, 0.4, 3.2, M.dark, 0, 1.4, -3)); add(box(0.08, 1, 0.6, M.dark, 0, 1.9, -4.5)); const rot = add(box(7.5, 0.05, 0.25, M.metal, 0, 2.1, 0)); rot.userData.spin = 0.3; const rot2 = add(box(0.25, 0.05, 7.5, M.metal, 0, 2.1, 0)); rot2.userData.spin = 0.3; add(box(0.1, 0.1, 3.6, M.metal, 0.75, 0.2, 0)); add(box(0.1, 0.1, 3.6, M.metal, -0.75, 0.2, 0)); light = 0xff3020; break; }
   }
   g.traverse(o => { if (o.isMesh) { if (o.castShadow !== false) o.castShadow = true; o.receiveShadow = true; } });
@@ -1166,6 +1315,8 @@ function makePickup(type) {
     case 'medkit': g.add(box(0.55, 0.3, 0.4, M.white, 0, 0.15, 0)); g.add(box(0.3, 0.02, 0.08, S(0xff2020, 1.5), 0, 0.31, 0)); g.add(box(0.08, 0.02, 0.3, S(0xff2020, 1.5), 0, 0.31, 0)); col = 0x69e0a0; break;
     case 'keycard': g.add(box(0.4, 0.02, 0.26, S(0x40a0ff, 2.5), 0, 0.4, 0)); col = 0x40a0ff; break;
     case 'tape': g.add(box(0.36, 0.1, 0.24, S(0x202020, 0.1), 0, 0.3, 0)); g.add(box(0.2, 0.11, 0.1, S(0xff9a30, 2.5), 0, 0.3, 0)); col = 0xff9a30; break;
+    case 'key': g.add(box(0.08, 0.04, 0.34, S(0xffc040, 2.2), 0, 0.35, 0)); { const r = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.03, 8, 16), S(0xffc040, 2.2)); r.rotation.x = Math.PI / 2; r.position.set(0, 0.35, -0.22); g.add(r); } g.add(box(0.1, 0.04, 0.05, S(0xffc040, 2.2), 0.06, 0.35, 0.12)); col = 0xffc040; break;
+    case 'fuse': g.add(cyl(0.07, 0.07, 0.3, S(0xff9a30, 1.6), 0, 0.3, 0, 10)); g.add(cyl(0.08, 0.08, 0.06, M.steel, 0, 0.45, 0, 10)); g.add(cyl(0.08, 0.08, 0.06, M.steel, 0, 0.15, 0, 10)); col = 0xff9a30; break;
     case 'code': case 'doc': g.add(box(0.36, 0.01, 0.48, S(0xe8e0c8, type === 'code' ? 1.8 : 1.0), 0, 0.3, 0)); col = type === 'code' ? 0xffe080 : 0xe8e0c8; break;
   }
   g.traverse(o => { if (o.isMesh) o.castShadow = true; });
@@ -1199,6 +1350,33 @@ function buildLevel(M, scene) {
   { // garantizar que la salida es alcanzable
     let d = bfsField(map, map.start.x, map.start.y);
     if (d[key(ex[0], ex[1])] < 0) { let i = ex[0]; while (i > 1 && d[key(i, ex[1])] < 0) { map.g[key(i, ex[1])] = 0; map.g[key(i, ex[1] + 1)] = map.g[key(i, ex[1] + 1)] === 1 && ex[1] + 1 < H - 1 ? 0 : map.g[key(i, ex[1] + 1)]; i--; } }
+  }
+  // ---- puerta cerrada que corta el camino a la salida (se crea el cuello de botella si hace falta)
+  const doorStage = M.objectives.findIndex(o => (o.type === 'door' || o.type === 'keypad') && o.where === 'choke');
+  if (doorStage >= 0) delete M.objectives[doorStage]._where;
+  let choke = null;
+  if (doorStage >= 0 && M.layout === 'rooms') {
+    const inRoom = (i, j) => map.rooms.some(r => i >= r.x && i < r.x + r.w && j >= r.y && j < r.y + r.h);
+    const allOpen = v => v === 0 || v === 3;
+    const roomsOk = () => { const d = bfsField(map, map.start.x, map.start.y, allOpen); return map.rooms.every(r => d[key(r.cx, r.cy)] >= 0) && d[key(ex[0], ex[1])] >= 0; };
+    let floorN = 0; for (let k = 0; k < W * H; k++) if (map.g[k] === 0) floorN++;
+    const path = findPath(map, map.start.x, map.start.y, ex[0], ex[1]) || [];
+    const cands = path.map((c, k) => ({ c, f: k / path.length })).filter(o => o.f > 0.3 && o.f < 0.85 && !inRoom(o.c.x, o.c.y)).sort((a, b) => Math.abs(a.f - 0.55) - Math.abs(b.f - 0.55));
+    for (const { c } of cands.slice(0, 8)) {
+      const saved = map.g.slice(); map.g[key(c.x, c.y)] = 3;
+      let ok = true;
+      for (let it = 0; it < 10; it++) {
+        if (bfsField(map, map.start.x, map.start.y)[key(ex[0], ex[1])] < 0) break;
+        const alt = findPath(map, map.start.x, map.start.y, ex[0], ex[1]) || [];
+        const cor = alt.filter(q => !inRoom(q.x, q.y)); let sealed = false;
+        for (const q of cor.sort(() => R() - 0.5)) { const kq = key(q.x, q.y); map.g[kq] = 1; if (roomsOk()) { sealed = true; break; } map.g[kq] = 0; }
+        if (!sealed) { ok = false; break; }
+      }
+      const d = bfsField(map, map.start.x, map.start.y); let near = 0; for (let k = 0; k < W * H; k++) if (d[k] >= 0) near++;
+      if (ok && d[key(ex[0], ex[1])] < 0 && near > floorN * 0.25 && near < floorN * 0.9 && roomsOk()) { choke = c; break; }
+      map.g.set(saved);
+    }
+    if (!choke) M.objectives[doorStage]._where = 'exit';
   }
   // ---- muros (instanciados, solo los visibles)
   const wallCells = [];
@@ -1248,7 +1426,7 @@ function buildLevel(M, scene) {
   };
   const placeSolid = (i, j) => { // bloquea la celda solo si no rompe la conectividad
     map.g[key(i, j)] = 2;
-    const d = bfsField(map, map.start.x, map.start.y);
+    const d = bfsField(map, map.start.x, map.start.y, v => v === 0 || v === 3);
     let ok = true; for (let k = 0; k < W * H; k++) if (map.g[k] === 0 && d[k] < 0) { ok = false; break; }
     if (!ok) { map.g[key(i, j)] = 0; return false; }
     occ.add(key(i, j)); return true;
@@ -1261,17 +1439,70 @@ function buildLevel(M, scene) {
   level.exit = { x: exc.x, z: exc.z, mesh: makeExitMarker() };
   level.exit.mesh.position.set(exc.x, 0, exc.z); G.add(level.exit.mesh);
 
+  const nearD = bfsField(map, map.start.x, map.start.y);
+  map.rooms.forEach(r => { r.near = nearD[key(r.cx, r.cy)] >= 0; });
+  level.code = ''; for (let k = 0; k < 4; k++) level.code += (Math.random() * 10 | 0);
+
   // ---- objetivos
   const midRooms = roomsByDist.filter(r => r !== exitRoom && r !== map.startRoom);
-  const pickRooms = (n, from = 0.25) => { const pool = midRooms.length ? midRooms : roomsByDist; const out = []; for (let k = 0; k < n; k++) { const t = from + (1 - from) * ((k + 0.5) / n); out.push(pool[Math.min(pool.length - 1, Math.floor(t * pool.length))]); } return out; };
+  const pickRooms = (n, from = 0.25, region) => {
+    let pool = midRooms.length ? midRooms : roomsByDist;
+    if (region && choke) { const f = pool.filter(r => region === 'near' ? r.near : !r.near); if (f.length) pool = f; else if (region === 'near') pool = roomsByDist.filter(r => r.near); }
+    const out = []; for (let k = 0; k < n; k++) { const t = from + (1 - from) * ((k + 0.5) / n); out.push(pool[Math.min(pool.length - 1, Math.floor(t * pool.length))]); } return out;
+  };
+  const regionOf = (stage) => doorStage < 0 ? null : stage <= doorStage ? 'near' : 'far';
+  const placeTarget = (room, type, stage, extra = {}) => {
+    let c = null;
+    for (let t = 0; t < 30 && !c; t++) { const cc = freeCell(room, { interior: true, minStart: 5 }); if (cc && placeSolid(cc[0], cc[1])) c = cc; }
+    if (!c) for (let t = 0; t < 30 && !c; t++) { const cc = freeCell(room, {}); if (cc && placeSolid(cc[0], cc[1])) c = cc; }
+    if (!c) return null;
+    const p = cellCenter(c[0], c[1]), mesh = makeTarget(type);
+    mesh.position.set(p.x, 0, p.z); mesh.rotation.y = (R() * 4 | 0) * Math.PI / 2; G.add(mesh);
+    const tg = Object.assign({ type, stage, x: p.x, z: p.z, mesh, done: false, progress: 0 }, extra);
+    level.targets.push(tg);
+    level.lamps.push({ x: p.x, y: 1.8, z: p.z, color: mesh.userData.light, power: 10, flick: 0, small: true });
+    return tg;
+  };
+  const placeDoc = (doc, region, from = 0.2) => { const room = pickRooms(1, from, region)[0] || roomsByDist[0]; const c = freeCell(room) || freeCell(room) || [map.start.x + 1, map.start.y]; occ.add(key(c[0], c[1])); level.pickups.push({ type: 'doc', doc, ...cellCenter(c[0], c[1]) }); };
+  const SEQCOL = [['ROJA', 0xff3020], ['AMBAR', 0xffb020], ['VERDE', 0x30ff70], ['AZUL', 0x3a8aff]];
   M.objectives.forEach((ob, stage) => {
+    const region = regionOf(stage);
     if (ob.type === 'collect') {
-      pickRooms(ob.count, 0.3 + stage * 0.05).forEach(room => {
+      const isFrag = ob.item === 'code';
+      if (isFrag) { level.code = ''; for (let k = 0; k < ob.count * 2; k++) level.code += (Math.random() * 10 | 0); }
+      pickRooms(ob.count, 0.3 + stage * 0.05, region).forEach((room, k) => {
         const c = freeCell(room, { minStart: 6 }) || freeCell(room); if (!c) return; occ.add(key(c[0], c[1]));
-        level.pickups.push({ type: ob.item, stage, ...cellCenter(c[0], c[1]) });
+        const pk = { type: ob.item, stage, ...cellCenter(c[0], c[1]) };
+        if (isFrag) { pk.frag = k; pk.fragN = ob.count; pk.digits = level.code.slice(k * 2, k * 2 + 2); }
+        level.pickups.push(pk);
       });
+    } else if (ob.type === 'door' || ob.type === 'keypad') {
+      const where = ob._where || ob.where;
+      let tg = null;
+      if (where === 'choke' && choke) {
+        const p = cellCenter(choke.x, choke.y), mesh = makeDoor(ob.type, map, choke.x, choke.y); mesh.position.set(p.x, 0, p.z); G.add(mesh);
+        tg = { type: ob.type, stage, x: p.x, z: p.z, mesh, done: false, progress: 0, cell: [choke.x, choke.y] };
+        level.targets.push(tg); level.lamps.push({ x: p.x, y: 2.6, z: p.z, color: ob.type === 'door' ? 0xffb020 : 0x3a8aff, power: 12, flick: 0, small: true });
+      } else if (where === 'room') {
+        tg = placeTarget(pickRooms(1, 0.7, region)[0] || roomsByDist[roomsByDist.length - 1], ob.mesh || 'vault', stage, { lock: ob.type });
+        if (tg) tg.type = ob.type, tg.meshType = ob.mesh;
+      } else { // en la propia salida
+        const mesh = makeDoor(ob.type, null); mesh.position.set(exc.x, 0, exc.z); G.add(mesh);
+        tg = { type: ob.type, stage, x: exc.x, z: exc.z, mesh, done: false, progress: 0, atExit: true }; level.targets.push(tg);
+      }
+      if (tg) { tg.key = ob.key; tg.code = ob.code; }
+      if (ob.type === 'door') { const room = pickRooms(1, 0.75, 'near')[0] || roomsByDist[0]; const c = freeCell(room, { minStart: 6 }) || freeCell(room); if (c) { occ.add(key(c[0], c[1])); level.pickups.push({ type: 'key', name: ob.key, stage, ...cellCenter(c[0], c[1]) }); } }
+      if (ob.type === 'keypad' && ob.code === 'doc' && ob.doc) level.codeDoc = ob.doc;
+    } else if (ob.type === 'sequence') {
+      const order = [0, 1, 2, 3].slice(0, ob.count); for (let k = order.length - 1; k > 0; k--) { const r = Math.random() * (k + 1) | 0; [order[k], order[r]] = [order[r], order[k]]; }
+      pickRooms(ob.count, 0.3 + stage * 0.08, region).forEach((room, k) => {
+        const tg = placeTarget(room, ob.target, stage, { seq: k, colName: SEQCOL[k][0] });
+        if (tg) { tg.order = order.indexOf(k); const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8), new THREE.MeshStandardMaterial({ color: 0x111111, emissive: SEQCOL[k][1], emissiveIntensity: 3 })); bulb.position.y = (tg.mesh.userData.h || 1.6) + 0.45; tg.mesh.add(bulb); tg.bulb = bulb; level.lamps[level.lamps.length - 1].color = SEQCOL[k][1]; }
+      });
+      level.seqOrder = order.map(k => SEQCOL[k][0]).join(' → ');
+      if (ob.doc) placeDoc({ title: ob.doc.title, body: ob.doc.body.replace('{ORDER}', level.seqOrder), note: (ob.noteLabel || 'Orden') + ': ' + level.seqOrder }, region, 0.15);
     } else if (ob.type === 'interact' || ob.type === 'plant') {
-      const rooms = M.layout === 'arena' ? [roomsByDist[0]] : pickRooms(ob.count, 0.35 + stage * 0.1);
+      const rooms = M.layout === 'arena' ? [roomsByDist[0]] : pickRooms(ob.count, 0.35 + stage * 0.1, region);
       rooms.forEach(room => {
         let c = null;
         for (let t = 0; t < 30 && !c; t++) { const cc = freeCell(room, { interior: true, minStart: 5 }); if (cc && placeSolid(cc[0], cc[1])) c = cc; }
@@ -1285,10 +1516,8 @@ function buildLevel(M, scene) {
     }
   });
   // ---- documentos
-  (M.docs || []).forEach((doc, k) => {
-    const room = pickRooms(1, 0.15 + k * 0.2)[0] || roomsByDist[0]; const c = freeCell(room) || [map.start.x + 1, map.start.y];
-    occ.add(key(c[0], c[1])); level.pickups.push({ type: 'doc', doc, ...cellCenter(c[0], c[1]) });
-  });
+  (M.docs || []).forEach((doc, k) => placeDoc(doc, 'near', 0.15 + k * 0.2));
+  if (level.codeDoc) placeDoc({ title: level.codeDoc.title, body: level.codeDoc.body.split('{CODE}').join(level.code), note: (level.codeDoc.note || level.codeDoc.title) + ': ' + level.code }, 'near', 0.45);
   // ---- suministros
   const nRooms = map.rooms.length;
   const supply = (type, n) => { for (let k = 0; k < n; k++) { const room = map.rooms[R() * nRooms | 0]; const c = freeCell(room); if (c) { occ.add(key(c[0], c[1])); level.pickups.push({ type, ...cellCenter(c[0], c[1]) }); } } };
@@ -1496,6 +1725,27 @@ function decorateWalls(map, th, G, R) {
       put(boxGeo, D.hazard, cx, 0.12, fz + 0.03, CS, 0.24, 0.05);
     }
   }
+}
+
+
+// puerta física (o compuerta en la salida) con cerradura de llave o teclado
+function makeDoor(kind, map, i, j) {
+  const M = mats(), g = new THREE.Group();
+  const col = kind === 'door' ? 0xffb020 : 0x3a8aff;
+  const along = map ? (map.g[j * map.W + i - 1] !== 0 && map.g[j * map.W + i + 1] !== 0) : true; // pasillo norte-sur: puerta a lo ancho (eje x)
+  const slab = new THREE.Group(); g.add(slab);
+  const leaf = box(CS, 2.9, 0.32, M.steel, 0, 1.45, 0); slab.add(leaf);
+  for (let k = 0; k < 4; k++) slab.add(box(CS * 0.9, 0.06, 0.36, M.dark, 0, 0.5 + k * 0.65, 0));
+  slab.add(box(CS * 0.92, 0.18, 0.36, M.hazard, 0, 0.18, 0));
+  const lockM = new THREE.MeshStandardMaterial({ color: 0x111111, emissive: col, emissiveIntensity: 3 });
+  const lock = box(0.28, 0.4, 0.42, M.dark, 0.6, 1.3, 0); slab.add(lock);
+  const led = box(0.12, 0.12, 0.46, lockM, 0.6, 1.4, 0); slab.add(led);
+  if (kind === 'keypad') for (let k = 0; k < 6; k++) slab.add(box(0.05, 0.05, 0.46, M.metal, 0.54 + (k % 2) * 0.1, 1.25 - (k >> 1) * 0.07, 0));
+  // marco
+  g.add(box(0.25, 3.2, 0.5, M.dark, -CS / 2, 1.6, 0)); g.add(box(0.25, 3.2, 0.5, M.dark, CS / 2, 1.6, 0)); g.add(box(CS + 0.25, 0.3, 0.5, M.dark, 0, 3.05, 0));
+  if (!along) g.rotation.y = Math.PI / 2;
+  g.userData = { slab, led, lockM, h: 2.4 };
+  return g;
 }
 
 // ---- actors.js
@@ -1872,7 +2122,7 @@ function loadMission(idx, preview = false) {
   // jugadora
   const P = G.player = {
     x: L.startPos.x, z: L.startPos.z, vx: 0, vz: 0, yaw: Math.PI / 2, r: 0.38, hp: 100, crouch: false, run: false, lamp: true,
-    weapon: 'pistol', mag: { pistol: 12, shotgun: 6 }, res: { pistol: 24, shotgun: M.id >= 4 ? 6 : 0 }, hasShotgun: M.id >= 4, med: 1,
+    weapon: 'pistol', mag: { pistol: 12, shotgun: 6 }, res: { pistol: 24, shotgun: M.id >= 5 ? 6 : 0 }, hasShotgun: M.id >= 5, med: 1,
     fireT: 0, reloadT: 0, stepT: 0, inv: 0, recoil: 0, cqcT: 0, rig: buildActorModel('player', 7), aimX: 0, aimZ: 0, faction: 'p', alive: true,
   };
   if (M.boss) { P.res.pistol = 60; P.res.shotgun = 18; P.med = 3; }
@@ -1882,7 +2132,9 @@ function loadMission(idx, preview = false) {
   G.time = 0; G.stats = { alerts: 0, kills: 0, takedowns: 0, infKills: 0, damage: 0, docs: 0, shots: 0 };
   G.subQ = []; G.sub = null; $('subs').innerHTML = '';
   G.survT = M.survive || 0; G.escT = M.escape || 0; G.waveT = 3; G.bossDeadT = 0; G.boss = null; G.ammoT = 15; G.done = false; G.failT = 0;
-  G.plants = [];
+  G.plants = []; G.notes = []; G.keys = new Set(); G.seqNext = 0; G.autoT = null;
+  if (M.objectives.some(o => o.code === 'vault')) { L.code = SAVE.vaultCode || String(100000 + Math.random() * 900000 | 0); G.notes.push('Código de la Bóveda (fragmentos de Lind, Okafor y Reyes): ' + L.code); }
+  if (M.radioCode && !preview) { setTimeout(() => { if (G.M === M && G.mode === 'play') { M.radioCode.forEach(l => subLine(l[0], null, l[1].split('{CODE}').join(L.code.split('').join(' ')))); addNote('Código de la puerta del muelle (Ibarra): ' + L.code); } }, 5000); }
   // enemigos
   L.guardsSpawn.forEach(s => spawn('guard', s.x, s.z, { wp: s.wp, sentry: s.sentry }));
   L.infSpawn.forEach(s => spawn(s.kind, s.x, s.z, { dormant: !!M.dormant }));
@@ -2151,13 +2403,18 @@ function updPlayer(dt) {
   if (sp > 0.5) { const mv = Math.atan2(P.vx, P.vz); const back = angDiff(mv, P.yaw) > Math.PI / 2; if (back) { P.rig.legL.pivot.rotation.x *= -1; P.rig.legR.pivot.rotation.x *= -1; } }
 }
 
+function addNote(txt) { if (G.notes.includes(txt)) return; G.notes.push(txt); subLine('SYS', null, 'Anotado en tus notas (Esc para verlas)'); }
 function pickup(p) {
   const P = G.player;
   if (p.type === 'ammo') { P.res.pistol += 12; subLine('SYS', null, '+12 balas de pistola'); }
   else if (p.type === 'shells') { if (!P.hasShotgun) return; P.res.shotgun += 6; subLine('SYS', null, '+6 cartuchos'); }
   else if (p.type === 'medkit') { if (P.med >= 4) return; P.med++; subLine('SYS', null, 'Botiquín recogido'); }
-  else if (p.type === 'doc') { G.stats.docs++; openDoc(p.doc); }
-  else { G.items[p.type] = (G.items[p.type] || 0) + 1; const nm = { keycard: 'Tarjeta de acceso', tape: 'Grabación', code: 'Fragmento de código' }[p.type]; subLine('SYS', null, nm + ' obtenida'); }
+  else if (p.type === 'doc') { if (!p.doc.note) G.stats.docs++; openDoc(p.doc); if (p.doc.note) addNote(p.doc.note); }
+  else if (p.type === 'key') { G.keys.add(p.name); subLine('SYS', null, 'Obtenido: ' + p.name); toast(p.name.toUpperCase()); }
+  else {
+    G.items[p.type] = (G.items[p.type] || 0) + 1; const nm = { keycard: 'Tarjeta de acceso obtenida', tape: 'Grabación obtenida', code: 'Fragmento de código obtenido', fuse: 'Fusible obtenido' }[p.type]; subLine('SYS', null, nm);
+    if (p.type === 'code' && p.digits) addNote(`Fragmento ${p.frag + 1} de ${p.fragN} del código: ${p.digits}`);
+  }
   p.taken = true; p.mesh.visible = false; SFX.pickup();
   checkStages();
 }
@@ -2358,7 +2615,7 @@ function checkStages() {
   while (G.stage < G.M.objectives.length && guard++ < 5) {
     const ob = G.M.objectives[G.stage]; let ok = false;
     if (ob.type === 'collect') ok = (G.items[ob.item] || 0) >= ob.count;
-    else if (ob.type === 'interact' || ob.type === 'plant') ok = G.level.targets.filter(t => t.stage === G.stage && t.done).length >= Math.min(ob.count, G.level.targets.filter(t => t.stage === G.stage).length);
+    else if (['interact', 'plant', 'door', 'keypad', 'sequence'].includes(ob.type)) ok = G.level.targets.filter(t => t.stage === G.stage && t.done).length >= Math.min(ob.count || 1, G.level.targets.filter(t => t.stage === G.stage).length);
     if (!ok) break;
     G.stage++; SFX.objective(); toast('OBJETIVO COMPLETADO');
     const lines = G.M.stageRadio && G.M.stageRadio[G.stage]; if (lines) lines.forEach(l => subLine(l[0], null, l[1]));
@@ -2371,16 +2628,40 @@ function interactables() {
   for (const t of G.level.targets) { if (t.done || t.stage !== G.stage) continue; const d = Math.hypot(t.x - P.x, t.z - P.z); if (d < bd) { bd = d; best = t; } }
   return best;
 }
-const ACT = { relay: ['Sabotear relé', 1.4], generator: ['Arrancar generador', 1.6], terminal: ['Descargar datos', 2.0], tank: ['Colocar C4', 1.8], antenna: ['Instalar inhibidor', 2.4], vault: ['Introducir código', 1.8], console: ['Desactivar bomba', 1.8], emitter: ['Desactivar emisor', 2.0], fuel: ['Colocar C4', 1.8], heli: ['Colocar C4', 2.2] };
+const ACT = { door: ['Abrir puerta', 0.5], keypad: ['Usar teclado numérico', 0.3], valve: ['Girar válvula', 1.2], floodgate: ['Abrir compuerta', 1.4], fusebox: ['Colocar fusibles', 1.4], relay: ['Sabotear relé', 1.4], generator: ['Arrancar generador', 1.6], terminal: ['Descargar datos', 2.0], tank: ['Colocar C4', 1.8], antenna: ['Instalar inhibidor', 2.4], vault: ['Introducir código', 1.8], console: ['Desactivar bomba', 1.8], emitter: ['Desactivar emisor', 2.0], fuel: ['Colocar C4', 1.8], heli: ['Colocar C4', 2.2] };
 function updInteract(dt) {
   const t = interactables(); G.curT = t;
   if (G.autoT && G.autoT !== t) G.autoT = null;
   if (t && (keys.KeyE || touch.act || G.autoT === t) && G.player.alive) {
+    if (t.type === 'door' && !G.keys.has(t.key)) { lockedMsg('Cerrada. Necesitas: ' + t.key); G.autoT = null; t.progress = 0; return; }
+    if (t.type === 'keypad') { G.autoT = null; t.progress = 0; keys.KeyE = false; openKeypad(t); return; }
     t.progress += dt / ACT[t.type][1];
     if (t.progress >= 1) completeTarget(t);
   } else if (t) t.progress = Math.max(0, t.progress - dt * 2);
 }
+function lockedMsg(m) { if ((G.lockT || 0) > G.t) return; G.lockT = G.t + 2.5; subLine('SYS', null, m); SFX.empty(); }
+function openDoor(t) {
+  t.done = true; t.progress = 1; SFX.door();
+  if (t.cell) { const map = G.level.map; map.g[t.cell[1] * map.W + t.cell[0]] = 0; buildRadarMap(); }
+  t.opening = 0; G.doorsAnim = (G.doorsAnim || []).concat(t);
+  const ud = t.mesh.userData; if (ud.lockM) ud.lockM.emissive.set(0x30ff70);
+  if (G.M.id === 4 && t.type === 'door') { G.player.hasShotgun = true; G.player.res.shotgun += 6; }
+  checkStages();
+}
 function completeTarget(t) {
+  if (t.type === 'door' || t.type === 'keypad') { openDoor(t); return; }
+  if (t.seq !== undefined) { // secuencia: comprobar el orden
+    if (t.order !== G.seqNext) {
+      t.progress = 0; G.seqNext = 0; G.autoT = null;
+      G.level.targets.forEach(o => { if (o.stage === t.stage && o.seq !== undefined) { o.done = false; o.progress = 0; } });
+      SFX.buzz(); G.shake = Math.max(G.shake, 0.4); makeNoise(t.x, t.z, 18, 'player');
+      subLine('SYS', null, (G.M.fail || 'Orden incorrecto. La secuencia se ha reiniciado.') + ' Vuelve a empezar.');
+      return;
+    }
+    G.seqNext++; t.done = true; t.progress = 1; SFX.beep(); if (t.bulb) t.bulb.material.emissive.multiplyScalar(0.15);
+    subLine('SYS', null, `${ACT[t.type][0]} ${t.colName.toLowerCase()}: correcto (${G.seqNext}/${G.level.targets.filter(o => o.stage === t.stage).length})`);
+    checkStages(); return;
+  }
   t.done = true; t.progress = 1; SFX.beep();
   if (t.plant) { t.boomT = 3.2; t.beepT = 0; G.plants.push(t); subLine('SYS', null, 'C4 colocado. ¡Aléjate!'); }
   else if (t.type === 'generator') { t.running = true; t.noiseT = 0; makeNoise(t.x, t.z, 18, 'gen'); }
@@ -2441,7 +2722,10 @@ function updTags() {
   if (t && G.player.alive) {
     const [x, y] = proj(t.x, (t.mesh.userData.h || 1.6) + 0.8, t.z);
     pe.hidden = false; pe.style.left = x + 'px'; pe.style.top = y + 'px';
-    const lbl = ACT[t.type][0]; pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> ${lbl}<div class="prog"><i style="width:${(t.progress * 100) | 0}%"></i></div>`;
+    let lbl = ACT[t.type][0];
+    if (t.colName) lbl += ' ' + t.colName.toLowerCase();
+    if (t.type === 'door') lbl = G.keys.has(t.key) ? 'Abrir con ' + t.key.toLowerCase() : 'Cerrada · necesitas ' + t.key.toLowerCase();
+    pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> ${lbl}<div class="prog"><i style="width:${(t.progress * 100) | 0}%"></i></div>`;
   } else {
     const c = G.player.alive ? cqcTarget() : null;
     if (c && (canTakedown(c) || c.faction === 'i')) {
@@ -2458,6 +2742,8 @@ function updHUDObjective() {
   if (!G.M) return; const ob = curObj();
   let txt = ob.label;
   if (ob.type === 'collect') txt += ` (${Math.min(G.items[ob.item] || 0, ob.count)}/${ob.count})`;
+  if (ob.type === 'door') { const t = G.level.targets.find(x => x.stage === G.stage); if (t) txt += G.keys.has(t.key) ? ' · llave: SÍ' : ' · llave: NO'; }
+  if (ob.type === 'sequence') txt += ` (${G.seqNext}/${ob.count})`;
   if (ob.type === 'interact' || ob.type === 'plant') txt += ` (${G.level.targets.filter(t => t.stage === G.stage && t.done).length}/${ob.count})`;
   setTxt('hObj', txt);
 }
@@ -2482,7 +2768,7 @@ const radar = $('radar'), rctx = radar.getContext('2d'); let radarMap = null;
 function buildRadarMap() {
   const map = G.level.map, S = 8, c = document.createElement('canvas'); c.width = map.W * S; c.height = map.H * S; const x = c.getContext('2d');
   x.fillStyle = 'rgba(120,170,200,0.10)'; x.fillRect(0, 0, c.width, c.height);
-  for (let j = 0; j < map.H; j++) for (let i = 0; i < map.W; i++) { const v = map.g[j * map.W + i]; if (v === 1) { x.fillStyle = 'rgba(150,200,230,0.55)'; x.fillRect(i * S, j * S, S, S); } else if (v === 2) { x.fillStyle = 'rgba(150,200,230,0.28)'; x.fillRect(i * S + 1, j * S + 1, S - 2, S - 2); } }
+  for (let j = 0; j < map.H; j++) for (let i = 0; i < map.W; i++) { const v = map.g[j * map.W + i]; if (v === 1) { x.fillStyle = 'rgba(150,200,230,0.55)'; x.fillRect(i * S, j * S, S, S); } else if (v === 2) { x.fillStyle = 'rgba(150,200,230,0.28)'; x.fillRect(i * S + 1, j * S + 1, S - 2, S - 2); } else if (v === 3) { x.fillStyle = 'rgba(255,176,32,0.95)'; x.fillRect(i * S, j * S, S, S); } }
   radarMap = { c, S };
 }
 function drawRadar() {
@@ -2626,6 +2912,7 @@ function update(dt) {
   separate();
   P.rig.g.position.set(P.x, 0, P.z);
   updPlants(dt);
+  if (G.doorsAnim) G.doorsAnim.forEach(t => { if (t.opening < 1) { t.opening = Math.min(1, t.opening + dt * 0.8); const sl = t.mesh.userData.slab; if (sl) sl.position.y = -t.opening * 3.1; if (t.opening >= 1 && t.atExit) t.mesh.visible = false; } });
   // el fuego quema
   for (const f of G.level.fires) { if (Math.hypot(f.position.x - P.x, f.position.z - P.z) < 1.1 && P.alive) { G.burnT = (G.burnT || 0) - dt; if (G.burnT <= 0) { G.burnT = 0.4; P.inv = 0; damagePlayer(5); } } }
   // alarma
@@ -2659,7 +2946,7 @@ function update(dt) {
     }
   }
   // hints de la primera misión
-  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD: Sílex mira hacia donde camina. Clic para disparar hacia delante.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar: marca el objetivo. Los botiquines se usan solos.'].forEach(t => subLine('SYS', null, t)); }
+  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD: Sílex mira hacia donde camina. Clic para disparar hacia delante.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar. Algunas puertas piden llave o código: los códigos que encuentres se apuntan en tus notas (Esc).'].forEach(t => subLine('SYS', null, t)); }
   if (P.hp < 30 && P.alive) { G.hbT = (G.hbT || 0) - dt; if (G.hbT <= 0) { G.hbT = 0.9; SFX.heartbeat(); } }
   updCamera(dt); updLights(dt); updFX(dt); updSubs(dt);
   CUT.uPlayer.value.set(P.x, 0, P.z);
@@ -2716,7 +3003,7 @@ function showKeys(back) {
       <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span><kbd>M</kbd><span>Activar o silenciar la música</span>
       <kbd>R · H</kbd><span>Recargar y curarse a mano (las dos cosas también ocurren solas)</span>
     </div>
-    <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Los anillos en el suelo muestran cuánto ruido haces.</p>
+    <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Hay puertas con llave, teclados con código y mecanismos que deben activarse en orden: busca documentos, porque las pistas se apuntan solas en tus notas (Esc). Los anillos en el suelo muestran cuánto ruido haces.</p>
     <div class="btnrow"><button class="btn" id="bBack">Volver</button></div></div>`);
   $('bBack').onclick = () => { SFX.ui(); back(); }; $('bBack').focus();
 }
@@ -2790,6 +3077,7 @@ function missionComplete() {
   const [r, rn] = rankOf(); const M = G.M;
   const order = ['D', 'C', 'B', 'A', 'S'];
   if (!SAVE.ranks[M.id] || order.indexOf(r) > order.indexOf(SAVE.ranks[M.id])) SAVE.ranks[M.id] = r;
+  if (M.saveCode) SAVE[M.saveCode] = G.level.code;
   SAVE.unlocked = Math.max(SAVE.unlocked, Math.min(20, M.id + 1)); save();
   setTimeout(() => {
     G.mode = 'debrief'; setHUD(false);
@@ -2844,6 +3132,7 @@ function pause() {
   const ob = curObj();
   screen(`<div class="card" style="width:min(520px,100%)"><div class="eyebrow">Pausa · Misión ${String(G.M.id).padStart(2, '0')}</div><h2>${G.M.title}</h2>
     <div class="objs"><div>${ob.label}</div></div>
+    ${G.notes.length ? `<div class="notes"><div class="eyebrow">Notas</div>${G.notes.map(n => `<div>${n}</div>`).join('')}</div>` : ''}
     <div class="menu" style="margin-top:18px;width:100%"><button id="pR">Continuar</button><button id="pRe">Reiniciar misión</button><button id="pK">Controles</button><button id="pM">Abandonar al menú</button></div></div>`);
   $('pR').onclick = resume; $('pRe').onclick = () => { SFX.ui(); startMission(G.idx); }; $('pK').onclick = () => showKeys(() => { G.paused = false; pause(); }); $('pM').onclick = () => { SFX.ui(); showTitle(); };
   $('pR').focus();
@@ -2858,6 +3147,7 @@ addEventListener('keydown', (e) => {
   if ((G.mode === 'brief' || G.mode === 'debrief') && G.briefNext && (e.code === 'Space' || e.code === 'Enter') && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && !document.activeElement.hidden && e.code === 'Enter')) { e.preventDefault(); G.briefNext(); return; }
   if (e.repeat) { keys[e.code] = true; return; }
   keys[e.code] = true; SFX.init();
+  if (G.keypad) { e.preventDefault(); if (/^(Digit|Numpad)\d$/.test(e.code)) G.keypad.press(e.code.slice(-1)); else if (e.code === 'Backspace') G.keypad.press('del'); else if (e.code === 'Enter' || e.code === 'NumpadEnter') G.keypad.press('ok'); else if (e.code === 'Escape') G.keypad.close(); return; }
   if (e.code === 'KeyM') { const on = SFX.toggleMusic(); if (G.mode === 'play') subLine('SYS', null, on ? 'Música activada' : 'Música desactivada'); return; }
   if (e.code === 'Escape' || e.code === 'KeyP') { pause(); return; }
   if (G.mode !== 'play' || G.paused) return;
@@ -2913,7 +3203,32 @@ try {
   requestAnimationFrame(loop);
 } catch (err) { $('loading').textContent = 'ERROR: ' + err.message; console.error(err); }
 // gancho de depuración (consola): __PC.start(n) inicia la misión n (1-20)
-window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r), SFX };
+window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r), SFX, open: (t) => openDoor(t) };
+
+
+// ---- teclado numérico
+function openKeypad(t) {
+  G.paused = true; G.uiBlock = true; mouse.left = false; $('cursor').hidden = true; canvas.style.cursor = 'default';
+  const code = G.level.code; let entry = '';
+  const el = screen(`<div class="card keypad"><div class="eyebrow">Cerradura electrónica · ${code.length} cifras</div>
+    <div class="kpdisp" id="kpd"></div><div class="kpmsg" id="kpm">Introduce el código</div>
+    <div class="kpgrid">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-k="${n}">${n}</button>`).join('')}<button data-k="del">Borrar</button><button data-k="0">0</button><button data-k="ok" class="ok">OK</button></div>
+    <div class="notes">${G.notes.length ? '<div class="eyebrow">Tus notas</div>' + G.notes.map(n => `<div>${n}</div>`).join('') : '<div class="eyebrow">Tus notas</div><div>No has anotado ningún código todavía. Busca documentos por la zona.</div>'}</div>
+    <div class="btnrow"><button class="btn ghost" id="kpx">Salir (Esc)</button></div></div>`);
+  const disp = () => { $('kpd').textContent = (entry + '_'.repeat(code.length - entry.length)).split('').join(' '); };
+  const close = () => { G.keypad = null; hideScreen(); G.paused = false; setTimeout(() => G.uiBlock = false, 150); $('cursor').hidden = touch.on; canvas.style.cursor = 'none'; };
+  const press = (k) => {
+    if (k === 'del') { entry = entry.slice(0, -1); SFX.blip(); }
+    else if (k === 'ok') {
+      if (entry === code) { $('kpm').textContent = 'ACCESO CONCEDIDO'; $('kpm').className = 'kpmsg okc'; SFX.objective(); G.keypad = null; setTimeout(() => { close(); openDoor(t); }, 600); return; }
+      $('kpm').textContent = 'CÓDIGO INCORRECTO'; $('kpm').className = 'kpmsg bad'; SFX.buzz(); entry = ''; makeNoise(t.x, t.z, 10, 'player');
+    } else if (entry.length < code.length) { entry += k; SFX.blip(); }
+    disp();
+  };
+  el.querySelectorAll('.kpgrid button').forEach(b => b.onclick = () => press(b.dataset.k));
+  $('kpx').onclick = close; disp();
+  G.keypad = { press, close };
+}
 
 </script>
 

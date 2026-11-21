@@ -372,3 +372,136 @@ const EPILOGUE = [
   'La Dra. Ilse Maren utilizó la fórmula del inhibidor N-4 para desarrollar un tratamiento contra la cepa original. Lo bautizó «Novak».',
   'Sección Nueve sigue sin existir. Su agente, tampoco.',
 ];
+
+// ============================================================================
+// PUZLES — cerraduras, códigos, secuencias y fusibles integrados en el guion.
+// Cada entrada sustituye los objetivos de la misión y añade diálogos/documentos.
+//   door     → puerta con llave (where: 'choke' corta el camino; 'exit' en la salida)
+//   keypad   → teclado numérico (code: 'doc' | 'fragments' | 'vault' | 'radio')
+//   sequence → activar N elementos en el orden indicado en un documento
+// ============================================================================
+const PUZZLES = {
+  1: {
+    objectives: [
+      { type: 'door', key: 'Llave de la escotilla', where: 'exit', label: 'La escotilla tiene candado: encuentra su llave y ábrela' },
+      { type: 'reach', label: 'Entra por la escotilla de servicio' } ],
+    introAdd: [['IBA', 'Un detalle: la escotilla tiene un candado de obra. Los guardias del perímetro guardan la llave en alguna de las garitas.']],
+    stageRadio: { 1: [['SIL', 'Candado abierto. Bajo.']] },
+  },
+  2: {
+    objectives: [
+      { type: 'collect', item: 'keycard', count: 1, label: 'Consigue la tarjeta de acceso N1 en la oficina del capataz' },
+      { type: 'keypad', where: 'choke', code: 'doc', doc: { title: 'Pósit en una taquilla', note: 'Puerta del almacén 3', body: 'Brandt:\n\nEl código de la puerta del almacén 3 es {CODE}.\nApréndetelo de una vez y deja de pegarlo en las taquillas.\n\n— El capataz' }, label: 'La puerta del almacén 3 va con código: averigua cuál es' },
+      { type: 'reach', label: 'Entra en el puesto de control' } ],
+    stageRadio: { 1: [['IBA', 'Tienes la tarjeta. Pero la puerta del almacén 3 va con código. Alguien lo tendrá apuntado.']], 2: [['IBA', 'Dentro. El puesto de control está al otro lado.']] },
+  },
+  3: {
+    objectives: [
+      { type: 'interact', target: 'relay', count: 2, label: 'Sabotea los 2 relés de la alarma general' },
+      { type: 'keypad', where: 'choke', code: 'doc', doc: { title: 'Cuaderno del vigilante', note: 'Paso a barracones', body: 'Turno de noche.\n\nCódigo de paso a barracones (cambia cada día): {CODE}\n\nHaller sigue encerrado en los vestuarios. Golpea la puerta cada vez que alguien pasa.\nNo vamos a abrir.' }, label: 'Abre el paso a los barracones con el código del día' },
+      { type: 'reach', label: 'Cruza hacia los barracones' } ],
+    stageRadio: { 1: [['IBA', 'Alarma general fuera de servicio. Ahora pueden verte, pero no pueden avisar al resto del complejo.']], 2: [['SIL', 'Código aceptado.']] },
+  },
+  4: {
+    objectives: [
+      { type: 'collect', item: 'tape', count: 1, label: 'Encuentra la grabación de radio de Novak' },
+      { type: 'door', key: 'Llave de la armería', where: 'choke', label: 'La armería corta el paso: encuentra la llave del sargento Brandt' },
+      { type: 'reach', label: 'Avanza hacia el ala médica' } ],
+    stageRadio: { 2: [['SIL', 'La armería. Hay una escopeta táctica. Me la llevo.'], ['IBA', 'Úsala con cabeza: no lleva silenciador.']] },
+  },
+  5: {
+    objectives: [
+      { type: 'collect', item: 'keycard', count: 1, label: 'Recupera la tarjeta N2 del jefe médico' },
+      { type: 'keypad', where: 'choke', code: 'doc', doc: { title: 'Pizarra de enfermería', note: 'Puerta de aislamiento', body: 'TURNO C — CUARENTENA\n\n· Cama 3: la sedación no hace efecto.\n· Cama 7: trasladado a aislamiento.\n· Código de la puerta de aislamiento: {CODE}\n  (NO dárselo a seguridad).\n\nSi los pacientes de fase 3 se levantan, NO abráis.' }, label: 'Abre la puerta de aislamiento (el código está apuntado en la enfermería)' },
+      { type: 'reach', label: 'Llega al ascensor de servicio' } ],
+    stageRadio: { 2: [['MAR', 'Aislamiento abierto. Lo que hubiera dentro ya no está encerrado. Cuidado.']] },
+  },
+  6: {
+    objectives: [
+      { type: 'collect', item: 'fuse', count: 2, label: 'Encuentra 2 fusibles de repuesto para el cuadro del ascensor' },
+      { type: 'interact', target: 'fusebox', count: 1, label: 'Coloca los fusibles en el cuadro eléctrico' },
+      { type: 'interact', target: 'generator', count: 3, label: 'Arranca los 3 generadores auxiliares' },
+      { type: 'reach', label: 'Sube al ascensor de servicio' } ],
+    docsAdd: [{ title: 'Aviso de mantenimiento', body: 'Los fusibles del cuadro del ascensor B se fundieron con la sobrecarga del día −2.\n\nHay repuestos en el almacén técnico y en la taquilla del turno de noche.\nSin fusibles, los generadores no alimentan el ascensor.' }],
+    introAdd: [['MAR', 'Y otra cosa: el cuadro del ascensor tiene los fusibles fundidos. Sin repuestos, los generadores no servirán de nada.']],
+    stageRadio: { 1: [['IBA', 'Tienes los fusibles. Ahora, el cuadro eléctrico.']], 2: [['SIL', 'Cuadro reparado. Faltan los generadores.']], 3: [['IBA', 'Energía restablecida. Los infectados van a ir hacia ese ruido. Sal de ahí.']] },
+  },
+  7: {
+    objectives: [
+      { type: 'interact', target: 'terminal', count: 3, label: 'Descarga los datos de 3 terminales del programa ATLAS' },
+      { type: 'door', key: 'Tarjeta del archivero', where: 'choke', label: 'El paso a la galería está cerrado: busca la tarjeta del archivero' },
+      { type: 'reach', label: 'Continúa hacia la galería de cultivo' } ],
+    stageRadio: { 1: [['SIL', 'Maren. Aquí pone que CENIZA deriva de un fungicida. Autora: I. Maren.'], ['MAR', 'Creé un hongo que mataba plagas de langosta. Halden lo convirtió en esto. Por eso me fui. Por eso estoy ayudando.'], ['IBA', 'Sesenta por ciento de la financiación está censurado. Alguien con mucho dinero quería esto. Sigue, Sílex.']] },
+  },
+  8: {
+    objectives: [
+      { type: 'sequence', target: 'valve', count: 3, noteLabel: 'Válvulas de ventilación B-2', doc: { title: 'Protocolo de ventilación B-2', body: 'En caso de incidente en la galería, cerrar las válvulas de ventilación en este orden EXACTO:\n\n{ORDER}\n\nUn orden incorrecto provoca una descarga de presión. Es ruidosa. Muy ruidosa.\n\nCon la ventilación cerrada, nada de lo que ocurra en la galería llegará a la superficie.' }, label: 'Cierra las 3 válvulas de ventilación en el orden del protocolo' },
+      { type: 'plant', target: 'tank', count: 3, label: 'Coloca C4 en los 3 tanques de esporas' },
+      { type: 'reach', label: 'Baja al laboratorio B-3' } ],
+    introAdd: [['MAR', 'Antes de volar nada, cierre la ventilación. Si no, la explosión empujará las esporas a la superficie. Debe de haber un protocolo con el orden de las válvulas.']],
+    stageRadio: { 1: [['MAR', 'Ventilación cerrada. Ahora sí: los tanques.']], 2: [['IBA', 'Galería destruida. Y has despertado a todo el corral. Muévete.']] },
+    fail: 'La válvula silba con una descarga de presión. Todo el sector la ha oído.',
+  },
+  9: {
+    objectives: [
+      { type: 'collect', item: 'code', count: 2, label: 'Encuentra las 2 mitades del código del laboratorio' },
+      { type: 'keypad', where: 'exit', code: 'fragments', label: 'Introduce el código en la puerta sellada del laboratorio B-3' },
+      { type: 'reach', label: 'Entra y encuentra a Novak' } ],
+    stageRadio: { 1: [['SIL', 'Tengo las dos mitades. Las he apuntado.']] },
+  },
+  12: {
+    objectives: [
+      { type: 'collect', item: 'fuse', count: 2, label: 'La antena no tiene corriente: encuentra 2 fusibles' },
+      { type: 'interact', target: 'antenna', count: 1, label: 'Instala el inhibidor de señal en la antena principal' },
+      { type: 'reach', label: 'Vuelve al interior por la escalera de servicio' } ],
+    introAdd: [['MAR', 'La antena lleva apagada desde la brecha: necesitará dos fusibles. Los guardias de la azotea tienen material en sus casetas.']],
+    stageRadio: { 1: [['MAR', 'Bien. Ahora instale el inhibidor en la antena.']], 2: [['MAR', 'Ya podemos hablar. Lea el mensaje que intercepté. Ibarra lo recibió hace cuatro horas.'], ['SIL', 'El sesenta por ciento censurado… era nuestro propio Ministerio.'], ['MAR', 'Le han cambiado la misión sin decírselo. Quieren CENIZA para ellos. Yo solo quiero que desaparezca.'], ['SIL', 'Ibarra me lo habría contado.'], ['MAR', 'Pregúnteselo. Cuando esté preparada.']] },
+  },
+  13: {
+    objectives: [
+      { type: 'collect', item: 'code', count: 3, label: 'Recupera los 3 fragmentos del código de la Bóveda' },
+      { type: 'door', key: 'Tarjeta de criogenia', where: 'choke', label: 'La salida de la cámara está bloqueada: busca la tarjeta de criogenia' },
+      { type: 'reach', label: 'Dirígete a la Bóveda' } ],
+    saveCode: 'vaultCode',
+    stageRadio: { 1: [['SIL', 'Tengo los tres fragmentos. Los he apuntado. Ibarra ha tardado un segundo de más en responderme.'], ['MAR', 'Lo he oído.']] },
+  },
+  14: {
+    objectives: [
+      { type: 'keypad', where: 'room', mesh: 'vault', code: 'vault', label: 'Abre la Bóveda con el código de seis cifras (consulta tus notas)' },
+      { type: 'reach', label: '¡Emboscada! Escapa hacia los túneles de drenaje' } ],
+  },
+  15: {
+    objectives: [
+      { type: 'collect', item: 'tape', count: 1, label: 'Encuentra el diario de voz de Varek' },
+      { type: 'sequence', target: 'floodgate', count: 3, noteLabel: 'Compuertas del colector', doc: { title: 'Plano del colector principal', body: 'Para vaciar el colector y pasar al hangar, abrir las compuertas en este orden:\n\n{ORDER}\n\nEn cualquier otro orden el agua retrocede de golpe. El estruendo se oye en todo el subsuelo.' }, label: 'Abre las 3 compuertas del colector en el orden correcto' },
+      { type: 'reach', label: 'Llega al hangar' } ],
+    stageRadio: { 2: [['IBA', 'El colector se vacía. El camino al hangar está libre.']] },
+    fail: 'El agua retrocede con un estruendo. Algo ahí abajo lo ha oído.',
+  },
+  17: {
+    objectives: [
+      { type: 'interact', target: 'emitter', count: 3, label: 'Desactiva los 3 emisores PASTOR' },
+      { type: 'door', key: 'Llave del sector del reactor', where: 'exit', label: 'El sector del reactor está cerrado: la llave la llevaba un técnico' },
+      { type: 'reach', label: 'Entra en el sector del reactor' } ],
+  },
+  18: {
+    objectives: [
+      { type: 'sequence', target: 'console', count: 3, noteLabel: 'Bombas de refrigeración', doc: { title: 'Manual de emergencia — Reactor', body: 'PARADA DE REFRIGERACIÓN\n(solo personal autorizado)\n\nDesactivar las bombas en este orden:\n\n{ORDER}\n\nCualquier otro orden dispara el bloqueo de seguridad y reinicia las tres bombas.' }, label: 'Desactiva las 3 bombas de refrigeración en el orden del manual' },
+      { type: 'reach', label: 'Entra en la sala de turbinas' } ],
+    fail: 'Bloqueo de seguridad: las bombas se reinician con un estruendo.',
+  },
+  20: {
+    objectives: [
+      { type: 'keypad', where: 'exit', code: 'radio', label: 'Abre la puerta del muelle con el código que te da Ibarra' },
+      { type: 'reach', label: 'Sube al pesquero antes de la fusión del núcleo' } ],
+    radioCode: [['IBA', 'Sílex, la puerta del muelle tiene cierre de emergencia. Código: {CODE}. Repito: {CODE}. Está en tus notas.']],
+  },
+};
+for (const [id, P] of Object.entries(PUZZLES)) {
+  const M = MISSIONS[id - 1];
+  M.objectives = P.objectives;
+  if (P.introAdd) M.intro = M.intro.concat(P.introAdd);
+  if (P.docsAdd) M.docs = (M.docs || []).concat(P.docsAdd);
+  if (P.stageRadio) M.stageRadio = Object.assign({}, M.stageRadio, P.stageRadio);
+  ['saveCode', 'radioCode', 'fail'].forEach(k => { if (P[k]) M[k] = P[k]; });
+}

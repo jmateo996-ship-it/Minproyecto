@@ -233,7 +233,7 @@ function loadMission(idx, preview = false) {
   // jugadora
   const P = G.player = {
     x: L.startPos.x, z: L.startPos.z, vx: 0, vz: 0, yaw: Math.PI / 2, r: 0.38, hp: 100, crouch: false, run: false, lamp: true,
-    weapon: 'pistol', mag: { pistol: 12, shotgun: 6 }, res: { pistol: 24, shotgun: M.id >= 4 ? 6 : 0 }, hasShotgun: M.id >= 4, med: 1,
+    weapon: 'pistol', mag: { pistol: 12, shotgun: 6 }, res: { pistol: 24, shotgun: M.id >= 5 ? 6 : 0 }, hasShotgun: M.id >= 5, med: 1,
     fireT: 0, reloadT: 0, stepT: 0, inv: 0, recoil: 0, cqcT: 0, rig: buildActorModel('player', 7), aimX: 0, aimZ: 0, faction: 'p', alive: true,
   };
   if (M.boss) { P.res.pistol = 60; P.res.shotgun = 18; P.med = 3; }
@@ -243,7 +243,9 @@ function loadMission(idx, preview = false) {
   G.time = 0; G.stats = { alerts: 0, kills: 0, takedowns: 0, infKills: 0, damage: 0, docs: 0, shots: 0 };
   G.subQ = []; G.sub = null; $('subs').innerHTML = '';
   G.survT = M.survive || 0; G.escT = M.escape || 0; G.waveT = 3; G.bossDeadT = 0; G.boss = null; G.ammoT = 15; G.done = false; G.failT = 0;
-  G.plants = [];
+  G.plants = []; G.notes = []; G.keys = new Set(); G.seqNext = 0; G.autoT = null;
+  if (M.objectives.some(o => o.code === 'vault')) { L.code = SAVE.vaultCode || String(100000 + Math.random() * 900000 | 0); G.notes.push('Código de la Bóveda (fragmentos de Lind, Okafor y Reyes): ' + L.code); }
+  if (M.radioCode && !preview) { setTimeout(() => { if (G.M === M && G.mode === 'play') { M.radioCode.forEach(l => subLine(l[0], null, l[1].split('{CODE}').join(L.code.split('').join(' ')))); addNote('Código de la puerta del muelle (Ibarra): ' + L.code); } }, 5000); }
   // enemigos
   L.guardsSpawn.forEach(s => spawn('guard', s.x, s.z, { wp: s.wp, sentry: s.sentry }));
   L.infSpawn.forEach(s => spawn(s.kind, s.x, s.z, { dormant: !!M.dormant }));
@@ -512,13 +514,18 @@ function updPlayer(dt) {
   if (sp > 0.5) { const mv = Math.atan2(P.vx, P.vz); const back = angDiff(mv, P.yaw) > Math.PI / 2; if (back) { P.rig.legL.pivot.rotation.x *= -1; P.rig.legR.pivot.rotation.x *= -1; } }
 }
 
+function addNote(txt) { if (G.notes.includes(txt)) return; G.notes.push(txt); subLine('SYS', null, 'Anotado en tus notas (Esc para verlas)'); }
 function pickup(p) {
   const P = G.player;
   if (p.type === 'ammo') { P.res.pistol += 12; subLine('SYS', null, '+12 balas de pistola'); }
   else if (p.type === 'shells') { if (!P.hasShotgun) return; P.res.shotgun += 6; subLine('SYS', null, '+6 cartuchos'); }
   else if (p.type === 'medkit') { if (P.med >= 4) return; P.med++; subLine('SYS', null, 'Botiquín recogido'); }
-  else if (p.type === 'doc') { G.stats.docs++; openDoc(p.doc); }
-  else { G.items[p.type] = (G.items[p.type] || 0) + 1; const nm = { keycard: 'Tarjeta de acceso', tape: 'Grabación', code: 'Fragmento de código' }[p.type]; subLine('SYS', null, nm + ' obtenida'); }
+  else if (p.type === 'doc') { if (!p.doc.note) G.stats.docs++; openDoc(p.doc); if (p.doc.note) addNote(p.doc.note); }
+  else if (p.type === 'key') { G.keys.add(p.name); subLine('SYS', null, 'Obtenido: ' + p.name); toast(p.name.toUpperCase()); }
+  else {
+    G.items[p.type] = (G.items[p.type] || 0) + 1; const nm = { keycard: 'Tarjeta de acceso obtenida', tape: 'Grabación obtenida', code: 'Fragmento de código obtenido', fuse: 'Fusible obtenido' }[p.type]; subLine('SYS', null, nm);
+    if (p.type === 'code' && p.digits) addNote(`Fragmento ${p.frag + 1} de ${p.fragN} del código: ${p.digits}`);
+  }
   p.taken = true; p.mesh.visible = false; SFX.pickup();
   checkStages();
 }
@@ -719,7 +726,7 @@ function checkStages() {
   while (G.stage < G.M.objectives.length && guard++ < 5) {
     const ob = G.M.objectives[G.stage]; let ok = false;
     if (ob.type === 'collect') ok = (G.items[ob.item] || 0) >= ob.count;
-    else if (ob.type === 'interact' || ob.type === 'plant') ok = G.level.targets.filter(t => t.stage === G.stage && t.done).length >= Math.min(ob.count, G.level.targets.filter(t => t.stage === G.stage).length);
+    else if (['interact', 'plant', 'door', 'keypad', 'sequence'].includes(ob.type)) ok = G.level.targets.filter(t => t.stage === G.stage && t.done).length >= Math.min(ob.count || 1, G.level.targets.filter(t => t.stage === G.stage).length);
     if (!ok) break;
     G.stage++; SFX.objective(); toast('OBJETIVO COMPLETADO');
     const lines = G.M.stageRadio && G.M.stageRadio[G.stage]; if (lines) lines.forEach(l => subLine(l[0], null, l[1]));
@@ -732,16 +739,40 @@ function interactables() {
   for (const t of G.level.targets) { if (t.done || t.stage !== G.stage) continue; const d = Math.hypot(t.x - P.x, t.z - P.z); if (d < bd) { bd = d; best = t; } }
   return best;
 }
-const ACT = { relay: ['Sabotear relé', 1.4], generator: ['Arrancar generador', 1.6], terminal: ['Descargar datos', 2.0], tank: ['Colocar C4', 1.8], antenna: ['Instalar inhibidor', 2.4], vault: ['Introducir código', 1.8], console: ['Desactivar bomba', 1.8], emitter: ['Desactivar emisor', 2.0], fuel: ['Colocar C4', 1.8], heli: ['Colocar C4', 2.2] };
+const ACT = { door: ['Abrir puerta', 0.5], keypad: ['Usar teclado numérico', 0.3], valve: ['Girar válvula', 1.2], floodgate: ['Abrir compuerta', 1.4], fusebox: ['Colocar fusibles', 1.4], relay: ['Sabotear relé', 1.4], generator: ['Arrancar generador', 1.6], terminal: ['Descargar datos', 2.0], tank: ['Colocar C4', 1.8], antenna: ['Instalar inhibidor', 2.4], vault: ['Introducir código', 1.8], console: ['Desactivar bomba', 1.8], emitter: ['Desactivar emisor', 2.0], fuel: ['Colocar C4', 1.8], heli: ['Colocar C4', 2.2] };
 function updInteract(dt) {
   const t = interactables(); G.curT = t;
   if (G.autoT && G.autoT !== t) G.autoT = null;
   if (t && (keys.KeyE || touch.act || G.autoT === t) && G.player.alive) {
+    if (t.type === 'door' && !G.keys.has(t.key)) { lockedMsg('Cerrada. Necesitas: ' + t.key); G.autoT = null; t.progress = 0; return; }
+    if (t.type === 'keypad') { G.autoT = null; t.progress = 0; keys.KeyE = false; openKeypad(t); return; }
     t.progress += dt / ACT[t.type][1];
     if (t.progress >= 1) completeTarget(t);
   } else if (t) t.progress = Math.max(0, t.progress - dt * 2);
 }
+function lockedMsg(m) { if ((G.lockT || 0) > G.t) return; G.lockT = G.t + 2.5; subLine('SYS', null, m); SFX.empty(); }
+function openDoor(t) {
+  t.done = true; t.progress = 1; SFX.door();
+  if (t.cell) { const map = G.level.map; map.g[t.cell[1] * map.W + t.cell[0]] = 0; buildRadarMap(); }
+  t.opening = 0; G.doorsAnim = (G.doorsAnim || []).concat(t);
+  const ud = t.mesh.userData; if (ud.lockM) ud.lockM.emissive.set(0x30ff70);
+  if (G.M.id === 4 && t.type === 'door') { G.player.hasShotgun = true; G.player.res.shotgun += 6; }
+  checkStages();
+}
 function completeTarget(t) {
+  if (t.type === 'door' || t.type === 'keypad') { openDoor(t); return; }
+  if (t.seq !== undefined) { // secuencia: comprobar el orden
+    if (t.order !== G.seqNext) {
+      t.progress = 0; G.seqNext = 0; G.autoT = null;
+      G.level.targets.forEach(o => { if (o.stage === t.stage && o.seq !== undefined) { o.done = false; o.progress = 0; } });
+      SFX.buzz(); G.shake = Math.max(G.shake, 0.4); makeNoise(t.x, t.z, 18, 'player');
+      subLine('SYS', null, (G.M.fail || 'Orden incorrecto. La secuencia se ha reiniciado.') + ' Vuelve a empezar.');
+      return;
+    }
+    G.seqNext++; t.done = true; t.progress = 1; SFX.beep(); if (t.bulb) t.bulb.material.emissive.multiplyScalar(0.15);
+    subLine('SYS', null, `${ACT[t.type][0]} ${t.colName.toLowerCase()}: correcto (${G.seqNext}/${G.level.targets.filter(o => o.stage === t.stage).length})`);
+    checkStages(); return;
+  }
   t.done = true; t.progress = 1; SFX.beep();
   if (t.plant) { t.boomT = 3.2; t.beepT = 0; G.plants.push(t); subLine('SYS', null, 'C4 colocado. ¡Aléjate!'); }
   else if (t.type === 'generator') { t.running = true; t.noiseT = 0; makeNoise(t.x, t.z, 18, 'gen'); }
@@ -802,7 +833,10 @@ function updTags() {
   if (t && G.player.alive) {
     const [x, y] = proj(t.x, (t.mesh.userData.h || 1.6) + 0.8, t.z);
     pe.hidden = false; pe.style.left = x + 'px'; pe.style.top = y + 'px';
-    const lbl = ACT[t.type][0]; pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> ${lbl}<div class="prog"><i style="width:${(t.progress * 100) | 0}%"></i></div>`;
+    let lbl = ACT[t.type][0];
+    if (t.colName) lbl += ' ' + t.colName.toLowerCase();
+    if (t.type === 'door') lbl = G.keys.has(t.key) ? 'Abrir con ' + t.key.toLowerCase() : 'Cerrada · necesitas ' + t.key.toLowerCase();
+    pe.innerHTML = `<em>${touch.on ? 'ACCIÓN' : '[E]'}</em> ${lbl}<div class="prog"><i style="width:${(t.progress * 100) | 0}%"></i></div>`;
   } else {
     const c = G.player.alive ? cqcTarget() : null;
     if (c && (canTakedown(c) || c.faction === 'i')) {
@@ -819,6 +853,8 @@ function updHUDObjective() {
   if (!G.M) return; const ob = curObj();
   let txt = ob.label;
   if (ob.type === 'collect') txt += ` (${Math.min(G.items[ob.item] || 0, ob.count)}/${ob.count})`;
+  if (ob.type === 'door') { const t = G.level.targets.find(x => x.stage === G.stage); if (t) txt += G.keys.has(t.key) ? ' · llave: SÍ' : ' · llave: NO'; }
+  if (ob.type === 'sequence') txt += ` (${G.seqNext}/${ob.count})`;
   if (ob.type === 'interact' || ob.type === 'plant') txt += ` (${G.level.targets.filter(t => t.stage === G.stage && t.done).length}/${ob.count})`;
   setTxt('hObj', txt);
 }
@@ -843,7 +879,7 @@ const radar = $('radar'), rctx = radar.getContext('2d'); let radarMap = null;
 function buildRadarMap() {
   const map = G.level.map, S = 8, c = document.createElement('canvas'); c.width = map.W * S; c.height = map.H * S; const x = c.getContext('2d');
   x.fillStyle = 'rgba(120,170,200,0.10)'; x.fillRect(0, 0, c.width, c.height);
-  for (let j = 0; j < map.H; j++) for (let i = 0; i < map.W; i++) { const v = map.g[j * map.W + i]; if (v === 1) { x.fillStyle = 'rgba(150,200,230,0.55)'; x.fillRect(i * S, j * S, S, S); } else if (v === 2) { x.fillStyle = 'rgba(150,200,230,0.28)'; x.fillRect(i * S + 1, j * S + 1, S - 2, S - 2); } }
+  for (let j = 0; j < map.H; j++) for (let i = 0; i < map.W; i++) { const v = map.g[j * map.W + i]; if (v === 1) { x.fillStyle = 'rgba(150,200,230,0.55)'; x.fillRect(i * S, j * S, S, S); } else if (v === 2) { x.fillStyle = 'rgba(150,200,230,0.28)'; x.fillRect(i * S + 1, j * S + 1, S - 2, S - 2); } else if (v === 3) { x.fillStyle = 'rgba(255,176,32,0.95)'; x.fillRect(i * S, j * S, S, S); } }
   radarMap = { c, S };
 }
 function drawRadar() {
@@ -987,6 +1023,7 @@ function update(dt) {
   separate();
   P.rig.g.position.set(P.x, 0, P.z);
   updPlants(dt);
+  if (G.doorsAnim) G.doorsAnim.forEach(t => { if (t.opening < 1) { t.opening = Math.min(1, t.opening + dt * 0.8); const sl = t.mesh.userData.slab; if (sl) sl.position.y = -t.opening * 3.1; if (t.opening >= 1 && t.atExit) t.mesh.visible = false; } });
   // el fuego quema
   for (const f of G.level.fires) { if (Math.hypot(f.position.x - P.x, f.position.z - P.z) < 1.1 && P.alive) { G.burnT = (G.burnT || 0) - dt; if (G.burnT <= 0) { G.burnT = 0.4; P.inv = 0; damagePlayer(5); } } }
   // alarma
@@ -1020,7 +1057,7 @@ function update(dt) {
     }
   }
   // hints de la primera misión
-  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD: Sílex mira hacia donde camina. Clic para disparar hacia delante.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar: marca el objetivo. Los botiquines se usan solos.'].forEach(t => subLine('SYS', null, t)); }
+  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD: Sílex mira hacia donde camina. Clic para disparar hacia delante.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar. Algunas puertas piden llave o código: los códigos que encuentres se apuntan en tus notas (Esc).'].forEach(t => subLine('SYS', null, t)); }
   if (P.hp < 30 && P.alive) { G.hbT = (G.hbT || 0) - dt; if (G.hbT <= 0) { G.hbT = 0.9; SFX.heartbeat(); } }
   updCamera(dt); updLights(dt); updFX(dt); updSubs(dt);
   CUT.uPlayer.value.set(P.x, 0, P.z);
@@ -1077,7 +1114,7 @@ function showKeys(back) {
       <kbd>F</kbd><span>Linterna</span><kbd>Esc</kbd><span>Pausa</span><kbd>M</kbd><span>Activar o silenciar la música</span>
       <kbd>R · H</kbd><span>Recargar y curarse a mano (las dos cosas también ocurren solas)</span>
     </div>
-    <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Los anillos en el suelo muestran cuánto ruido haces.</p>
+    <p class="hint">Los guardias ven en un cono y oyen disparos y carreras. Los infectados oyen todo y ven poco, pero la linterna los atrae. Sigue el rombo del radar para llegar al objetivo. Hay puertas con llave, teclados con código y mecanismos que deben activarse en orden: busca documentos, porque las pistas se apuntan solas en tus notas (Esc). Los anillos en el suelo muestran cuánto ruido haces.</p>
     <div class="btnrow"><button class="btn" id="bBack">Volver</button></div></div>`);
   $('bBack').onclick = () => { SFX.ui(); back(); }; $('bBack').focus();
 }
@@ -1151,6 +1188,7 @@ function missionComplete() {
   const [r, rn] = rankOf(); const M = G.M;
   const order = ['D', 'C', 'B', 'A', 'S'];
   if (!SAVE.ranks[M.id] || order.indexOf(r) > order.indexOf(SAVE.ranks[M.id])) SAVE.ranks[M.id] = r;
+  if (M.saveCode) SAVE[M.saveCode] = G.level.code;
   SAVE.unlocked = Math.max(SAVE.unlocked, Math.min(20, M.id + 1)); save();
   setTimeout(() => {
     G.mode = 'debrief'; setHUD(false);
@@ -1205,6 +1243,7 @@ function pause() {
   const ob = curObj();
   screen(`<div class="card" style="width:min(520px,100%)"><div class="eyebrow">Pausa · Misión ${String(G.M.id).padStart(2, '0')}</div><h2>${G.M.title}</h2>
     <div class="objs"><div>${ob.label}</div></div>
+    ${G.notes.length ? `<div class="notes"><div class="eyebrow">Notas</div>${G.notes.map(n => `<div>${n}</div>`).join('')}</div>` : ''}
     <div class="menu" style="margin-top:18px;width:100%"><button id="pR">Continuar</button><button id="pRe">Reiniciar misión</button><button id="pK">Controles</button><button id="pM">Abandonar al menú</button></div></div>`);
   $('pR').onclick = resume; $('pRe').onclick = () => { SFX.ui(); startMission(G.idx); }; $('pK').onclick = () => showKeys(() => { G.paused = false; pause(); }); $('pM').onclick = () => { SFX.ui(); showTitle(); };
   $('pR').focus();
@@ -1219,6 +1258,7 @@ addEventListener('keydown', (e) => {
   if ((G.mode === 'brief' || G.mode === 'debrief') && G.briefNext && (e.code === 'Space' || e.code === 'Enter') && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && !document.activeElement.hidden && e.code === 'Enter')) { e.preventDefault(); G.briefNext(); return; }
   if (e.repeat) { keys[e.code] = true; return; }
   keys[e.code] = true; SFX.init();
+  if (G.keypad) { e.preventDefault(); if (/^(Digit|Numpad)\d$/.test(e.code)) G.keypad.press(e.code.slice(-1)); else if (e.code === 'Backspace') G.keypad.press('del'); else if (e.code === 'Enter' || e.code === 'NumpadEnter') G.keypad.press('ok'); else if (e.code === 'Escape') G.keypad.close(); return; }
   if (e.code === 'KeyM') { const on = SFX.toggleMusic(); if (G.mode === 'play') subLine('SYS', null, on ? 'Música activada' : 'Música desactivada'); return; }
   if (e.code === 'Escape' || e.code === 'KeyP') { pause(); return; }
   if (G.mode !== 'play' || G.paused) return;
@@ -1274,4 +1314,29 @@ try {
   requestAnimationFrame(loop);
 } catch (err) { $('loading').textContent = 'ERROR: ' + err.message; console.error(err); }
 // gancho de depuración (consola): __PC.start(n) inicia la misión n (1-20)
-window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r), SFX };
+window.__PC = { G, start: (n) => startMission(n - 1), brief: (n) => showBriefing(n - 1), hurt: (a, n) => damageActor(a, n, true), assist: (r) => assistYaw(r), SFX, open: (t) => openDoor(t) };
+
+
+// ---- teclado numérico
+function openKeypad(t) {
+  G.paused = true; G.uiBlock = true; mouse.left = false; $('cursor').hidden = true; canvas.style.cursor = 'default';
+  const code = G.level.code; let entry = '';
+  const el = screen(`<div class="card keypad"><div class="eyebrow">Cerradura electrónica · ${code.length} cifras</div>
+    <div class="kpdisp" id="kpd"></div><div class="kpmsg" id="kpm">Introduce el código</div>
+    <div class="kpgrid">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-k="${n}">${n}</button>`).join('')}<button data-k="del">Borrar</button><button data-k="0">0</button><button data-k="ok" class="ok">OK</button></div>
+    <div class="notes">${G.notes.length ? '<div class="eyebrow">Tus notas</div>' + G.notes.map(n => `<div>${n}</div>`).join('') : '<div class="eyebrow">Tus notas</div><div>No has anotado ningún código todavía. Busca documentos por la zona.</div>'}</div>
+    <div class="btnrow"><button class="btn ghost" id="kpx">Salir (Esc)</button></div></div>`);
+  const disp = () => { $('kpd').textContent = (entry + '_'.repeat(code.length - entry.length)).split('').join(' '); };
+  const close = () => { G.keypad = null; hideScreen(); G.paused = false; setTimeout(() => G.uiBlock = false, 150); $('cursor').hidden = touch.on; canvas.style.cursor = 'none'; };
+  const press = (k) => {
+    if (k === 'del') { entry = entry.slice(0, -1); SFX.blip(); }
+    else if (k === 'ok') {
+      if (entry === code) { $('kpm').textContent = 'ACCESO CONCEDIDO'; $('kpm').className = 'kpmsg okc'; SFX.objective(); G.keypad = null; setTimeout(() => { close(); openDoor(t); }, 600); return; }
+      $('kpm').textContent = 'CÓDIGO INCORRECTO'; $('kpm').className = 'kpmsg bad'; SFX.buzz(); entry = ''; makeNoise(t.x, t.z, 10, 'player');
+    } else if (entry.length < code.length) { entry += k; SFX.blip(); }
+    disp();
+  };
+  el.querySelectorAll('.kpgrid button').forEach(b => b.onclick = () => press(b.dataset.k));
+  $('kpx').onclick = close; disp();
+  G.keypad = { press, close };
+}

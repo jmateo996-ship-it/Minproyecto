@@ -69,6 +69,8 @@ const SFX = {
   },
   caution() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.35, 0, 0.4); this.tone(o, t, 0.35, 660, 640, 'triangle', 0.5); this.tone(o, t + 0.18, 0.35, 495, 480, 'triangle', 0.5); },
   heartbeat() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.6, 0, 0); this.tone(o, t, 0.15, 60, 40, 'sine', 1); this.tone(o, t + 0.22, 0.15, 55, 38, 'sine', 0.8); },
+  door() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.5, 0, 0.5); this.noise(o, t, 1.4, 220, 1, 'lowpass', 0.9, 0.2); this.tone(o, t, 1.3, 90, 70, 'sawtooth', 0.15); this.noise(o, t + 1.3, 0.2, 600, 2, 'bandpass', 0.8); },
+  buzz() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.4, 0, 0.2); this.tone(o, t, 0.45, 110, 105, 'square', 0.35); this.tone(o, t, 0.45, 116, 110, 'square', 0.3); },
   beep() { if (!this.ok()) return; const t = this.ctx.currentTime, o = this.out(0.25, 0, 0.2); this.tone(o, t, 0.1, 2000, 0, 'square', 0.4); },
   ambient(theme) {
     if (!this.ok()) return; const c = this.ctx;
