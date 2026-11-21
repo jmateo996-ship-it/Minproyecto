@@ -410,7 +410,6 @@ function assistYaw(range) {
 function playerFire() {
   const P = G.player, W = WEAP[P.weapon];
   if (P.fireT > 0 || P.reloadT > 0) return;
-  if (!touch.on && P.mouseX !== undefined) { P.yaw = Math.atan2(P.mouseX - P.x, P.mouseZ - P.z); P.aimHold = 0.8; }
   if (P.mag[P.weapon] <= 0) { SFX.empty(); P.fireT = 0.3; startReload(); return; }
   P.mag[P.weapon]--; P.fireT = W.rate; P.recoil = 1; G.stats.shots++;
   const gx = P.x + Math.sin(P.yaw) * 0.6 + Math.cos(P.yaw) * 0.12, gz = P.z + Math.cos(P.yaw) * 0.6 - Math.sin(P.yaw) * 0.12;
@@ -483,8 +482,8 @@ function updPlayer(dt) {
     raycaster.setFromCamera({ x: mouse.x / innerWidth * 2 - 1, y: -(mouse.y / innerHeight) * 2 + 1 }, camera);
     if (raycaster.ray.intersectPlane(aimPlane, v3)) { P.mouseX = v3.x; P.mouseZ = v3.z; }
     P.aimHold = (P.aimHold || 0) - dt;
-    if ((mouse.left || mouse.right || P.aimHold > 0) && P.mouseX !== undefined) {
-      // disparando o apuntando: mira hacia el ratón
+    if (mouse.right && P.mouseX !== undefined) {
+      // clic derecho: apuntar hacia el ratón
       P.yaw = lerpAng(P.yaw, Math.atan2(P.mouseX - P.x, P.mouseZ - P.z), Math.min(1, dt * 18));
     } else if (L > 0.1) {
       // moviéndose: mira hacia donde camina
@@ -1021,7 +1020,7 @@ function update(dt) {
     }
   }
   // hints de la primera misión
-  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD: Sílex mira hacia donde camina. Clic para disparar hacia el ratón.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar: marca el objetivo. Los botiquines se usan solos.'].forEach(t => subLine('SYS', null, t)); }
+  if (M.id === 1 && !G.hintDone) { G.hintDone = true; ['Muévete con WASD: Sílex mira hacia donde camina. Clic para disparar hacia delante.', 'E sirve para todo: activar objetivos y neutralizar guardias que no te han visto.', 'C para agacharte y pasar sin ser vista. Mayús para correr (hace ruido).', 'Sigue el rombo del radar: marca el objetivo. Los botiquines se usan solos.'].forEach(t => subLine('SYS', null, t)); }
   if (P.hp < 30 && P.alive) { G.hbT = (G.hbT || 0) - dt; if (G.hbT <= 0) { G.hbT = 0.9; SFX.heartbeat(); } }
   updCamera(dt); updLights(dt); updFX(dt); updSubs(dt);
   CUT.uPlayer.value.set(P.x, 0, P.z);
@@ -1068,7 +1067,7 @@ function showKeys(back) {
     <div class="eyebrow" style="margin-top:6px">Lo esencial</div>
     <div class="keys">
       <kbd>W A S D</kbd><span>Moverse: Sílex mira (y alumbra con la linterna) hacia donde camina</span>
-      <kbd>Ratón + clic</kbd><span>Disparar hacia el ratón (la puntería se ajusta sola al enemigo más cercano). Clic derecho para apuntar sin disparar</span>
+      <kbd>Clic</kbd><span>Disparar hacia donde mira Sílex, sin girarla (la puntería se ajusta sola al enemigo que tenga delante). Con el clic derecho pulsado puedes girarla hacia el ratón</span>
       <kbd>E</kbd><span>Acción: activa objetivos con una pulsación, neutraliza guardias que no te han visto y usa el cuchillo con los infectados</span>
       <kbd>C</kbd><span>Agacharse: te mueves en silencio y te ven peor</span>
     </div>

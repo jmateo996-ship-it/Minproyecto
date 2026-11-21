@@ -11,7 +11,7 @@ Abre `index.html` en un navegador moderno de escritorio (Chrome, Edge o Firefox)
 | Acción | Tecla |
 | --- | --- |
 | Moverse | W A S D |
-| Apuntar y disparar (con puntería asistida) | Ratón + clic |
+| Disparar hacia donde mira Sílex (con puntería asistida) | Clic |
 | Acción: activar objetivos, neutralizar guardias, cuchillo | E |
 | Agacharse (silencio, menos visibilidad) | C |
 | Correr · cambiar arma · linterna · pausa · música | Mayús · Q · F · Esc · M |
