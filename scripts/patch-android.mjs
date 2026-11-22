@@ -21,8 +21,8 @@ for (const a of apps) {
   // build.gradle: versión por variables de entorno + firma release
   const bg = path.join(app, 'build.gradle');
   let g = fs.readFileSync(bg, 'utf8');
-  g = g.replace(/versionCode \d+/, 'versionCode (System.getenv("VERSION_CODE") ?: "1").toInteger()')
-       .replace(/versionName "[^"]*"/, 'versionName (System.getenv("VERSION_NAME") ?: "1.0.0")');
+  g = g.replace(/versionCode .*$/m, 'versionCode(Integer.parseInt(System.getenv("VERSION_CODE") ?: "1"))')
+       .replace(/versionName .*$/m, 'versionName(System.getenv("VERSION_NAME") ?: "1.0.0")');
   if (!g.includes('signingConfigs')) {
     g = g.replace('    buildTypes {', `    // Firma: variables de entorno (CI) o archivo android/keystore.properties (local)
     def ksProps = new Properties()
