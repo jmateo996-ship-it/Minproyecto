@@ -1,0 +1,7 @@
+{
+  "appId": "com.minproyecto.aparcamiento",
+  "appName": "Aparcamiento Imposible",
+  "webDir": "www",
+  "backgroundColor": "#2b3048",
+  "android": { "backgroundColor": "#2b3048" }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "tornillos",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@capacitor-community/admob": "8.4.2",
+    "@capacitor/android": "8.6.2",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.2"
+  }
+}

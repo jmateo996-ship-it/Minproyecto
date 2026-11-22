@@ -1,0 +1,24 @@
+{
+  "name": "minproyecto-juegos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tres juegos móviles (Aparcamiento Imposible, Cocina Zombi, Tornillos del Tiempo) empaquetados para Google Play con Capacitor.",
+  "scripts": {
+    "sync-shared": "node scripts/sync-shared.mjs",
+    "serve": "node scripts/serve.mjs",
+    "cap:sync": "npm run sync-shared && node scripts/cap-all.mjs sync android",
+    "store-assets": "node scripts/store-assets.cjs"
+  },
+  "dependencies": {
+    "@capacitor-community/admob": "8.4.2",
+    "@capacitor/android": "8.6.2",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.2"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}

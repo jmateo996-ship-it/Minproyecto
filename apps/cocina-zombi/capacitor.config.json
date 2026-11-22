@@ -1,0 +1,7 @@
+{
+  "appId": "com.minproyecto.cocinazombi",
+  "appName": "Cocina Zombi",
+  "webDir": "www",
+  "backgroundColor": "#2d1b3d",
+  "android": { "backgroundColor": "#2d1b3d" }
+}

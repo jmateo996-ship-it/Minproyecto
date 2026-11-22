@@ -1,0 +1,72 @@
+name: Android build
+
+on:
+  push:
+    branches: [main, 'claude/**']
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [aparcamiento, cocina-zombi, tornillos]
+    env:
+      VERSION_CODE: ${{ github.run_number }}
+      VERSION_NAME: 1.0.${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Copiar código compartido y sincronizar Capacitor
+        run: |
+          node scripts/sync-shared.mjs
+          node scripts/patch-android.mjs
+          cd apps/${{ matrix.app }} && npx cap sync android
+
+      - name: Preparar keystore (si hay secretos)
+        id: ks
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Sin ANDROID_KEYSTORE_BASE64: se genera APK de prueba y AAB SIN firmar (no sirve para subir a Play)."
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compilar
+        working-directory: apps/${{ matrix.app }}/android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug bundleRelease
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-${{ steps.ks.outputs.signed == 'true' && 'firmado' || 'sin-firmar' }}-v${{ github.run_number }}
+          path: |
+            apps/${{ matrix.app }}/android/app/build/outputs/bundle/release/*.aab
+            apps/${{ matrix.app }}/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

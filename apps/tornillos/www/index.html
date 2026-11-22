@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#16324a">
+<title>Tornillos del Tiempo</title>
+<link rel="stylesheet" href="shared/core.css">
+<style>
+  :root { --bg: #16324a; }
+  .bottom { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px calc(env(safe-area-inset-bottom) + 14px);
+    display: flex; justify-content: center; gap: 16px; z-index: 5; }
+  .boost { display: flex; flex-direction: column; align-items: center; font-size: 12px; font-weight: 700; gap: 2px; position: relative; }
+  .boost .icon-btn { width: 58px; height: 58px; font-size: 28px; background: #23557a; box-shadow: 0 4px 0 rgba(0,0,0,.35); }
+  .badge { position: absolute; top: -4px; right: -4px; background: #e2504c; border-radius: 999px; min-width: 22px; height: 22px;
+    font-size: 12px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+  .badge.ad { background: #f5a623; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hud">
+  <button class="icon-btn" id="btnSet">⚙️</button>
+  <div class="pill" id="level">Nivel 1</div>
+  <div class="pill">🪙 <span id="coins">0</span></div>
+</div>
+<div class="bottom">
+  <div class="boost" id="bRewind"><button class="icon-btn">⏪</button><span class="badge" id="rwBadge">1</span><span id="tRewind">Rebobinar</span></div>
+  <div class="boost" id="bSlot"><button class="icon-btn">➕</button><span class="badge ad">📺</span><span id="tSlot">Hueco</span></div>
+  <div class="boost" id="bRestart"><button class="icon-btn">🔄</button><span id="tRestart">Reiniciar</span></div>
+</div>
+<script src="shared/core.js"></script>
+<script src="config.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

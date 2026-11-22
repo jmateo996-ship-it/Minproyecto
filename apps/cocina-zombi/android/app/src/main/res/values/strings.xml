@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Cocina Zombi</string>
+    <string name="title_activity_main">Cocina Zombi</string>
+    <string name="package_name">com.minproyecto.cocinazombi</string>
+    <string name="custom_url_scheme">com.minproyecto.cocinazombi</string>
+</resources>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#2d1b3d">
+<title>Cocina Zombi</title>
+<link rel="stylesheet" href="shared/core.css">
+<style>
+  :root { --bg: #2d1b3d; }
+  #panel { position: fixed; left: 0; right: 0; bottom: 0; height: 52%; background: #3b2752; border-radius: 22px 22px 0 0;
+    z-index: 4; display: flex; flex-direction: column; box-shadow: 0 -6px 20px rgba(0,0,0,.35); }
+  .tabs { display: flex; gap: 6px; padding: 10px 12px 6px; }
+  .tab { flex: 1; border: 0; border-radius: 12px; padding: 10px; font-weight: 800; font-size: 15px; color: #fff; background: #4d3569; }
+  .tab.on { background: #ff7a45; }
+  #list { flex: 1; overflow-y: auto; padding: 4px 12px calc(env(safe-area-inset-bottom) + 12px); touch-action: pan-y; }
+  .row { display: flex; align-items: center; gap: 10px; background: #4d3569; border-radius: 14px; padding: 8px 10px; margin-bottom: 8px; }
+  .row .em { font-size: 34px; width: 46px; text-align: center; }
+  .row .info { flex: 1; min-width: 0; }
+  .row .name { font-weight: 800; font-size: 15px; }
+  .row .sub { font-size: 12px; opacity: .8; }
+  .bar { height: 6px; background: rgba(0,0,0,.3); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: #ffd447; width: 0; }
+  .row .btn { min-width: 96px; padding: 10px 8px; font-size: 14px; border-radius: 12px; }
+  .row.locked { opacity: .75; }
+  #nightBtn { position: fixed; left: 50%; transform: translateX(-50%); top: calc(env(safe-area-inset-top) + 64px); z-index: 6;
+    background: #6b3fd6; display: none; animation: pulse 1s infinite alternate; }
+  #nightBtn.show { display: block; }
+  #nightHud { display: none; position: fixed; left: 12px; right: 12px; bottom: calc(env(safe-area-inset-bottom) + 18px); z-index: 6; }
+  #nightHud .bar { height: 14px; border-radius: 7px; }
+  #nightHud .bar i { background: #e2504c; }
+  .night #panel { display: none; }
+  .night #nightHud { display: block; }
+  #mult { font-size: 13px; }
+  @keyframes pulse { to { transform: translateX(-50%) scale(1.07); } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hud">
+  <button class="icon-btn" id="btnSet">⚙️</button>
+  <div class="pill">🪙 <span id="coins">0</span></div>
+  <div class="pill" id="mult">🌙 x1.0</div>
+  <div class="pill" id="rate">0/s</div>
+</div>
+<button class="btn" id="nightBtn">🌙 ¡Llegan los zombis!</button>
+<div id="nightHud"><div class="pill" style="margin-bottom:6px" id="nightInfo"></div><div class="bar"><i id="doorBar"></i></div></div>
+<div id="panel">
+  <div class="tabs"><button class="tab on" data-tab="kitchen" id="tabK">🍳 Cocina</button><button class="tab" data-tab="defense" id="tabD">🛡️ Defensa</button></div>
+  <div id="list"></div>
+</div>
+<script src="shared/core.js"></script>
+<script src="config.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[
+  {
+    "dir": "aparcamiento",
+    "appId": "com.minproyecto.aparcamiento",
+    "name": "Aparcamiento Imposible",
+    "nameEn": "Impossible Parking",
+    "bg": "#2b3048",
+    "accent": "#ff5a5f",
+    "icon": "🚗",
+    "admobAppId": "ca-app-pub-3940256099942544~3347511713"
+  },
+  {
+    "dir": "cocina-zombi",
+    "appId": "com.minproyecto.cocinazombi",
+    "name": "Cocina Zombi",
+    "nameEn": "Zombie Kitchen",
+    "bg": "#2d1b3d",
+    "accent": "#ff7a45",
+    "icon": "🧟",
+    "admobAppId": "ca-app-pub-3940256099942544~3347511713"
+  },
+  {
+    "dir": "tornillos",
+    "appId": "com.minproyecto.tornillos",
+    "name": "Tornillos del Tiempo",
+    "nameEn": "Screws of Time",
+    "bg": "#16324a",
+    "accent": "#3a86ff",
+    "icon": "🔩",
+    "admobAppId": "ca-app-pub-3940256099942544~3347511713"
+  }
+]

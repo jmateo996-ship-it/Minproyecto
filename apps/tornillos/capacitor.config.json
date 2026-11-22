@@ -1,0 +1,7 @@
+{
+  "appId": "com.minproyecto.tornillos",
+  "appName": "Tornillos del Tiempo",
+  "webDir": "www",
+  "backgroundColor": "#16324a",
+  "android": { "backgroundColor": "#16324a" }
+}
