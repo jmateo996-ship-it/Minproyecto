@@ -199,8 +199,8 @@ const Rooms = (() => {
         name: 'EXPEDIENTE DEL INSTITUTO: PROYECTO LEVIATÁN',
         desc: 'Informes firmados en 2914 por el equipo del Protocolo Cuna. Describen los guardianes que el Instituto creó para ORDO con el código de Lía: leviatanes de cristal, vigías y fundidores.',
         bosses: [
-          { name: 'LEVIATÁN ANCESTRAL', mission: 7, weak: 'El sujeto L‑0. Sus segmentos son de cristal reflectante: solo la cabeza recibe daño. Disparar al cuerpo es inútil.' },
-          { name: 'VIGÍA DEL INSTITUTO', mission: 8, weak: 'Torretas laterales con poca vida: cada una que cae le quita blindaje. Luego, apunta al ojo central.' },
+          { name: 'LEVIATÁN ANCESTRAL', mission: 7, weak: 'El sujeto L‑0 no es una serpiente: es una manta de cristal colosal. Sus alas desvían los disparos y queman al tocarlas; solo su corazón, en el centro, recibe daño.' },
+          { name: 'VIGÍA DEL INSTITUTO', mission: 8, weak: 'Un satélite de vigilancia. Sus paneles solares absorben los disparos. Cuando una cámara fija su línea en rojo, dispara una ráfaga por ella: apártate. Destruye las tres cámaras y el disco central pierde su blindaje.' },
           { name: 'FUNDIDOR', mission: 9, weak: 'Vierte metal por tres caños por turnos: hay un hueco entre chorros. Muévete con él y dispara al crisol.' },
         ],
       },
@@ -317,7 +317,7 @@ const Rooms = (() => {
         bosses: [
           { name: 'FORJA MADRE', mission: 10, weak: 'Mientras quede un emisor en su anillo, el núcleo recibe solo un 12 % del daño. Rompe los seis emisores primero.' },
           { name: 'HERALDO DE ORDO', mission: 11, weak: 'Dos satélites giran a su alrededor y absorben los disparos. Dispara al ojo cuando los satélites estén a los lados.' },
-          { name: 'CRUCERO DE ORDO', mission: 12, weak: 'Sus dos torretas laterales caen rápido y cada una le arranca blindaje. Después, el ojo central.' },
+          { name: 'CRUCERO DE ORDO', mission: 12, weak: 'Un crucero en forma de tridente. Cada punta carga un rayo (verás una línea roja) antes de disparar. Mientras quede una punta, el puente está blindado: destrúyelas primero.' },
         ],
       },
       hotspots: [
@@ -440,8 +440,8 @@ const Rooms = (() => {
         name: 'NÚCLEO DE MEMORIA DE ORDO',
         desc: 'La mente de un Heraldo, con fragmentos de los planes de ORDO para cruzar la Grieta. ORDO concentrará toda su mente en un solo cuerpo: ORDO PRIMORDIAL.',
         bosses: [
-          { name: 'HERALDO DEL UMBRAL', mission: 13, weak: 'Mismo diseño que el Heraldo derribado: dos satélites escudo. Su ojo sigue tu nave; muévete para abrir ángulo.' },
-          { name: 'TALADRO DE LA GRIETA', mission: 14, weak: 'Una excavadora adaptada para perforar la Grieta: destruye los dos taladros y su motor queda expuesto.' },
+          { name: 'HERALDO DEL UMBRAL', mission: 13, weak: 'Se desdobla en tres reflejos. Solo el auténtico tiene el ojo rojo encendido y recibe daño; cada pocos segundos se desvanecen y cambian de sitio.' },
+          { name: 'TALADRO DE LA GRIETA', mission: 14, weak: 'Una barrena gigante con tres cuchillas que se abren y se cierran a su alrededor. Mientras quede una, el eje está blindado: rompe las cuchillas.' },
           { name: 'ORDO PRIMORDIAL', mission: 15, weak: 'Cuatro fases. Seis satélites bloquean tus disparos hasta que le queda un 25 %: entonces estallan y el núcleo queda al descubierto. Guarda los PULSOS para esa última fase.' },
         ],
       },

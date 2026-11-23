@@ -739,5 +739,14 @@ window.LANG_EN = {
  "¡JEFE DERROTADO!": "BOSS DEFEATED!",
  "REPETIR": "REPLAY",
  "Lucha contra cada jefe por separado. Derrota a uno para desbloquear el siguiente.": "Fight each boss one at a time. Defeat one to unlock the next.",
- "SIGUIENTE JEFE": "NEXT BOSS"
+ "SIGUIENTE JEFE": "NEXT BOSS",
+ "El guardián de la compuerta despierta. Su escudo de cristal gira: ¡dispara por los huecos!": "The hatch guardian is waking up. Its crystal shield is spinning: shoot through the gaps!",
+ "Es el sujeto L‑0, el primer Leviatán. Sus alas de cristal desvían los disparos: ¡apunta a su corazón!": "It's subject L‑0, the first Leviathan. Its crystal wings deflect shots: aim for its heart!",
+ "El repetidor tenía un satélite vigía. ¡Si sus cámaras se ponen rojas, apártate de la línea!": "The relay had a watcher satellite. If its cameras turn red, get out of the line!",
+ "Hay tres… no, es uno solo reflejado. ¡Solo el de verdad tiene el ojo encendido!": "There are three… no, it's just one, reflected. Only the real one has its eye lit up!",
+ "El sujeto L‑0 no es una serpiente: es una manta de cristal colosal. Sus alas desvían los disparos y queman al tocarlas; solo su corazón, en el centro, recibe daño.": "Subject L‑0 is not a serpent: it's a colossal crystal manta. Its wings deflect shots and burn on contact; only its heart, in the center, takes damage.",
+ "Un satélite de vigilancia. Sus paneles solares absorben los disparos. Cuando una cámara fija su línea en rojo, dispara una ráfaga por ella: apártate. Destruye las tres cámaras y el disco central pierde su blindaje.": "A surveillance satellite. Its solar panels absorb shots. When a camera locks its line in red, it fires a burst along it: get out of the way. Destroy all three cameras and the central dish loses its armor.",
+ "Un crucero en forma de tridente. Cada punta carga un rayo (verás una línea roja) antes de disparar. Mientras quede una punta, el puente está blindado: destrúyelas primero.": "A trident‑shaped cruiser. Each prong charges a beam (you'll see a red line) before it fires. While any prong remains, the bridge is armored: destroy them first.",
+ "Se desdobla en tres reflejos. Solo el auténtico tiene el ojo rojo encendido y recibe daño; cada pocos segundos se desvanecen y cambian de sitio.": "It splits into three reflections. Only the real one has its red eye lit and takes damage; every few seconds they fade out and swap places.",
+ "Una barrena gigante con tres cuchillas que se abren y se cierran a su alrededor. Mientras quede una, el eje está blindado: rompe las cuchillas.": "A giant auger with three blades that open and close around it. While any blade remains, the shaft is armored: break the blades."
 };

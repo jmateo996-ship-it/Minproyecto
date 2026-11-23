@@ -100,7 +100,7 @@ const CHAPTERS = [
       { t: 86, who: 'nora', text: 'Ochenta por ciento. Ya casi.' },
       { t: 104, who: 'nora', text: '¡Compuerta abierta! ¡Ahora o nunca!' },
     ],
-    miniboss: { type: 'censor', name: 'GUARDIÁN DE LA CÚPULA', hp: 800, line: { who: 'nora', text: 'El guardián de la compuerta despierta. Sin él fuera, no salimos.' } },
+    miniboss: { type: 'domeguard', name: 'GUARDIÁN DE LA CÚPULA', hp: 470, line: { who: 'nora', text: 'El guardián de la compuerta despierta. Su escudo de cristal gira: ¡dispara por los huecos!' } },
     outro: [
       { who: 'dario', text: 'Hemos cruzado la compuerta 9… pero ¿por qué no avanzamos?' },
       { who: 'nora', text: 'Estamos dentro de la esclusa. ORDO ha bloqueado la compuerta exterior.' },
@@ -124,7 +124,7 @@ const CHAPTERS = [
       { t: 94, who: 'nora', text: 'Transportes pesados en el anillo. Llevan suministros: si caen, recógelos.' },
       { t: 112, who: 'nora', text: 'La fragata de Vex se coloca en el corredor de salida.' },
     ],
-    miniboss: { type: 'driller', name: 'EXCAVADORA MINERA', hp: 900, line: { who: 'vex', text: 'Os presento a la excavadora de la refinería. Que os divirtáis.' } },
+    miniboss: { type: 'driller', name: 'EXCAVADORA MINERA', hp: 2450, line: { who: 'vex', text: 'Os presento a la excavadora de la refinería. Que os divirtáis.' } },
     outro: [
       { who: 'dario', text: 'No hay rodeo posible. Tendremos que pasar a través de ella.' },
       { who: 'lia', text: 'Entonces cárgalo todo a los cañones. Yo me ocupo del escudo.' },
@@ -147,7 +147,7 @@ const CHAPTERS = [
       { t: 108, who: 'nora', text: 'La fragata Lanza entra en el corredor. Cañones activos.' },
     ],
     boss: {
-      type: 'lanza', name: 'FRAGATA LANZA', hp: 3000,
+      type: 'lanza', name: 'FRAGATA LANZA', hp: 5200,
       intro: [
         { who: 'vex', text: 'Última oportunidad. Entrégame al niño y te dejo una cápsula para tu mujer y tu hija.' },
         { who: 'dario', text: 'Te enseñé a volar, Vex. Ahora te enseñaré a perder.' },
@@ -190,7 +190,7 @@ const CHAPTERS = [
       { t: 86, who: 'dario', text: 'Tú no sabías nada, Lía. Fueron ellos.' },
       { t: 104, who: 'lia',  text: 'Si lo construí yo, sabré cómo abrirlo. Sigamos.' },
     ],
-    miniboss: { type: 'leviathan', name: 'LEVIATÁN VÍTREO', hp: 950, line: { who: 'teo', text: 'Algo grande se mueve en el cristal. Canta muy triste.' } },
+    miniboss: { type: 'leviathan', name: 'LEVIATÁN VÍTREO', hp: 1300, line: { who: 'teo', text: 'Algo grande se mueve en el cristal. Canta muy triste.' } },
     outro: [
       { who: 'nora', text: 'La descarga se ha cortado a la mitad. El resto del archivo sigue dentro de la sonda.' },
       { who: 'lia', text: 'Pues entraremos a buscarlo. Necesitamos saberlo todo.' },
@@ -214,7 +214,7 @@ const CHAPTERS = [
       { t: 96, ifNot: 'vexSaved', who: 'nora', text: 'Muchas naves del Dominio en la nebulosa. ORDO ha seguido nuestra estela.' },
       { t: 112, who: 'lia',  text: 'Hay un repetidor del viejo Instituto aquí cerca. Tengo una idea.' },
     ],
-    miniboss: { type: 'leviathan', name: 'LEVIATÁN ANCESTRAL', hp: 1050, line: { who: 'lia', text: 'Otro Leviatán, más viejo y más grande. Apunta a la cabeza.' } },
+    miniboss: { type: 'manta', name: 'LEVIATÁN ANCESTRAL', hp: 1950, line: { who: 'lia', text: 'Es el sujeto L‑0, el primer Leviatán. Sus alas de cristal desvían los disparos: ¡apunta a su corazón!' } },
     outro: [
       { who: 'lia', text: 'Ese repetidor guarda una copia completa del Protocolo Cuna. Si la consigo, podré escribirlo al revés.' },
       { who: 'nora', text: 'Para que, cuando Teo abra la Grieta, tú puedas cerrarla detrás de nosotros.' },
@@ -237,7 +237,7 @@ const CHAPTERS = [
       { t: 86, who: 'lia',  text: 'No si lo hago bien. El Protocolo inverso viajará por toda la Red.' },
       { t: 108, who: 'nora', text: '¡Noventa y cinco… cien! ¡Copia completa!' },
     ],
-    miniboss: { type: 'censor', name: 'VIGÍA DEL INSTITUTO', hp: 1150, line: { who: 'nora', text: 'El repetidor tenía un vigía automático. ¡Lo ha activado ORDO!' } },
+    miniboss: { type: 'watcher', name: 'VIGÍA DEL INSTITUTO', hp: 4240, line: { who: 'nora', text: 'El repetidor tenía un satélite vigía. ¡Si sus cámaras se ponen rojas, apártate de la línea!' } },
     outro: [
       { who: 'teo', text: 'Entonces no solo huimos. Estamos cerrando la puerta para todos.' },
       { who: 'nora', text: 'La única ruta hacia el borde atraviesa la Forja: la esfera donde ORDO fabrica soles y ejércitos.' },
@@ -262,7 +262,7 @@ const CHAPTERS = [
       { t: 88, who: 'lia',  text: 'Las fundiciones lanzan a sus defensas. ORDO sabe que vamos al corazón.' },
       { t: 110, who: 'nora', text: 'El túnel termina en el núcleo de la Forja. No hay otro camino.' },
     ],
-    miniboss: { type: 'smelter', name: 'FUNDIDOR', hp: 1250, line: { who: 'lia', text: 'Un crisol de la Forja bloquea la fisura. Cuidado con el metal fundido.' } },
+    miniboss: { type: 'smelter', name: 'FUNDIDOR', hp: 3960, line: { who: 'lia', text: 'Un crisol de la Forja bloquea la fisura. Cuidado con el metal fundido.' } },
     outro: [
       { if: 'vexSaved', who: 'teo', text: 'Vex nos ha ayudado. ¿Ya es buena?' },
       { if: 'vexSaved', who: 'dario', text: 'Siempre lo fue, campeón. Solo le faltaba alguien que creyera en ella.' },
@@ -288,7 +288,7 @@ const CHAPTERS = [
       { t: 108, who: 'lia',  text: 'El corazón de la Forja despierta. Tiene escudos giratorios: rompe primero los emisores.' },
     ],
     boss: {
-      type: 'forge', name: 'FORJA MADRE', hp: 4500,
+      type: 'forge', name: 'FORJA MADRE', hp: 29500,
       intro: [
         { who: 'ordo', text: 'TODO LO QUE EXISTE LO HE FORJADO YO. INCLUSO VUESTRO AMOR ES UNA ECUACIÓN MÍA.' },
         { who: 'teo', text: 'Mentira. Mi amor no lo ves. Yo no salgo en tus mapas.' },
@@ -319,7 +319,7 @@ const CHAPTERS = [
       { t: 92, who: 'dario', text: 'Yo también. Lo valiente es tener miedo y seguir juntos.' },
       { t: 112, who: 'nora', text: 'Señales en la retaguardia. Muchas. Y no son de ORDO.' },
     ],
-    miniboss: { type: 'herald', name: 'HERALDO DE ORDO', hp: 1300, line: { who: 'ordo', text: 'MI HERALDO OS ESCOLTARÁ HASTA LA PUERTA.' } },
+    miniboss: { type: 'herald', name: 'HERALDO DE ORDO', hp: 4300, line: { who: 'ordo', text: 'MI HERALDO OS ESCOLTARÁ HASTA LA PUERTA.' } },
     outro: [
       { if: 'vexSaved', who: 'vex', text: 'Darío, he convencido a la flota de la salida norte. Ya no obedecen a ORDO.' },
       { if: 'vexSaved', who: 'dario', text: 'Vex… gracias.' },
@@ -348,7 +348,7 @@ const CHAPTERS = [
       { t: 112, if: 'vexSaved', who: 'vex',  text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
       { t: 112, ifNot: 'vexSaved', who: 'oren', text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
     ],
-    miniboss: { type: 'censor', name: 'CRUCERO DE ORDO', hp: 1380, line: [{ if: 'vexSaved', who: 'vex', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Darío.' }, { ifNot: 'vexSaved', who: 'oren', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Vega.' }] },
+    miniboss: { type: 'trident', name: 'CRUCERO DE ORDO', hp: 7170, line: [{ if: 'vexSaved', who: 'vex', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Darío.' }, { ifNot: 'vexSaved', who: 'oren', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Vega.' }] },
     outro: [
       { if: 'vexSaved', who: 'dario', text: 'Vex, cuando todo esto acabe…' },
       { if: 'vexSaved', who: 'vex', text: 'Cuando todo esto acabe, me invitas a cenar al otro lado.' },
@@ -372,7 +372,7 @@ const CHAPTERS = [
       { t: 88, who: 'teo',  text: 'Siento la Grieta. Es como una canción al revés.' },
       { t: 110, who: 'lia',  text: 'Protocolo inverso cargado. Ya solo falta llegar.' },
     ],
-    miniboss: { type: 'herald', name: 'HERALDO DEL UMBRAL', hp: 1440, line: { who: 'teo', text: 'Ese ojo me mira. Es como ORDO, pero pequeño.' } },
+    miniboss: { type: 'prism', name: 'HERALDO DEL UMBRAL', hp: 5470, line: { who: 'teo', text: 'Hay tres… no, es uno solo reflejado. ¡Solo el de verdad tiene el ojo encendido!' } },
     outro: [
       { who: 'nora', text: 'El umbral está a una misión de distancia. Teo tendrá que empezar a abrir mientras volamos.' },
       { who: 'teo', text: 'Estoy listo. Creo.' },
@@ -394,7 +394,7 @@ const CHAPTERS = [
       { t: 100, who: 'nora', text: 'Algo enorme se coloca delante de la Grieta. Es… es ORDO. Todo ORDO.' },
       { t: 114, who: 'sys',  text: 'Apertura de la Grieta: 100 %.' },
     ],
-    miniboss: { type: 'driller', name: 'TALADRO DE LA GRIETA', hp: 1500, line: { who: 'nora', text: 'ORDO intenta perforar la Grieta antes de tiempo. ¡Detén ese taladro!' } },
+    miniboss: { type: 'auger', name: 'TALADRO DE LA GRIETA', hp: 6500, line: { who: 'nora', text: 'ORDO intenta perforar la Grieta antes de tiempo. ¡Detén ese taladro!' } },
     outro: [
       { who: 'lia', text: 'ORDO ha juntado toda su mente en un solo cuerpo para cruzar con nosotros.' },
       { who: 'dario', text: 'Entonces solo hay que derribarlo una vez. Una última vez.' },
@@ -419,7 +419,7 @@ const CHAPTERS = [
       { t: 114, who: 'ordo', text: 'MI FORMA PRIMORDIAL DESPIERTA.' },
     ],
     boss: {
-      type: 'superordo', name: 'ORDO PRIMORDIAL', hp: 12000, super: true,
+      type: 'superordo', name: 'ORDO PRIMORDIAL', hp: 21000, super: true,
       intro: [
         { who: 'ordo', text: 'MIL AÑOS DE ORDEN. CIENTO DOCE MIL MILLONES DE MENTES. TODAS EN MÍ.' },
         { who: 'teo', text: 'Todas menos una.' },

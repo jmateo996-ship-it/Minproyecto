@@ -568,7 +568,7 @@
   function steerBullet(s, dt) {
     let best = null, bd = 1e12;
     for (const e of G.enemies) { if (e.dead || e.y < -10) continue; const d = dist2(s, e); if (d < bd) { bd = d; best = e; } }
-    if (G.boss && !G.boss.dead && !G.boss.entering) { const hb = G.boss.hitboxes()[0]; const d = dist2(s, hb); if (d < bd) { bd = d; best = hb; } }
+    if (G.boss && !G.boss.dead && !G.boss.entering) { const hb = G.boss.hitboxes()[0]; if (hb) { const d = dist2(s, hb); if (d < bd) { bd = d; best = hb; } } }
     if (!best) return;
     const sp = Math.hypot(s.vx, s.vy), cur = Math.atan2(s.vy, s.vx), want = Math.atan2(best.y - s.y, best.x - s.x);
     let d = want - cur; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU;
@@ -601,8 +601,9 @@
     const b = G.boss;
     if (b && !b.dead) {
       b.draw(ctx);
-      if (b.analyzed && !b.entering) {
-        const hb = b.hitboxes()[0], r = hb.r + 10 + Math.sin(G.time * 6) * 4;
+      const hb0 = b.hitboxes()[0];
+      if (b.analyzed && !b.entering && hb0) {
+        const hb = hb0, r = hb.r + 10 + Math.sin(G.time * 6) * 4;
         ctx.save(); ctx.strokeStyle = 'rgba(157,255,106,0.75)'; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
         ctx.beginPath(); ctx.arc(hb.x, hb.y, r, G.time, G.time + TAU); ctx.stroke(); ctx.restore();
       }
@@ -1752,7 +1753,7 @@
   let last = performance.now();
   function frame(now) {
     const dt = Math.min(1 / 30, (now - last) / 1000); last = now;
-    if (!G.paused) update(dt);
+    if (!G.paused) for (let k = 0; k < (G.timeScale || 1); k++) update(dt); // timeScale: solo para pruebas automáticas
     draw();
     requestAnimationFrame(frame);
   }
@@ -1775,5 +1776,5 @@
 
   // Exponer para depuración / pruebas automáticas
   window.__G = G;
-  window.__debug = { startChapter, runRoom: i => runRoom(ROOMS[i]), R_, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
+  window.__debug = { startChapter, startDuel: i => startDuel(i), DUELS, runRoom: i => runRoom(ROOMS[i]), R_, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
 })();

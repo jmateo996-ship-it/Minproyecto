@@ -10,6 +10,7 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
 ## Características
 
 - **15 misiones de 2 minutos** (unos 30 minutos de juego más los combates finales), repartidas en tres actos: *La Huida*, *La Verdad* y *La Grieta*.
+- **15 jefes con diseño y forma de luchar únicos**: ninguno repite aspecto (torre con subnaves, cúpula de placas giratorias, manta de cristal, satélite con cámaras, crucero tridente, prisma que se desdobla, barrena con cuchillas…). Su vida está calibrada para que cada combate dure algo más que el anterior.
 - **Cada misión termina con un combate**:
   - **Mini jefe** en 12 misiones: Guardián del Censo, Torre Centinela, Excavadora Minera, Leviatán Vítreo, Fundidor, Heraldo de ORDO… Son más débiles que los jefes.
   - **Jefe** en las misiones 5 (**Fragata Lanza**) y 10 (**Forja Madre**).

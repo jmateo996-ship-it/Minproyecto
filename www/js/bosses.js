@@ -501,6 +501,368 @@ const Bosses = (() => {
     return b;
   }
 
+  /* ==================== MINI JEFE · GUARDIÁN DE LA CÚPULA ====================
+     Misión 3. Un núcleo dorado protegido por un anillo giratorio de placas
+     de cristal con tres huecos: hay que disparar por los huecos. Desde el
+     borde de la cúpula deja caer cortinas de balas. */
+  function domeguard(G, def) {
+    const b = base(G, def);
+    b.targetY = 280;
+    b.core = img(120, 120, (g, glow) => {
+      glow('#ffb347', 30);
+      const gr = g.createRadialGradient(0, 0, 4, 0, 0, 50);
+      gr.addColorStop(0, '#fffbe8'); gr.addColorStop(0.4, '#ffc45a'); gr.addColorStop(1, '#5a3000');
+      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 50, 0, TAU); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#fff0c0'; g.lineWidth = 3; g.stroke();
+      g.strokeStyle = 'rgba(90,48,0,0.6)'; g.lineWidth = 2;
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; g.beginPath(); g.moveTo(Math.cos(a) * 18, Math.sin(a) * 18); g.lineTo(Math.cos(a) * 46, Math.sin(a) * 46); g.stroke(); }
+    });
+    b.plate = img(56, 34, (g, glow) => {
+      glow('#7fe8ff', 12);
+      g.fillStyle = 'rgba(150,235,255,0.55)'; poly(g, [-26, -12, 26, -12, 20, 14, -20, 14]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ffd27a'; g.lineWidth = 3; g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(-16, -6); g.lineTo(10, -6); g.stroke();
+    });
+    b.rim = img(600, 300, (g, glow) => {
+      glow('#7fe8ff', 18); g.strokeStyle = 'rgba(127,232,255,0.55)'; g.lineWidth = 5;
+      g.beginPath(); g.arc(0, 110, 280, Math.PI * 1.08, Math.PI * 1.92); g.stroke();
+      g.shadowBlur = 0; g.strokeStyle = 'rgba(255,210,122,0.5)'; g.lineWidth = 2;
+      for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.08 + i * 0.084); g.beginPath(); g.moveTo(Math.cos(a) * 280, 110 + Math.sin(a) * 280); g.lineTo(Math.cos(a) * 240, 110 + Math.sin(a) * 240); g.stroke(); }
+    });
+    const N = 12, GAPS = [0, 3, 6, 9], R = 100;
+    b.rot = 0; b.dir = 1;
+    const plates = () => { const out = []; for (let i = 0; i < N; i++) if (!GAPS.includes(i)) { const a = b.rot + i / N * TAU; out.push({ x: b.x + Math.cos(a) * R, y: b.y + Math.sin(a) * R, a }); } return out; };
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.5; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      if (Math.floor(this.t / 6) % 2) this.dir = -1; else this.dir = 1;
+      this.rot += dt * (0.7 + ph * 0.35) * this.dir;
+      this.x = G.W / 2 + Math.sin(this.t * 0.5) * 120;
+      // Cortinas desde el borde de la cúpula
+      this.every('curtain', [2.6, 2.0, 1.5][ph], () => {
+        const off = Math.random() * 60;
+        for (let k = 0; k < 8; k++) G.shot(40 + off + k * (G.W - 80) / 8, -8, 0, 165, 'bOrange');
+      });
+      this.every('aim', 1.6, () => G.fan(this.x, this.y + 40, G.aim(this.x, this.y), ph === 0 ? 3 : 5, 0.18, 250, 'bRed'));
+      if (ph >= 1) this.every('gaps', 0.28, () => { for (const gi of GAPS) { const a = this.rot + gi / N * TAU; G.shot(this.x + Math.cos(a) * 60, this.y + Math.sin(a) * 60, Math.cos(a) * 210, Math.sin(a) * 210, 'bCyan'); } });
+      if (ph === 2) this.every('plates', 1.5, () => { for (const p of plates()) G.shot(p.x, p.y, Math.cos(p.a) * 150, Math.sin(p.a) * 150, 'bViolet'); });
+    };
+    b.shields = function () { return plates().map(p => ({ x: p.x, y: p.y, r: 27 })); };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 50, part: null }]; };
+    b.draw = function (ctx) {
+      put(ctx, this.rim, this.x, this.y - 40, 0, 0.9);
+      put(ctx, this.core, this.x, this.y, -this.rot * 0.5);
+      for (const p of plates()) put(ctx, this.plate, p.x, p.y, p.a + Math.PI / 2);
+    };
+    return b;
+  }
+
+  /* ==================== MINI JEFE · LEVIATÁN ANCESTRAL ====================
+     Misión 7. El sujeto L‑0: una manta colosal de cristal. Sus alas desvían
+     los disparos y hacen daño al tocarlas; solo su corazón es vulnerable.
+     Canta anillos de cristal y suelta crías de cristal. */
+  function manta(G, def) {
+    const b = base(G, def);
+    b.targetY = 300;
+    b.body = img(460, 240, (g, glow) => {
+      glow('#9ff', 26);
+      const gr = g.createLinearGradient(0, -100, 0, 110);
+      gr.addColorStop(0, 'rgba(210,255,255,0.85)'); gr.addColorStop(0.5, 'rgba(90,150,230,0.7)'); gr.addColorStop(1, 'rgba(120,60,200,0.55)');
+      g.fillStyle = gr;
+      g.beginPath(); g.moveTo(0, -95); g.quadraticCurveTo(120, -60, 225, 25); g.quadraticCurveTo(120, 30, 40, 80); g.lineTo(10, 118); g.lineTo(-10, 118); g.lineTo(-40, 80);
+      g.quadraticCurveTo(-120, 30, -225, 25); g.quadraticCurveTo(-120, -60, 0, -95); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = 'rgba(230,255,255,0.9)'; g.lineWidth = 2.5; g.stroke();
+      g.strokeStyle = 'rgba(230,255,255,0.35)'; g.lineWidth = 1.5;
+      for (let k = 1; k <= 4; k++) { g.beginPath(); g.moveTo(0, -60 + k * 8); g.quadraticCurveTo(k * 40, -20, k * 52, 20); g.stroke(); g.beginPath(); g.moveTo(0, -60 + k * 8); g.quadraticCurveTo(-k * 40, -20, -k * 52, 20); g.stroke(); }
+      g.fillStyle = 'rgba(20,40,80,0.8)'; g.beginPath(); g.ellipse(-26, -50, 9, 5, -0.3, 0, TAU); g.ellipse(26, -50, 9, 5, 0.3, 0, TAU); g.fill();
+    });
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.2; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.45) * 150;
+      this.y = this.targetY + Math.sin(this.t * 0.9) * 40;
+      this.every('song', [2.2, 1.6, 1.2][ph], () => G.ring(this.x, this.y + 10, 20, 140, this.t, 'bCyan', 0.15));
+      this.every('shard', 1.3, () => { for (const s of [-1, 1]) G.fan(this.x + s * 200, this.y + 25, G.aim(this.x + s * 200, this.y + 25), 3, 0.2, 240, 'bViolet'); });
+      if (ph >= 1) this.every('spawn', 5, () => { for (const s of [-1, 1]) G.spawnEnemy('crystal', this.x + s * 180, this.y + 30, { ai: 'drift', vx: s * 40, vy: 110, spin: 1 }); });
+      if (ph === 2) this.every('tail', 0.09, () => { const a = Math.PI / 2 + Math.sin(this.t * 3) * 0.9; G.shot(this.x, this.y + 115, Math.cos(a) * 260, Math.sin(a) * 260, 'bCyan'); });
+    };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y + 5, r: 40, part: null }]; };
+    // Alas: desvían los disparos y dañan al contacto
+    b.bodyHitboxes = function () {
+      const flap = Math.sin(this.t * 3) * 8, out = [];
+      for (const k of [1, 2, 3, 4]) for (const s of [-1, 1]) out.push({ x: this.x + s * (k * 50), y: this.y + 15 - k * 4 + flap * k * 0.3, r: 28 });
+      return out;
+    };
+    b.draw = function (ctx) {
+      ctx.save(); ctx.translate(this.x, this.y); ctx.scale(1, 1 + 0.07 * Math.sin(this.t * 3)); put(ctx, this.body, 0, 0); ctx.restore();
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      const gr = ctx.createRadialGradient(this.x, this.y + 5, 0, this.x, this.y + 5, 44);
+      gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, '#ff6aa0'); gr.addColorStop(1, 'rgba(255,40,120,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(this.x, this.y + 5, 40 + 5 * Math.sin(this.t * 4), 0, TAU); ctx.fill(); ctx.restore();
+    };
+    return b;
+  }
+
+  /* ===================== MINI JEFE · VIGÍA DEL INSTITUTO =====================
+     Misión 8. Un satélite de vigilancia blanco con dos paneles solares que
+     absorben disparos y tres cámaras. Las cámaras barren el espacio y,
+     cuando fijan una línea (se vuelve roja), disparan una ráfaga por ella. */
+  function watcher(G, def) {
+    const b = base(G, def);
+    b.targetY = 270;
+    b.dish = img(150, 150, (g, glow) => {
+      glow('#bff', 18);
+      g.fillStyle = lg(g, -60, -60, 60, 60, ['#ffffff', '#cfe6ee', '#7c98a8']); g.beginPath(); g.arc(0, 0, 62, 0, TAU); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#5a7888'; g.lineWidth = 2;
+      for (const r of [48, 34, 20]) { g.beginPath(); g.arc(0, 0, r, 0, TAU); g.stroke(); }
+      for (let i = 0; i < 3; i++) { const a = i / 3 * TAU - Math.PI / 2; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * 62, Math.sin(a) * 62); g.stroke(); }
+    });
+    b.panel = img(170, 80, (g, glow) => {
+      glow('#4fd8ff', 10); g.fillStyle = '#0c2a50'; g.fillRect(-80, -34, 160, 68); g.shadowBlur = 0;
+      g.strokeStyle = '#9fd8ff'; g.lineWidth = 2; g.strokeRect(-80, -34, 160, 68);
+      g.strokeStyle = 'rgba(160,216,255,0.45)'; g.lineWidth = 1;
+      for (let x = -60; x < 80; x += 20) { g.beginPath(); g.moveTo(x, -34); g.lineTo(x, 34); g.stroke(); }
+      for (const y of [-11, 11]) { g.beginPath(); g.moveTo(-80, y); g.lineTo(80, y); g.stroke(); }
+    });
+    b.cam = img(46, 46, (g, glow) => {
+      g.fillStyle = '#e8eef2'; g.beginPath(); g.arc(0, 0, 18, 0, TAU); g.fill();
+      g.strokeStyle = '#5a7888'; g.lineWidth = 2; g.stroke();
+      glow('#4fd8ff', 10); g.fillStyle = '#123'; g.beginPath(); g.arc(0, 6, 9, 0, TAU); g.fill();
+    });
+    const camHp = Math.round(320 * (0.85 + G.difficulty * 0.15));
+    b.parts = [[-80, 70], [0, 98], [80, 70]].map(([ox, oy], k) => ({ ox, oy, k, r: 22, hp: camHp, max: camHp, alive: true, ang: Math.PI / 2, lock: 0, cool: 1 + k * 0.7 }));
+    b.partBonus = 0.08; b.partShare = 0.1;
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.4; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.35) * 110;
+      for (const c of this.parts) {
+        if (!c.alive) continue;
+        const cx = this.x + c.ox, cy = this.y + c.oy;
+        if (c.lock > 0) {
+          c.lock -= dt;
+          if (c.lock <= 0) { for (let n = 0; n < 7; n++) G.shot(cx + Math.cos(c.ang) * n * 16, cy + Math.sin(c.ang) * n * 16, Math.cos(c.ang) * 380, Math.sin(c.ang) * 380, 'bRed'); c.cool = [2.6, 2.0, 1.4][ph]; }
+        } else {
+          // Barrido hasta que la cámara "fija" al jugador
+          c.ang = Math.PI / 2 + Math.sin(this.t * (0.8 + ph * 0.3) + c.k * 2.1) * 0.8;
+          c.cool -= dt;
+          if (c.cool <= 0) { c.ang = Math.atan2(G.player.y - cy, G.player.x - cx); c.lock = 0.7; }
+        }
+      }
+      if (ph >= 1) this.every('ring', ph === 2 ? 1.8 : 2.6, () => G.ring(this.x, this.y, 14, 150, this.t, 'bCyan', 0.2));
+      this.every('spark', 1.9, () => G.fan(this.x, this.y + 40, G.aim(this.x, this.y), 3, 0.22, 230, 'bViolet'));
+    };
+    const camsAlive = () => b.parts.some(c => c.alive);
+    b.shields = function () {
+      const out = [];
+      for (const s of [-1, 1]) for (const dx of [-55, 0, 55]) out.push({ x: this.x + s * 165 + dx, y: this.y - 5, r: 32 });
+      return out;
+    };
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y, r: 58, part: null, armor: camsAlive() ? 0.4 : 1 }];
+      for (const c of this.parts) if (c.alive) hb.push({ x: this.x + c.ox, y: this.y + c.oy, r: c.r, part: c });
+      return hb;
+    };
+    b.draw = function (ctx) {
+      ctx.strokeStyle = '#8aa4b4'; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.moveTo(this.x - 245, this.y - 5); ctx.lineTo(this.x + 245, this.y - 5); ctx.stroke();
+      for (const s of [-1, 1]) put(ctx, this.panel, this.x + s * 165, this.y - 5);
+      // Líneas de visión de las cámaras
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const c of this.parts) if (c.alive) {
+        const cx = this.x + c.ox, cy = this.y + c.oy;
+        ctx.strokeStyle = c.lock > 0 ? `rgba(255,42,90,${0.5 + 0.4 * Math.sin(this.t * 30)})` : 'rgba(79,216,255,0.18)';
+        ctx.lineWidth = c.lock > 0 ? 3 : 1.5;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(c.ang) * 1500, cy + Math.sin(c.ang) * 1500); ctx.stroke();
+      }
+      ctx.restore();
+      put(ctx, this.dish, this.x, this.y, this.t * 0.4);
+      ctx.fillStyle = '#ff2a5a'; ctx.beginPath(); ctx.arc(this.x, this.y, 9 + 2 * Math.sin(this.t * 6), 0, TAU); ctx.fill();
+      for (const c of this.parts) if (c.alive) put(ctx, this.cam, this.x + c.ox, this.y + c.oy, c.ang - Math.PI / 2);
+    };
+    return b;
+  }
+
+  /* ======================== MINI JEFE · CRUCERO DE ORDO ========================
+     Misión 12. Un crucero negro en forma de tridente. Cada punta carga un
+     rayo (aviso: línea roja) y dispara una ráfaga larga. Mientras quede una
+     punta, el puente está blindado. Lanza kamikazes desde el hangar. */
+  function trident(G, def) {
+    const b = base(G, def);
+    b.targetY = 230;
+    b.body = img(380, 320, (g, glow) => {
+      glow('#ff2a4f', 22);
+      g.fillStyle = lg(g, -190, 0, 190, 0, ['#14060c', '#2e0c18', '#14060c']);
+      // Eje central y travesaño
+      poly(g, [-34, -150, 34, -150, 40, -40, 150, -30, 150, 0, 40, 0, 26, 150, -26, 150, -40, 0, -150, 0, -150, -30, -40, -40]); g.fill();
+      // Puntas laterales
+      poly(g, [-150, -10, -112, -10, -112, 120, -131, 140, -150, 120]); g.fill();
+      poly(g, [150, -10, 112, -10, 112, 120, 131, 140, 150, 120]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ff3b5c'; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(0, -140); g.lineTo(0, 140); g.moveTo(-131, -5); g.lineTo(-131, 130); g.moveTo(131, -5); g.lineTo(131, 130); g.moveTo(-140, -15); g.lineTo(140, -15); g.stroke();
+      g.fillStyle = '#ff2a4f'; for (const y of [-120, -95, -70]) g.fillRect(-12, y, 24, 6);
+    });
+    b.tip = img(44, 44, (g, glow) => {
+      glow('#ff2a4f', 16); g.fillStyle = '#3a0814'; g.beginPath(); g.arc(0, 0, 17, 0, TAU); g.fill();
+      g.strokeStyle = '#ff6c8f'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ffd0dc'; g.beginPath(); g.arc(0, 0, 6, 0, TAU); g.fill();
+    });
+    const tipHp = Math.round(380 * (0.85 + G.difficulty * 0.15));
+    b.parts = [[-131, 140], [0, 152], [131, 140]].map(([ox, oy], k) => ({ ox, oy, k, r: 22, hp: tipHp, max: tipHp, alive: true, state: 'idle', st: 1 + k * 0.8, ang: Math.PI / 2 }));
+    b.partBonus = 0.08; b.partShare = 0.1;
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.3; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.3) * 90;
+      for (const p of this.parts) {
+        if (!p.alive) continue;
+        const px = this.x + p.ox, py = this.y + p.oy;
+        p.st -= dt;
+        if (p.state === 'idle' && p.st <= 0) { p.state = 'charge'; p.st = 0.9; p.ang = Math.atan2(G.player.y - py, G.player.x - px); }
+        else if (p.state === 'charge' && p.st <= 0) { p.state = 'fire'; p.st = 0.75; }
+        else if (p.state === 'fire') {
+          this.every('beam' + p.k, 0.05, () => G.shot(px, py, Math.cos(p.ang) * 420, Math.sin(p.ang) * 420, 'bRed'));
+          if (ph === 2 && p.k === 1) p.ang += Math.sin(this.t * 4) * dt * 1.5;
+          if (p.st <= 0) { p.state = 'idle'; p.st = [2.4, 1.8, 1.3][ph] + p.k * 0.3; }
+        }
+      }
+      if (ph >= 1) this.every('kami', 5, () => { G.spawnEnemy('kamikaze', this.x - 60, this.y - 40, { ai: 'homing', speed: 240 }); G.spawnEnemy('kamikaze', this.x + 60, this.y - 40, { ai: 'homing', speed: 240 }); });
+      this.every('side', 2.2, () => { for (const s of [-1, 1]) G.fan(this.x + s * 150, this.y - 15, Math.PI / 2 + s * 0.6, 4, 0.12, 200, 'bViolet'); });
+    };
+    const tipsAlive = () => b.parts.some(p => p.alive);
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y - 70, r: 50, part: null, armor: tipsAlive() ? 0.3 : 1 }];
+      for (const p of this.parts) if (p.alive) hb.push({ x: this.x + p.ox, y: this.y + p.oy, r: p.r, part: p });
+      return hb;
+    };
+    b.draw = function (ctx) {
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const p of this.parts) if (p.alive && p.state === 'charge') {
+        const px = this.x + p.ox, py = this.y + p.oy, k = 1 - p.st / 0.9;
+        ctx.strokeStyle = `rgba(255,42,79,${0.2 + 0.6 * k})`; ctx.lineWidth = 1 + 4 * k;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + Math.cos(p.ang) * 1500, py + Math.sin(p.ang) * 1500); ctx.stroke();
+      }
+      ctx.restore();
+      put(ctx, this.body, this.x, this.y);
+      for (const p of this.parts) if (p.alive) put(ctx, this.tip, this.x + p.ox, this.y + p.oy, this.t * (p.state === 'charge' ? 8 : 1));
+      ctx.fillStyle = tipsAlive() ? 'rgba(255,42,79,0.6)' : '#ff2a4f';
+      ctx.beginPath(); ctx.arc(this.x, this.y - 70, 14 + (tipsAlive() ? 0 : 3 * Math.sin(this.t * 8)), 0, TAU); ctx.fill();
+    };
+    return b;
+  }
+
+  /* ====================== MINI JEFE · HERALDO DEL UMBRAL ======================
+     Misión 13. Un prisma blanco que se desdobla en tres reflejos. Solo el
+     auténtico tiene el ojo encendido y recibe daño; cada pocos segundos se
+     desvanecen y cambian de sitio. */
+  function prism(G, def) {
+    const b = base(G, def);
+    b.targetY = 270;
+    b.body = img(150, 170, (g, glow) => {
+      glow('#e8c8ff', 22);
+      g.fillStyle = lg(g, -60, -80, 60, 80, ['#ffffff', '#d8c8ff', '#7a5ac8']);
+      poly(g, [0, -78, 52, 0, 0, 78, -52, 0]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ffffff'; g.lineWidth = 2; g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,0.5)'; g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(0, -78); g.lineTo(0, 78); g.moveTo(-52, 0); g.lineTo(52, 0); g.stroke();
+      g.strokeStyle = 'rgba(232,200,255,0.6)'; g.lineWidth = 3;
+      for (const s of [-1, 1]) { g.beginPath(); g.moveTo(s * 40, -20); g.quadraticCurveTo(s * 90, -50, s * 74, 10); g.stroke(); }
+    });
+    const SLOTS = [0.22, 0.5, 0.78];
+    b.real = 1; b.fade = 1; b.swapT = 0;
+    const pos = i => ({ x: G.W * SLOTS[i] + Math.sin(b.t * 0.8 + i) * 30, y: b.y + Math.sin(b.t * 1.3 + i * 2) * 25 });
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.4; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase(), every = [4.5, 3.5, 2.6][ph];
+      this.swapT += dt;
+      // Desvanecerse, cambiar de sitio y reaparecer
+      if (this.swapT > every) { this.fade = Math.max(0, this.fade - dt * 3); if (this.fade === 0) { this.real = Math.floor(Math.random() * 3); this.swapT = 0; } }
+      else this.fade = Math.min(1, this.fade + dt * 3);
+      this.x = pos(this.real).x;
+      if (this.fade < 0.8) return;
+      for (let i = 0; i < 3; i++) {
+        const p = pos(i);
+        this.every('aim' + i, 1.4 + i * 0.2, () => G.shot(p.x, p.y + 40, Math.cos(G.aim(p.x, p.y)) * 230, Math.sin(G.aim(p.x, p.y)) * 230, 'bViolet'));
+        if (ph === 2 && i !== this.real) this.every('cring' + i, 2.4, () => G.ring(p.x, p.y, 10, 130, this.t, 'bCyan'));
+      }
+      const r = pos(this.real);
+      this.every('fan', 1.8, () => G.fan(r.x, r.y + 40, G.aim(r.x, r.y), 5, 0.16, 260, 'bRed'));
+      if (ph >= 1) this.every('cross', 0.12, () => { const a = this.t * 2.4; for (let k = 0; k < 4; k++) { const aa = a + k * Math.PI / 2; G.shot(r.x, r.y, Math.cos(aa) * 190, Math.sin(aa) * 190, 'bViolet'); } });
+    };
+    b.hitboxes = function () { if (this.fade < 0.8) return []; const p = pos(this.real); return [{ x: p.x, y: p.y, r: 52, part: null }]; };
+    b.draw = function (ctx) {
+      for (let i = 0; i < 3; i++) {
+        const p = pos(i), real = i === this.real;
+        ctx.save(); ctx.globalAlpha = this.fade * (real ? 1 : 0.85);
+        put(ctx, this.body, p.x, p.y, Math.sin(this.t + i) * 0.08);
+        ctx.restore();
+        ctx.globalAlpha = this.fade;
+        ctx.fillStyle = real ? '#ff2a4f' : 'rgba(120,90,180,0.8)';
+        ctx.beginPath(); ctx.ellipse(p.x, p.y, real ? 11 : 8, real ? 16 : 10, 0, 0, TAU); ctx.fill();
+        if (real) { ctx.strokeStyle = `rgba(255,42,79,${0.4 + 0.3 * Math.sin(this.t * 8)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x, p.y, 24, 0, TAU); ctx.stroke(); }
+        ctx.globalAlpha = 1;
+      }
+    };
+    return b;
+  }
+
+  /* ===================== MINI JEFE · TALADRO DE LA GRIETA =====================
+     Misión 14. Una barrena gigante vista desde arriba: un disco espiral que
+     gira con tres cuchillas que se abren y se cierran a su alrededor.
+     Mientras queden cuchillas, el eje está blindado. Escupe escombros. */
+  function auger(G, def) {
+    const b = base(G, def);
+    b.targetY = 290;
+    b.disc = img(190, 190, (g, glow) => {
+      glow('#ffb347', 20);
+      const gr = g.createRadialGradient(0, 0, 10, 0, 0, 88);
+      gr.addColorStop(0, '#fff2c8'); gr.addColorStop(0.3, '#c89a50'); gr.addColorStop(1, '#3a2a18');
+      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 88, 0, TAU); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#2a1a08'; g.lineWidth = 5;
+      g.beginPath(); for (let a = 0; a < TAU * 3; a += 0.08) { const r = 10 + a * 4.2; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); } g.stroke();
+      g.strokeStyle = '#ffd27a'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 88, 0, TAU); g.stroke();
+    });
+    b.blade = img(90, 34, (g, glow) => {
+      glow('#ff6a1a', 14);
+      g.fillStyle = lg(g, -40, 0, 40, 0, ['#ffb066', '#ffffff', '#c86a2a']);
+      poly(g, [-40, -6, 30, -14, 42, 0, 30, 14, -40, 6]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#3a1a08'; g.lineWidth = 2; g.stroke();
+    });
+    const bladeHp = Math.round(420 * (0.85 + G.difficulty * 0.15));
+    b.parts = [0, 1, 2].map(k => ({ k, r: 26, hp: bladeHp, max: bladeHp, alive: true }));
+    b.partBonus = 0.08; b.partShare = 0.1;
+    b.spin = 0;
+    const bladeR = () => 130 + Math.sin(b.t * 1.4) * 45 + (b.phase() === 2 ? 30 : 0);
+    const bladePos = p => { const a = b.spin * 0.6 + p.k * TAU / 3, r = bladeR(); return { x: b.x + Math.cos(a) * r, y: b.y + Math.sin(a) * r, a }; };
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.4; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.spin += dt * (2 + ph * 0.8);
+      this.x = G.W / 2 + Math.sin(this.t * 0.5) * 160;
+      this.y = this.targetY + Math.sin(this.t * 1.1) * 25;
+      this.every('debris', [1.8, 1.4, 1.0][ph], () => G.spawnEnemy('rockS', this.x + (Math.random() - 0.5) * 100, this.y + 60, { ai: 'drift', vx: (Math.random() - 0.5) * 260, vy: 200 }));
+      this.every('burst', 2, () => G.fan(this.x, this.y + 60, G.aim(this.x, this.y), 5, 0.18, 250, 'bRed'));
+      if (ph >= 1) this.every('spiral', 0.09, () => { for (let k = 0; k < 2; k++) { const a = this.spin + k * Math.PI; G.shot(this.x, this.y, Math.cos(a) * 200, Math.sin(a) * 200, 'bOrange'); } });
+    };
+    const bladesAlive = () => b.parts.some(p => p.alive);
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y, r: 70, part: null, armor: bladesAlive() ? 0.25 : 1 }];
+      for (const p of this.parts) if (p.alive) { const q = bladePos(p); hb.push({ x: q.x, y: q.y, r: p.r, part: p }); }
+      return hb;
+    };
+    b.draw = function (ctx) {
+      put(ctx, this.disc, this.x, this.y, this.spin);
+      for (const p of this.parts) if (p.alive) { const q = bladePos(p); put(ctx, this.blade, q.x, q.y, q.a); }
+      if (bladesAlive()) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(255,179,71,${0.3 + 0.2 * Math.sin(this.t * 6)})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(this.x, this.y, 96, 0, TAU); ctx.stroke(); ctx.restore(); }
+    };
+    return b;
+  }
+
   /* ======================= MINI JEFE · EXCAVADORA MINERA ======================
      Asteroides. Dos brazos‑taladro destructibles; lanza rocas y abanicos. */
   function driller(G, def) {
@@ -632,7 +994,7 @@ const Bosses = (() => {
     return b;
   }
 
-  const TYPES = { lanza, forge, superordo, censor, sentinel, leviathan, driller, smelter, herald };
+  const TYPES = { lanza, forge, superordo, censor, sentinel, domeguard, leviathan, manta, watcher, driller, smelter, herald, trident, prism, auger };
   function create(G, def) { return TYPES[def.type](G, def); }
   return { create };
 })();
