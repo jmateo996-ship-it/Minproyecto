@@ -124,7 +124,7 @@ const Meta = (() => {
         return Promise.resolve(false);
       }
       // Navegador / pruebas: simulación
-      const ok = window.confirm('Modo de prueba (sin tienda): ¿simular la compra del juego completo?');
+      const ok = window.confirm(T('Modo de prueba (sin tienda): ¿simular la compra del juego completo?'));
       if (ok && onOwned) onOwned();
       return Promise.resolve(ok);
     }

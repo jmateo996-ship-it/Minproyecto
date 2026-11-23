@@ -9,12 +9,16 @@
     "cap:add": "npx cap add ios && npx cap add android",
     "sync": "npx cap sync",
     "ios": "npx cap sync ios && npx cap open ios",
-    "android": "npx cap sync android && npx cap open android"
+    "android": "npx cap sync android && npx cap open android",
+    "build:single": "python3 tools/build_single.py && python3 tools/build_single.py --test",
+    "i18n:missing": "python3 tools/i18n.py extract en"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
     "@capacitor/core": "^6.1.2",
-    "@capacitor/ios": "^6.1.2"
+    "@capacitor/ios": "^6.1.2",
+    "@capacitor/haptics": "^6.0.0",
+    "cordova-plugin-purchase": "^13.0.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",

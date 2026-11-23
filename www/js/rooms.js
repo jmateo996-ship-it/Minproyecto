@@ -48,7 +48,7 @@ const Rooms = (() => {
     }
   }
   function label(g, txt, x, y, color = '#cfe') {
-    g.font = '700 15px system-ui, sans-serif'; g.textAlign = 'center'; g.fillStyle = color; g.fillText(txt, x, y);
+    g.font = '700 15px system-ui, sans-serif'; g.textAlign = 'center'; g.fillStyle = color; g.fillText(window.T ? window.T(txt) : txt, x, y);
   }
 
   /* --------------------------- Las estancias --------------------------- */
@@ -210,7 +210,7 @@ const Rooms = (() => {
             g.fillStyle = '#c8b890'; rr(g, 50, 170, 150, 120, 4); g.fill(); g.fillStyle = '#2a3a40'; g.fillRect(60, 180, 130, 80);
             g.fillStyle = '#e8d8b8'; for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(78 + i * 24, 212, 8, 0, TAU); g.fill(); g.fillRect(70 + i * 24, 222, 16, 30); }
             g.fillStyle = '#ffb347'; g.beginPath(); g.arc(126, 212, 8, 0, TAU); g.fill();
-            g.fillStyle = '#4a3a20'; g.font = '700 11px system-ui'; g.textAlign = 'center'; g.fillText('CUNA · 2914', 125, 280);
+            g.fillStyle = '#4a3a20'; g.font = '700 11px system-ui'; g.textAlign = 'center'; g.fillText(window.T('CUNA · 2914'), 125, 280);
           },
           async act(C) {
             C.S.sawPhoto = true;
@@ -463,7 +463,7 @@ const Rooms = (() => {
             if (S.plateOff) {
               g.fillStyle = '#0a0206'; g.fillRect(540, 300, 150, 200);
               g.fillStyle = '#ff9db6'; g.font = '800 30px system-ui'; g.textAlign = 'center'; g.fillText('7·4·1', 615, 400);
-              g.font = '600 13px system-ui'; g.fillText('CUNA', 615, 430);
+              g.font = '600 13px system-ui'; g.fillText(window.T('CUNA'), 615, 430);
             } else {
               g.fillStyle = '#3a1a2a'; g.save(); g.translate(615, 400); g.rotate(0.06); g.fillRect(-75, -100, 150, 200); g.restore();
               g.fillStyle = '#8a5a6a'; for (const [x, y] of [[550, 310], [670, 316], [548, 486], [672, 492]]) { g.beginPath(); g.arc(x, y, 5, 0, TAU); g.fill(); }

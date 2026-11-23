@@ -66,7 +66,21 @@ Detalles que unen las estancias con la historia:
 - En la estancia 2, la clave del archivo es **ARENAL**, el apellido de soltera de Lía.
 - En la estancia 4, solo **Teo** puede cruzar la barrera de ORDO, porque no aparece en sus mapas. Además, **Lía prueba por primera vez su Protocolo inverso**, el mismo que sellará la Grieta al final.
 
-## Epílogo
+## La elección: salvar o no a Vex
+
+Al final de la misión 5, la cápsula de Vex queda a la deriva. Teo pide ayudarla, y Nora avisa de que lanzarle la baliza de rescate delatará su posición a ORDO. **El jugador decide.**
+
+| | Ruta «Nadie se queda atrás» (salvas a Vex) | Ruta «Solos contra todo» (no la salvas) |
+|---|---|---|
+| Misión 7 | ORDO los encuentra por la baliza de Vex. | ORDO sigue su estela. |
+| Misión 9 | Vex les avisa de la emboscada en agradecimiento. | Nora intercepta la señal ella sola. Teo echa de menos a Vex. |
+| Misiones 11‑12 | Vex convence a la flota del norte y lucha con ellos. | La flota se amotina por su cuenta, inspirada por la familia; la dirige el **capitán Orén**. |
+| Estancia 4 | Vex les trae los restos del Heraldo. | Orén les trae los restos del Heraldo. |
+| Epílogo | Un año después, Vex cruza la Grieta: «Me debíais una cena». | Nadie vuelve a saber de Vex. Teo se pregunta si los habría perdonado. |
+
+En ambas rutas el Dominio queda liberado. Lo que cambia es el precio de la libertad.
+
+
 
 Al otro lado hay un sol imperfecto que nadie ha forjado y un océano que huele a sal. Los Vega aterrizan en una playa de arena negra.
 —¿Es real? —pregunta Teo.
