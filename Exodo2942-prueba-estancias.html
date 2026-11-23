@@ -198,6 +198,13 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
 .ach small { font-size: 12px; opacity: .7; }
 .ach:not(.on) { opacity: .55; }
 
+.diff-card { padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--dc); background: rgba(255,255,255,.04); box-shadow: 0 0 16px color-mix(in srgb, var(--dc) 30%, transparent); }
+.diff-card b { color: var(--dc); letter-spacing: .2em; font-size: 14px; }
+.diff-card p { margin: 4px 0 8px; font-size: 13px; opacity: .85; }
+.diff-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.diff-card li { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px dashed rgba(255,255,255,.1); padding-bottom: 3px; }
+.diff-card em { font-style: normal; font-weight: 800; color: var(--dc); }
+.diff-card small { display: block; margin-top: 8px; font-size: 11px; opacity: .6; }
 .settings-list { width: min(94vw, 460px); display: flex; flex-direction: column; gap: 14px; text-align: left; }
 .set-row { display: flex; flex-direction: column; gap: 6px; }
 .set-row > span { font-size: 12px; letter-spacing: .2em; font-weight: 800; opacity: .8; }
@@ -1244,7 +1251,18 @@ window.LANG_EN = {
  "Un satélite de vigilancia. Sus paneles solares absorben los disparos. Cuando una cámara fija su línea en rojo, dispara una ráfaga por ella: apártate. Destruye las tres cámaras y el disco central pierde su blindaje.": "A surveillance satellite. Its solar panels absorb shots. When a camera locks its line in red, it fires a burst along it: get out of the way. Destroy all three cameras and the central dish loses its armor.",
  "Un crucero en forma de tridente. Cada punta carga un rayo (verás una línea roja) antes de disparar. Mientras quede una punta, el puente está blindado: destrúyelas primero.": "A trident‑shaped cruiser. Each prong charges a beam (you'll see a red line) before it fires. While any prong remains, the bridge is armored: destroy them first.",
  "Se desdobla en tres reflejos. Solo el auténtico tiene el ojo rojo encendido y recibe daño; cada pocos segundos se desvanecen y cambian de sitio.": "It splits into three reflections. Only the real one has its red eye lit and takes damage; every few seconds they fade out and swap places.",
- "Una barrena gigante con tres cuchillas que se abren y se cierran a su alrededor. Mientras quede una, el eje está blindado: rompe las cuchillas.": "A giant auger with three blades that open and close around it. While any blade remains, the shaft is armored: break the blades."
+ "Una barrena gigante con tres cuchillas que se abren y se cierran a su alrededor. Mientras quede una, el eje está blindado: rompe las cuchillas.": "A giant auger with three blades that open and close around it. While any blade remains, the shaft is armored: break the blades.",
+ "Para disfrutar de la historia sin agobios.": "Enjoy the story without the stress.",
+ "La experiencia equilibrada, tal como se diseñó el juego.": "The balanced experience, as the game was designed.",
+ "Para expertos: cada impacto cuenta.": "For experts: every hit counts.",
+ "Vida de enemigos y jefes": "Enemy and boss health",
+ "Velocidad de sus balas": "Enemy bullet speed",
+ "Frecuencia de disparo enemigo": "Enemy fire rate",
+ "Tus vidas": "Your lives",
+ "Escudo": "Shield",
+ "Puntos y créditos": "Points and credits",
+ "Se aplica desde la próxima misión que empieces.": "Applies from the next mission you start.",
+ "Dificultad": "Difficulty"
 };
 
 </script>
@@ -1771,10 +1789,14 @@ const Meta = (() => {
   /* ------------------------------ Dificultad ------------------------------ */
   // hp: vida de enemigos y jefes · bullet: velocidad de balas enemigas
   // fire: cadencia enemiga · lives: vidas iniciales · reward: puntos y créditos
+  // shield: segmentos de escudo extra (o de menos) respecto al hangar
   const DIFFICULTY = [
-    { id: 'easy',   name: 'FÁCIL',   hp: 0.7, bullet: 0.85, fire: 0.75, lives: 5, reward: 0.75 },
-    { id: 'normal', name: 'NORMAL',  hp: 1.0, bullet: 1.0,  fire: 1.0,  lives: 3, reward: 1.0 },
-    { id: 'hard',   name: 'DIFÍCIL', hp: 1.35, bullet: 1.12, fire: 1.25, lives: 2, reward: 1.5 },
+    { id: 'easy',   name: 'FÁCIL',   color: '#9dff6a', hp: 0.6, bullet: 0.8,  fire: 0.7, lives: 5, shield: 1,  reward: 0.75,
+      desc: 'Para disfrutar de la historia sin agobios.' },
+    { id: 'normal', name: 'NORMAL',  color: '#4fd8ff', hp: 1.0, bullet: 1.0,  fire: 1.0, lives: 3, shield: 0,  reward: 1.0,
+      desc: 'La experiencia equilibrada, tal como se diseñó el juego.' },
+    { id: 'hard',   name: 'DIFÍCIL', color: '#ff2a5a', hp: 1.4, bullet: 1.15, fire: 1.3, lives: 2, shield: -1, reward: 1.5,
+      desc: 'Para expertos: cada impacto cuenta.' },
   ];
 
   /* ------------------------------- Mejoras ------------------------------- */
@@ -4279,7 +4301,7 @@ window.Rooms = Rooms;
   // Aplica el hangar a la nave. fresh: nave nueva; si no, solo garantiza los mínimos.
   function applyUpgrades(p, fresh) {
     const teo = p.mode === 'teo';
-    p.maxShield = upg('shield'); p.maxBombs = upg('pulse') + 2;
+    p.maxShield = Math.max(1, upg('shield') + (D().shield || 0)); p.maxBombs = upg('pulse') + 2;
     p.phaseDur = teo ? 1.0 : 0.7; p.phaseCdMax = upg('phase') * (teo ? 0.6 : 1);
     p.magnet = upg('magnet'); p.droneDmg = upgLevel('drones') >= 3 ? 10.5 : 7;
     if (fresh) { p.power = upg('cannon'); p.shield = p.maxShield; p.bombs = upg('pulse'); p.drones = upg('drones'); }
@@ -4982,8 +5004,20 @@ window.Rooms = Rooms;
       row.appendChild(box); list.appendChild(row);
     };
     const yn = [[true, T('SÍ')], [false, T('NO')]];
-    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; st.langChosen = true; applySettings(); });
     seg(T('DIFICULTAD'), M.DIFFICULTY.map((d, i) => [i, T(d.name)]), st.difficulty, v => { st.difficulty = v; });
+    // Ficha del nivel elegido, con sus valores exactos
+    const d = D(), pct = v => Math.round(v * 100) + ' %';
+    const card = document.createElement('div'); card.className = 'diff-card'; card.style.setProperty('--dc', d.color);
+    card.innerHTML = `<b>${T(d.name)}</b><p>${T(d.desc)}</p><ul>
+      <li><span>${T('Vida de enemigos y jefes')}</span><em>${pct(d.hp)}</em></li>
+      <li><span>${T('Velocidad de sus balas')}</span><em>${pct(d.bullet)}</em></li>
+      <li><span>${T('Frecuencia de disparo enemigo')}</span><em>${pct(d.fire)}</em></li>
+      <li><span>${T('Tus vidas')}</span><em>${d.lives}</em></li>
+      <li><span>${T('Escudo')}</span><em>${d.shield > 0 ? '+' + d.shield : d.shield < 0 ? String(d.shield) : '='}</em></li>
+      <li><span>${T('Puntos y créditos')}</span><em>${pct(d.reward)}</em></li></ul>
+      <small>${T('Se aplica desde la próxima misión que empieces.')}</small>`;
+    list.appendChild(card);
+    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; st.langChosen = true; applySettings(); });
     seg(T('SONIDO'), yn, save.sound, v => { save.sound = v; applySettings(); });
     seg(T('VIBRACIÓN'), yn, st.vibration, v => { st.vibration = v; applySettings(); M.haptic(80); });
     seg(T('DISPARO AUTOMÁTICO'), yn, st.autofire, v => { st.autofire = v; });
@@ -4993,9 +5027,6 @@ window.Rooms = Rooms;
     row.innerHTML = `<span>${T('SENSIBILIDAD DEL DEDO')} · ${st.sens.toFixed(2)}</span><input type="range" min="0.8" max="2.2" step="0.05" value="${st.sens}">`;
     row.querySelector('input').addEventListener('input', e => { st.sens = parseFloat(e.target.value); row.querySelector('span').textContent = T('SENSIBILIDAD DEL DEDO') + ' · ' + st.sens.toFixed(2); persist(); });
     list.appendChild(row);
-    const note = document.createElement('div'); note.className = 'help';
-    note.textContent = T('La dificultad cambia la vida de los enemigos, la velocidad de sus balas y tus vidas. En Difícil ganas un 50 % más de puntos y créditos.');
-    list.appendChild(note);
   }
   function openSettings(back) { settingsBack = back; buildSettings(); show('settings'); }
 
@@ -5218,7 +5249,7 @@ window.Rooms = Rooms;
     $('cardNum').textContent = T(ACTS[G.chapter.act]) + ' · ' + T('MISIÓN') + ' ' + G.chapter.id + '/' + CHAPTERS.length;
     $('cardTitle').textContent = T(G.chapter.title);
     $('cardPlace').textContent = opts.fromCheckpoint ? T('Desde el punto de control') + ' · ' + fmtTime(G.chapter.duration - checkpointT()) + ' ' + T('restantes')
-      : T(G.chapter.place) + (G.chapter.boss ? (G.chapter.boss.super ? ' · ' + T('SÚPER JEFE') : ' · ' + T('JEFE FINAL')) : '');
+      : T(G.chapter.place) + (G.chapter.boss ? (G.chapter.boss.super ? ' · ' + T('SÚPER JEFE') : ' · ' + T('JEFE FINAL')) : '') + ' · ' + T('Dificultad') + ': ' + T(D().name);
     show('card');
     await sleep(2600);
     if (id !== runId) return;

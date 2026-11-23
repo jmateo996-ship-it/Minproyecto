@@ -748,5 +748,16 @@ window.LANG_EN = {
  "Un satélite de vigilancia. Sus paneles solares absorben los disparos. Cuando una cámara fija su línea en rojo, dispara una ráfaga por ella: apártate. Destruye las tres cámaras y el disco central pierde su blindaje.": "A surveillance satellite. Its solar panels absorb shots. When a camera locks its line in red, it fires a burst along it: get out of the way. Destroy all three cameras and the central dish loses its armor.",
  "Un crucero en forma de tridente. Cada punta carga un rayo (verás una línea roja) antes de disparar. Mientras quede una punta, el puente está blindado: destrúyelas primero.": "A trident‑shaped cruiser. Each prong charges a beam (you'll see a red line) before it fires. While any prong remains, the bridge is armored: destroy them first.",
  "Se desdobla en tres reflejos. Solo el auténtico tiene el ojo rojo encendido y recibe daño; cada pocos segundos se desvanecen y cambian de sitio.": "It splits into three reflections. Only the real one has its red eye lit and takes damage; every few seconds they fade out and swap places.",
- "Una barrena gigante con tres cuchillas que se abren y se cierran a su alrededor. Mientras quede una, el eje está blindado: rompe las cuchillas.": "A giant auger with three blades that open and close around it. While any blade remains, the shaft is armored: break the blades."
+ "Una barrena gigante con tres cuchillas que se abren y se cierran a su alrededor. Mientras quede una, el eje está blindado: rompe las cuchillas.": "A giant auger with three blades that open and close around it. While any blade remains, the shaft is armored: break the blades.",
+ "Para disfrutar de la historia sin agobios.": "Enjoy the story without the stress.",
+ "La experiencia equilibrada, tal como se diseñó el juego.": "The balanced experience, as the game was designed.",
+ "Para expertos: cada impacto cuenta.": "For experts: every hit counts.",
+ "Vida de enemigos y jefes": "Enemy and boss health",
+ "Velocidad de sus balas": "Enemy bullet speed",
+ "Frecuencia de disparo enemigo": "Enemy fire rate",
+ "Tus vidas": "Your lives",
+ "Escudo": "Shield",
+ "Puntos y créditos": "Points and credits",
+ "Se aplica desde la próxima misión que empieces.": "Applies from the next mission you start.",
+ "Dificultad": "Difficulty"
 };

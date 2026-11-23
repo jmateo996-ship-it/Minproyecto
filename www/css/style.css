@@ -186,6 +186,13 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
 .ach small { font-size: 12px; opacity: .7; }
 .ach:not(.on) { opacity: .55; }
 
+.diff-card { padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--dc); background: rgba(255,255,255,.04); box-shadow: 0 0 16px color-mix(in srgb, var(--dc) 30%, transparent); }
+.diff-card b { color: var(--dc); letter-spacing: .2em; font-size: 14px; }
+.diff-card p { margin: 4px 0 8px; font-size: 13px; opacity: .85; }
+.diff-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.diff-card li { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px dashed rgba(255,255,255,.1); padding-bottom: 3px; }
+.diff-card em { font-style: normal; font-weight: 800; color: var(--dc); }
+.diff-card small { display: block; margin-top: 8px; font-size: 11px; opacity: .6; }
 .settings-list { width: min(94vw, 460px); display: flex; flex-direction: column; gap: 14px; text-align: left; }
 .set-row { display: flex; flex-direction: column; gap: 6px; }
 .set-row > span { font-size: 12px; letter-spacing: .2em; font-weight: 800; opacity: .8; }

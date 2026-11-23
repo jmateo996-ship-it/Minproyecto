@@ -105,7 +105,7 @@
   // Aplica el hangar a la nave. fresh: nave nueva; si no, solo garantiza los mínimos.
   function applyUpgrades(p, fresh) {
     const teo = p.mode === 'teo';
-    p.maxShield = upg('shield'); p.maxBombs = upg('pulse') + 2;
+    p.maxShield = Math.max(1, upg('shield') + (D().shield || 0)); p.maxBombs = upg('pulse') + 2;
     p.phaseDur = teo ? 1.0 : 0.7; p.phaseCdMax = upg('phase') * (teo ? 0.6 : 1);
     p.magnet = upg('magnet'); p.droneDmg = upgLevel('drones') >= 3 ? 10.5 : 7;
     if (fresh) { p.power = upg('cannon'); p.shield = p.maxShield; p.bombs = upg('pulse'); p.drones = upg('drones'); }
@@ -808,8 +808,20 @@
       row.appendChild(box); list.appendChild(row);
     };
     const yn = [[true, T('SÍ')], [false, T('NO')]];
-    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; st.langChosen = true; applySettings(); });
     seg(T('DIFICULTAD'), M.DIFFICULTY.map((d, i) => [i, T(d.name)]), st.difficulty, v => { st.difficulty = v; });
+    // Ficha del nivel elegido, con sus valores exactos
+    const d = D(), pct = v => Math.round(v * 100) + ' %';
+    const card = document.createElement('div'); card.className = 'diff-card'; card.style.setProperty('--dc', d.color);
+    card.innerHTML = `<b>${T(d.name)}</b><p>${T(d.desc)}</p><ul>
+      <li><span>${T('Vida de enemigos y jefes')}</span><em>${pct(d.hp)}</em></li>
+      <li><span>${T('Velocidad de sus balas')}</span><em>${pct(d.bullet)}</em></li>
+      <li><span>${T('Frecuencia de disparo enemigo')}</span><em>${pct(d.fire)}</em></li>
+      <li><span>${T('Tus vidas')}</span><em>${d.lives}</em></li>
+      <li><span>${T('Escudo')}</span><em>${d.shield > 0 ? '+' + d.shield : d.shield < 0 ? String(d.shield) : '='}</em></li>
+      <li><span>${T('Puntos y créditos')}</span><em>${pct(d.reward)}</em></li></ul>
+      <small>${T('Se aplica desde la próxima misión que empieces.')}</small>`;
+    list.appendChild(card);
+    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; st.langChosen = true; applySettings(); });
     seg(T('SONIDO'), yn, save.sound, v => { save.sound = v; applySettings(); });
     seg(T('VIBRACIÓN'), yn, st.vibration, v => { st.vibration = v; applySettings(); M.haptic(80); });
     seg(T('DISPARO AUTOMÁTICO'), yn, st.autofire, v => { st.autofire = v; });
@@ -819,9 +831,6 @@
     row.innerHTML = `<span>${T('SENSIBILIDAD DEL DEDO')} · ${st.sens.toFixed(2)}</span><input type="range" min="0.8" max="2.2" step="0.05" value="${st.sens}">`;
     row.querySelector('input').addEventListener('input', e => { st.sens = parseFloat(e.target.value); row.querySelector('span').textContent = T('SENSIBILIDAD DEL DEDO') + ' · ' + st.sens.toFixed(2); persist(); });
     list.appendChild(row);
-    const note = document.createElement('div'); note.className = 'help';
-    note.textContent = T('La dificultad cambia la vida de los enemigos, la velocidad de sus balas y tus vidas. En Difícil ganas un 50 % más de puntos y créditos.');
-    list.appendChild(note);
   }
   function openSettings(back) { settingsBack = back; buildSettings(); show('settings'); }
 
@@ -1044,7 +1053,7 @@
     $('cardNum').textContent = T(ACTS[G.chapter.act]) + ' · ' + T('MISIÓN') + ' ' + G.chapter.id + '/' + CHAPTERS.length;
     $('cardTitle').textContent = T(G.chapter.title);
     $('cardPlace').textContent = opts.fromCheckpoint ? T('Desde el punto de control') + ' · ' + fmtTime(G.chapter.duration - checkpointT()) + ' ' + T('restantes')
-      : T(G.chapter.place) + (G.chapter.boss ? (G.chapter.boss.super ? ' · ' + T('SÚPER JEFE') : ' · ' + T('JEFE FINAL')) : '');
+      : T(G.chapter.place) + (G.chapter.boss ? (G.chapter.boss.super ? ' · ' + T('SÚPER JEFE') : ' · ' + T('JEFE FINAL')) : '') + ' · ' + T('Dificultad') + ': ' + T(D().name);
     show('card');
     await sleep(2600);
     if (id !== runId) return;

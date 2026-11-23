@@ -20,10 +20,14 @@ const Meta = (() => {
   /* ------------------------------ Dificultad ------------------------------ */
   // hp: vida de enemigos y jefes · bullet: velocidad de balas enemigas
   // fire: cadencia enemiga · lives: vidas iniciales · reward: puntos y créditos
+  // shield: segmentos de escudo extra (o de menos) respecto al hangar
   const DIFFICULTY = [
-    { id: 'easy',   name: 'FÁCIL',   hp: 0.7, bullet: 0.85, fire: 0.75, lives: 5, reward: 0.75 },
-    { id: 'normal', name: 'NORMAL',  hp: 1.0, bullet: 1.0,  fire: 1.0,  lives: 3, reward: 1.0 },
-    { id: 'hard',   name: 'DIFÍCIL', hp: 1.35, bullet: 1.12, fire: 1.25, lives: 2, reward: 1.5 },
+    { id: 'easy',   name: 'FÁCIL',   color: '#9dff6a', hp: 0.6, bullet: 0.8,  fire: 0.7, lives: 5, shield: 1,  reward: 0.75,
+      desc: 'Para disfrutar de la historia sin agobios.' },
+    { id: 'normal', name: 'NORMAL',  color: '#4fd8ff', hp: 1.0, bullet: 1.0,  fire: 1.0, lives: 3, shield: 0,  reward: 1.0,
+      desc: 'La experiencia equilibrada, tal como se diseñó el juego.' },
+    { id: 'hard',   name: 'DIFÍCIL', color: '#ff2a5a', hp: 1.4, bullet: 1.15, fire: 1.3, lives: 2, shield: -1, reward: 1.5,
+      desc: 'Para expertos: cada impacto cuenta.' },
   ];
 
   /* ------------------------------- Mejoras ------------------------------- */
