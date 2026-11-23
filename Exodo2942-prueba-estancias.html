@@ -3759,6 +3759,8 @@ window.Rooms = Rooms;
   };
   // Resistencia de los enemigos normales a las balas (1 = original, 3 = aguantan el triple)
   const ENEMY_TOUGHNESS = 3;
+  // Daño de los disparos de tu nave (1 = original, 0.7 = un 30 % menos). No afecta al PULSO.
+  const PLAYER_DAMAGE = 0.7;
   function spawnEnemy(type, x, y, o = {}) {
     const d = EDEF[type];
     const hpScale = ENEMY_TOUGHNESS * D().hp * (1 + (G.difficulty - 1) * 0.35);
@@ -3904,7 +3906,7 @@ window.Rooms = Rooms;
   /* ------------------------------ Disparos ----------------------------- */
   const FIRE_RATE = { dario: 0.1, lia: 0.14, nora: 0.12, teo: 0.11 };
   function firePlayer(p) {
-    const lv = p.power, add = (x, y, vx, vy, spr = 'pShot', dmg = 10, extra) => G.pBullets.push(Object.assign({ x, y, vx, vy, spr, dmg, r: 7 }, extra));
+    const lv = p.power, add = (x, y, vx, vy, spr = 'pShot', dmg = 10, extra) => G.pBullets.push(Object.assign({ x, y, vx, vy, spr, dmg: dmg * PLAYER_DAMAGE, r: 7 }, extra));
     if (p.mode === 'lia') {
       // LÁSER: rayos que atraviesan hasta 3 enemigos
       const L = (x, vx = 0) => add(x, p.y - 44, vx, -1500, 'pLaser', 17, { pierce: 3, hit: [], r: 8 });
