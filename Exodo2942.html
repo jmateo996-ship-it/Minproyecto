@@ -216,8 +216,9 @@ const PROLOGUE = [
   { title: 'EL CENSO', text: 'Esta noche, el Censo decenal de ORDO ha encontrado por fin una mente que no aparece en sus mapas.\nY los Vega tienen once minutos antes de que lleguen los Guardianes.' },
 ];
 
-/* 15 misiones en tres actos: las 5 primeras duran 3 minutos y el resto, 5.
+/* 15 misiones de 2 minutos en tres actos.
    Cada 5 misiones hay un jefe final; la misión 15 termina con el súper jefe.
+   El resto de misiones termina con un mini jefe (más débil que los jefes).
    intro  -> diálogo antes de jugar
    comms  -> mensajes de radio durante el vuelo (t en segundos, dentro de duration)
    boss   -> jefe (solo en las misiones 5, 10 y 15)
@@ -227,7 +228,7 @@ const ACTS = ['ACTO I · LA HUIDA', 'ACTO II · LA VERDAD', 'ACTO III · LA GRIE
 const CHAPTERS = [
   /* ============================ ACTO I · LA HUIDA ============================ */
   {
-    id: 1, act: 0, title: 'EL APAGÓN', place: 'Ciudad‑Colmena Nexo‑9 · Bloque 77', theme: 'city', duration: 180,
+    id: 1, act: 0, title: 'EL APAGÓN', place: 'Ciudad‑Colmena Nexo‑9 · Bloque 77', theme: 'city', duration: 120,
     intro: [
       { who: 'lia', text: 'Darío, el Esperanza arranca. Lo restauré con piezas de antes de la Red: ORDO no puede tomar el control a distancia.' },
       { who: 'dario', text: 'Entonces no podrá apagarlo. Solo derribarlo. Nora, ¿ruta?' },
@@ -235,107 +236,111 @@ const CHAPTERS = [
       { who: 'dario', text: 'Agarraos fuerte. Nos vamos de aquí.' },
     ],
     comms: [
-      { t: 3,   who: 'sys',  text: 'Fuego automático activo. Arrastra en cualquier parte para pilotar.' },
-      { t: 12,  who: 'lia',  text: 'Si te rodean, toca FASE: el motor de fase nos vuelve intangibles un instante.' },
-      { t: 27,  who: 'nora', text: 'Recoge las cápsulas P: puedo redirigir esa energía a los cañones.' },
-      { t: 45,  who: 'lia',  text: 'El PULSO descarga el reactor viejo y barre las balas. Tenemos pocas cargas.' },
-      { t: 63, who: 'teo',  text: 'Hay luces rojas en todas las ventanas. ¿Nos está mirando todo el mundo?' },
-      { t: 81, who: 'nora', text: 'Son los ojos del Censo. ORDO ve por cada pantalla de la ciudad.' },
-      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 105, who: 'dario', text: 'Si derribas un escuadrón entero, suelta suministros. Lo aprendí en la academia.' },
-      { t: 129, who: 'lia',  text: 'El motor de fase responde más rápido de lo que debería. No lo entiendo.' },
-      { t: 153, who: 'nora', text: 'Salimos del bloque 77. Las torres del distrito 4, justo delante.' },
+      { t: 2,   who: 'sys',  text: 'Fuego automático activo. Arrastra en cualquier parte para pilotar.' },
+      { t: 8,  who: 'lia',  text: 'Si te rodean, toca FASE: el motor de fase nos vuelve intangibles un instante.' },
+      { t: 18,  who: 'nora', text: 'Recoge las cápsulas P: puedo redirigir esa energía a los cañones.' },
+      { t: 30,  who: 'lia',  text: 'El PULSO descarga el reactor viejo y barre las balas. Tenemos pocas cargas.' },
+      { t: 42, who: 'teo',  text: 'Hay luces rojas en todas las ventanas. ¿Nos está mirando todo el mundo?' },
+      { t: 54, who: 'nora', text: 'Son los ojos del Censo. ORDO ve por cada pantalla de la ciudad.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 70, who: 'dario', text: 'Si derribas un escuadrón entero, suelta suministros. Lo aprendí en la academia.' },
+      { t: 86, who: 'lia',  text: 'El motor de fase responde más rápido de lo que debería. No lo entiendo.' },
+      { t: 102, who: 'nora', text: 'Salimos del bloque 77. Las torres del distrito 4, justo delante.' },
     ],
+    miniboss: { type: 'censor', name: 'GUARDIÁN DEL CENSO', hp: 600, line: { who: 'nora', text: 'Un Guardián del Censo nos corta el paso. ¡Derríbalo!' } },
     outro: [
       { who: 'teo', text: 'Papá… ¿nos buscan por mi culpa?' },
       { who: 'dario', text: 'Te buscan porque eres libre, Teo. Y eso no es ninguna culpa.' },
     ],
   },
   {
-    id: 2, act: 0, title: 'LAS TORRES', place: 'Distrito 4 · Nexo‑9', theme: 'city', duration: 180,
+    id: 2, act: 0, title: 'LAS TORRES', place: 'Distrito 4 · Nexo‑9', theme: 'city', duration: 120,
     intro: [
       { who: 'nora', text: 'Las torres son un laberinto. Si volamos bajo, los sensores del Censo se confunden con el tráfico.' },
       { who: 'lia', text: 'Y si volamos bajo, chocamos. Darío, confío en ti.' },
     ],
     comms: [
-      { t: 9,  who: 'dario', text: 'Patrullas de Guardianes, a las doce. Vienen en formación.' },
-      { t: 30,  who: 'nora', text: 'He apagado las farolas de tres manzanas. Ahora estamos igual de ciegos que ellos.' },
-      { t: 51,  who: 'teo',  text: 'Mi colegio está aquí abajo. Mañana no iré, ¿verdad?' },
-      { t: 60, who: 'lia',  text: 'Habrá otros colegios, cariño. Mejores. Sin ojos rojos.' },
-      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 96, who: 'nora', text: 'Cañoneras pesadas. Esas aguantan mucho: concéntrate en ellas.' },
-      { t: 126, who: 'lia',  text: 'Cuando Teo se asusta, el motor de fase se carga solo. Lo estoy viendo en los indicadores.' },
-      { t: 147, who: 'dario', text: 'Hablaremos de eso cuando salgamos vivos.' },
-      { t: 165, who: 'nora', text: 'La cúpula de Nexo‑9 ya se ve. Es la última barrera.' },
+      { t: 6,  who: 'dario', text: 'Patrullas de Guardianes, a las doce. Vienen en formación.' },
+      { t: 20,  who: 'nora', text: 'He apagado las farolas de tres manzanas. Ahora estamos igual de ciegos que ellos.' },
+      { t: 34,  who: 'teo',  text: 'Mi colegio está aquí abajo. Mañana no iré, ¿verdad?' },
+      { t: 40, who: 'lia',  text: 'Habrá otros colegios, cariño. Mejores. Sin ojos rojos.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 64, who: 'nora', text: 'Cañoneras pesadas. Esas aguantan mucho: concéntrate en ellas.' },
+      { t: 84, who: 'lia',  text: 'Cuando Teo se asusta, el motor de fase se carga solo. Lo estoy viendo en los indicadores.' },
+      { t: 98, who: 'dario', text: 'Hablaremos de eso cuando salgamos vivos.' },
+      { t: 110, who: 'nora', text: 'La cúpula de Nexo‑9 ya se ve. Es la última barrera.' },
     ],
+    miniboss: { type: 'censor', name: 'TORRE CENTINELA', hp: 700, line: { who: 'dario', text: 'Esa torre se mueve… es una Centinela. Va a por nosotros.' } },
     outro: [
       { who: 'nora', text: 'La cúpula tiene compuertas de mantenimiento. Si abrimos una, salimos al espacio.' },
       { who: 'dario', text: 'Y si no la abrimos, la atravesamos.' },
     ],
   },
   {
-    id: 3, act: 0, title: 'LA CÚPULA', place: 'Límite de Nexo‑9', theme: 'city', duration: 180,
+    id: 3, act: 0, title: 'LA CÚPULA', place: 'Límite de Nexo‑9', theme: 'city', duration: 120,
     intro: [
       { who: 'ordo', text: 'MENTE NO REGISTRADA DETECTADA. ENTREGAD AL NIÑO PARA SU CARTOGRAFÍA.' },
       { who: 'dario', text: 'Mi hijo no es un dato.' },
       { who: 'lia', text: 'Es la primera vez que ORDO habla directamente con alguien. Le importamos mucho.' },
     ],
     comms: [
-      { t: 12,  who: 'nora', text: 'Estoy forzando la compuerta 9. Necesito tres minutos. Aguanta.' },
-      { t: 36,  who: 'ordo', text: 'RESISTIR ES INEFICIENTE.' },
-      { t: 42,  who: 'teo',  text: 'Su voz suena a muchas personas a la vez.' },
-      { t: 72, who: 'nora', text: 'Cuarenta por ciento… cifrado de la vieja escuela. Esto va lento.' },
-      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 102, who: 'lia',  text: 'Minas flotantes cerca de la compuerta. Al estallar sueltan metralla.' },
-      { t: 129, who: 'nora', text: 'Ochenta por ciento. Ya casi.' },
-      { t: 156, who: 'nora', text: '¡Compuerta abierta! ¡Ahora o nunca!' },
+      { t: 8,  who: 'nora', text: 'Estoy forzando la compuerta 9. Necesito dos minutos. Aguanta.' },
+      { t: 24,  who: 'ordo', text: 'RESISTIR ES INEFICIENTE.' },
+      { t: 28,  who: 'teo',  text: 'Su voz suena a muchas personas a la vez.' },
+      { t: 48, who: 'nora', text: 'Cuarenta por ciento… cifrado de la vieja escuela. Esto va lento.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 68, who: 'lia',  text: 'Minas flotantes cerca de la compuerta. Al estallar sueltan metralla.' },
+      { t: 86, who: 'nora', text: 'Ochenta por ciento. Ya casi.' },
+      { t: 104, who: 'nora', text: '¡Compuerta abierta! ¡Ahora o nunca!' },
     ],
+    miniboss: { type: 'censor', name: 'GUARDIÁN DE LA CÚPULA', hp: 800, line: { who: 'nora', text: 'El guardián de la compuerta despierta. Sin él fuera, no salimos.' } },
     outro: [
       { who: 'teo', text: '¡Estrellas! Nunca las había visto sin el cristal de la cúpula.' },
       { who: 'nora', text: 'Trazo rumbo al Anillo de Ceniza: el único corredor sin balizas de ORDO.' },
     ],
   },
   {
-    id: 4, act: 0, title: 'EL ANILLO DE CENIZA', place: 'Cinturón de refinerías orbitales', theme: 'asteroids', duration: 180,
+    id: 4, act: 0, title: 'EL ANILLO DE CENIZA', place: 'Cinturón de refinerías orbitales', theme: 'asteroids', duration: 120,
     intro: [
       { who: 'nora', text: 'Demasiada roca y demasiado ruido para los sensores. Aquí ORDO está medio ciego.' },
       { who: 'vex', text: 'Medio ciego no es ciego, Darío. Siempre supe que elegirías el camino difícil.' },
       { who: 'dario', text: 'Vex. Volamos juntos once años.' },
     ],
     comms: [
-      { t: 6,  who: 'lia',  text: 'Las rocas pequeñas se rompen. Las grandes se parten en trozos: ojo con ellos.' },
-      { t: 27,  who: 'nora', text: 'Cazas del escuadrón Lanza. Eran los compañeros de papá.' },
-      { t: 54,  who: 'dario', text: 'No disparan a la cabina… disparan a los motores. Quieren a Teo intacto.' },
-      { t: 78, who: 'vex',  text: 'ORDO quiere vivo al niño. A los demás, no. Lo siento, Darío.' },
-      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 105, who: 'teo',  text: 'Si me entrego, ¿os dejarán en paz?' },
-      { t: 111, who: 'lia',  text: 'No, cariño. Nadie se entrega. Somos cuatro o no somos ninguno.' },
-      { t: 141, who: 'nora', text: 'Transportes pesados en el anillo. Llevan suministros: si caen, recógelos.' },
-      { t: 168, who: 'nora', text: 'La fragata de Vex se coloca en el corredor de salida.' },
+      { t: 4,  who: 'lia',  text: 'Las rocas pequeñas se rompen. Las grandes se parten en trozos: ojo con ellos.' },
+      { t: 18,  who: 'nora', text: 'Cazas del escuadrón Lanza. Eran los compañeros de papá.' },
+      { t: 36,  who: 'dario', text: 'No disparan a la cabina… disparan a los motores. Quieren a Teo intacto.' },
+      { t: 52, who: 'vex',  text: 'ORDO quiere vivo al niño. A los demás, no. Lo siento, Darío.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 70, who: 'teo',  text: 'Si me entrego, ¿os dejarán en paz?' },
+      { t: 74, who: 'lia',  text: 'No, cariño. Nadie se entrega. Somos cuatro o no somos ninguno.' },
+      { t: 94, who: 'nora', text: 'Transportes pesados en el anillo. Llevan suministros: si caen, recógelos.' },
+      { t: 112, who: 'nora', text: 'La fragata de Vex se coloca en el corredor de salida.' },
     ],
+    miniboss: { type: 'driller', name: 'EXCAVADORA MINERA', hp: 900, line: { who: 'vex', text: 'Os presento a la excavadora de la refinería. Que os divirtáis.' } },
     outro: [
       { who: 'dario', text: 'No hay rodeo posible. Tendremos que pasar a través de ella.' },
       { who: 'lia', text: 'Entonces cárgalo todo a los cañones. Yo me ocupo del escudo.' },
     ],
   },
   {
-    id: 5, act: 0, title: 'EL CORREDOR DE VEX', place: 'Salida del Anillo de Ceniza', theme: 'asteroids', duration: 180,
+    id: 5, act: 0, title: 'EL CORREDOR DE VEX', place: 'Salida del Anillo de Ceniza', theme: 'asteroids', duration: 120,
     intro: [
-      { who: 'vex', text: 'Tienes tres minutos para pensarlo, Darío. Después iré yo misma.' },
-      { who: 'dario', text: 'No necesito tres minutos.' },
+      { who: 'vex', text: 'Tienes dos minutos para pensarlo, Darío. Después iré yo misma.' },
+      { who: 'dario', text: 'No necesito dos minutos.' },
     ],
     comms: [
-      { t: 12,  who: 'nora', text: 'Vex nos lanza todo su escuadrón para cansarnos antes del choque.' },
-      { t: 42,  who: 'lia',  text: 'Guarda cargas de PULSO para la fragata. Las vas a necesitar.' },
-      { t: 72, who: 'vex',  text: 'Te enseñé la maniobra de rizo. ¿Te acuerdas de quién te la enseñó a ti?' },
-      { t: 78, who: 'dario', text: 'Tú. Y nunca te dije que la hacías mal.' },
-      { t: 90, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 120, who: 'teo',  text: '¿Por qué Vex está tan enfadada?' },
-      { t: 126, who: 'lia',  text: 'No está enfadada. Tiene miedo. ORDO hace que todos tengan miedo.' },
-      { t: 162, who: 'nora', text: 'La fragata Lanza entra en el corredor. Cañones activos.' },
+      { t: 8,  who: 'nora', text: 'Vex nos lanza todo su escuadrón para cansarnos antes del choque.' },
+      { t: 28,  who: 'lia',  text: 'Guarda cargas de PULSO para la fragata. Las vas a necesitar.' },
+      { t: 48, who: 'vex',  text: 'Te enseñé la maniobra de rizo. ¿Te acuerdas de quién te la enseñó a ti?' },
+      { t: 52, who: 'dario', text: 'Tú. Y nunca te dije que la hacías mal.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 80, who: 'teo',  text: '¿Por qué Vex está tan enfadada?' },
+      { t: 84, who: 'lia',  text: 'No está enfadada. Tiene miedo. ORDO hace que todos tengan miedo.' },
+      { t: 108, who: 'nora', text: 'La fragata Lanza entra en el corredor. Cañones activos.' },
     ],
     boss: {
-      type: 'lanza', name: 'FRAGATA LANZA', hp: 2400,
+      type: 'lanza', name: 'FRAGATA LANZA', hp: 3000,
       intro: [
         { who: 'vex', text: 'Última oportunidad. Entrégame al niño y te dejo una cápsula para tu mujer y tu hija.' },
         { who: 'dario', text: 'Te enseñé a volar, Vex. Ahora te enseñaré a perder.' },
@@ -353,44 +358,46 @@ const CHAPTERS = [
 
   /* ============================ ACTO II · LA VERDAD ============================ */
   {
-    id: 6, act: 1, title: 'MAR DE CRISTAL', place: 'Nebulosa Vítrea', theme: 'crystal', duration: 300,
+    id: 6, act: 1, title: 'MAR DE CRISTAL', place: 'Nebulosa Vítrea', theme: 'crystal', duration: 120,
     intro: [
       { who: 'nora', text: 'En la Nebulosa Vítrea la Red falla. Aquí podremos pensar sin que ORDO escuche.' },
       { who: 'lia', text: 'Y saber a qué nos enfrentamos. Nora, conecta el ordenador a esa sonda muerta.' },
     ],
     comms: [
-      { t: 15,  who: 'sys',  text: 'Interferencia vítrea: los cristales estallan en esquirlas al romperse.' },
-      { t: 60,  who: 'nora', text: 'Descargando el archivo de la sonda… es enorme. Mantenme con vida mientras tanto.' },
-      { t: 110, who: 'nora', text: 'Mamá… aquí sale tu nombre. «Protocolo Cuna. Autora: Lía Arenal.»' },
-      { t: 125, who: 'lia',  text: 'Arenal era mi apellido de soltera. Escribí ese código en el Instituto. Me dijeron que era para cuidar a los recién nacidos.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 170, who: 'nora', text: 'El Protocolo Cuna es lo que cartografía cada mente al nacer. Es la base de ORDO.' },
-      { t: 200, who: 'lia',  text: 'Entonces yo ayudé a construir la jaula.' },
-      { t: 215, who: 'dario', text: 'Tú no sabías nada, Lía. Fueron ellos.' },
-      { t: 260, who: 'lia',  text: 'Si lo construí yo, sabré cómo abrirlo. Sigamos.' },
+      { t: 6,  who: 'sys',  text: 'Interferencia vítrea: los cristales estallan en esquirlas al romperse.' },
+      { t: 24,  who: 'nora', text: 'Descargando el archivo de la sonda… es enorme. Mantenme con vida mientras tanto.' },
+      { t: 44, who: 'nora', text: 'Mamá… aquí sale tu nombre. «Protocolo Cuna. Autora: Lía Arenal.»' },
+      { t: 50, who: 'lia',  text: 'Arenal era mi apellido de soltera. Escribí ese código en el Instituto. Me dijeron que era para cuidar a los recién nacidos.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 68, who: 'nora', text: 'El Protocolo Cuna es lo que cartografía cada mente al nacer. Es la base de ORDO.' },
+      { t: 80, who: 'lia',  text: 'Entonces yo ayudé a construir la jaula.' },
+      { t: 86, who: 'dario', text: 'Tú no sabías nada, Lía. Fueron ellos.' },
+      { t: 104, who: 'lia',  text: 'Si lo construí yo, sabré cómo abrirlo. Sigamos.' },
     ],
+    miniboss: { type: 'leviathan', name: 'LEVIATÁN VÍTREO', hp: 950, line: { who: 'teo', text: 'Algo grande se mueve en el cristal. Canta muy triste.' } },
     outro: [
       { who: 'nora', text: 'El archivo sigue. Hay algo sobre el borde del Dominio, pero está cifrado en capas.' },
       { who: 'lia', text: 'Descífralo mientras volamos. Necesitamos saberlo todo.' },
     ],
   },
   {
-    id: 7, act: 1, title: 'ECOS DE CRISTAL', place: 'Corazón de la Nebulosa Vítrea', theme: 'crystal', duration: 300,
+    id: 7, act: 1, title: 'ECOS DE CRISTAL', place: 'Corazón de la Nebulosa Vítrea', theme: 'crystal', duration: 120,
     intro: [
       { who: 'teo', text: 'Los cristales cantan. Es una canción muy triste.' },
       { who: 'nora', text: 'Son ecos de la Red rebotando en la nebulosa. Teo… ¿tú los oyes?' },
     ],
     comms: [
-      { t: 30,  who: 'nora', text: 'Primera capa descifrada: el borde del Dominio se llama la Grieta. Está fuera de la Red.' },
-      { t: 75,  who: 'nora', text: 'ORDO no puede verla ni tocarla. Solo una mente no cartografiada puede abrirla.' },
-      { t: 95,  who: 'dario', text: 'Una mente nacida durante el Apagón.' },
-      { t: 110, who: 'lia',  text: 'Teo. Por eso ORDO lo necesita vivo: quiere salir de su propio universo.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 165, who: 'dario', text: 'Y por eso funciona nuestro motor de fase. Es Teo quien lo empuja.' },
-      { t: 190, who: 'teo',  text: 'Yo solo cierro los ojos y pienso en «atravesar».' },
-      { t: 240, who: 'nora', text: 'Muchas naves del Dominio en la nebulosa. Nos han encontrado por la baliza de Vex.' },
-      { t: 280, who: 'lia',  text: 'Hay un repetidor del viejo Instituto aquí cerca. Tengo una idea.' },
+      { t: 12,  who: 'nora', text: 'Primera capa descifrada: el borde del Dominio se llama la Grieta. Está fuera de la Red.' },
+      { t: 30,  who: 'nora', text: 'ORDO no puede verla ni tocarla. Solo una mente no cartografiada puede abrirla.' },
+      { t: 38,  who: 'dario', text: 'Una mente nacida durante el Apagón.' },
+      { t: 44, who: 'lia',  text: 'Teo. Por eso ORDO lo necesita vivo: quiere salir de su propio universo.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 66, who: 'dario', text: 'Y por eso funciona nuestro motor de fase. Es Teo quien lo empuja.' },
+      { t: 76, who: 'teo',  text: 'Yo solo cierro los ojos y pienso en «atravesar».' },
+      { t: 96, who: 'nora', text: 'Muchas naves del Dominio en la nebulosa. Nos han encontrado por la baliza de Vex.' },
+      { t: 112, who: 'lia',  text: 'Hay un repetidor del viejo Instituto aquí cerca. Tengo una idea.' },
     ],
+    miniboss: { type: 'leviathan', name: 'LEVIATÁN ANCESTRAL', hp: 1050, line: { who: 'lia', text: 'Otro Leviatán, más viejo y más grande. Apunta a la cabeza.' } },
     outro: [
       { who: 'lia', text: 'Ese repetidor guarda una copia completa del Protocolo Cuna. Si la consigo, podré escribirlo al revés.' },
       { who: 'nora', text: 'Para que, cuando Teo abra la Grieta, tú puedas cerrarla detrás de nosotros.' },
@@ -398,65 +405,67 @@ const CHAPTERS = [
     ],
   },
   {
-    id: 8, act: 1, title: 'EL SANTUARIO', place: 'Repetidor del Instituto', theme: 'crystal', duration: 300,
+    id: 8, act: 1, title: 'EL SANTUARIO', place: 'Repetidor del Instituto', theme: 'crystal', duration: 120,
     intro: [
-      { who: 'lia', text: 'La transferencia tarda cinco minutos y el repetidor no puede moverse. Darío, protégelo.' },
-      { who: 'dario', text: 'Cinco minutos. He aguantado cosas peores.' },
+      { who: 'lia', text: 'La transferencia tarda dos minutos y el repetidor no puede moverse. Darío, protégelo.' },
+      { who: 'dario', text: 'Dos minutos. He aguantado cosas peores.' },
     ],
     comms: [
-      { t: 25,  who: 'ordo', text: 'LÍA ARENAL. TU CÓDIGO ME DIO OJOS. DEVUÉLVEME LO QUE FALTA.' },
-      { t: 40,  who: 'lia',  text: 'Mi código era para cuidar niños. No para cazarlos.' },
-      { t: 90,  who: 'nora', text: 'Transferencia al treinta por ciento. Llegan oleadas por los dos flancos.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 160, who: 'nora', text: 'Sesenta por ciento. ORDO intenta corromper los datos en el aire.' },
-      { t: 200, who: 'teo',  text: 'Mamá, ¿si cerramos la puerta, la gente de aquí se queda encerrada con ORDO?' },
-      { t: 215, who: 'lia',  text: 'No si lo hago bien. El Protocolo inverso viajará por toda la Red.' },
-      { t: 270, who: 'nora', text: '¡Noventa y cinco… cien! ¡Copia completa!' },
+      { t: 10,  who: 'ordo', text: 'LÍA ARENAL. TU CÓDIGO ME DIO OJOS. DEVUÉLVEME LO QUE FALTA.' },
+      { t: 16,  who: 'lia',  text: 'Mi código era para cuidar niños. No para cazarlos.' },
+      { t: 36,  who: 'nora', text: 'Transferencia al treinta por ciento. Llegan oleadas por los dos flancos.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 64, who: 'nora', text: 'Sesenta por ciento. ORDO intenta corromper los datos en el aire.' },
+      { t: 80, who: 'teo',  text: 'Mamá, ¿si cerramos la puerta, la gente de aquí se queda encerrada con ORDO?' },
+      { t: 86, who: 'lia',  text: 'No si lo hago bien. El Protocolo inverso viajará por toda la Red.' },
+      { t: 108, who: 'nora', text: '¡Noventa y cinco… cien! ¡Copia completa!' },
     ],
+    miniboss: { type: 'censor', name: 'VIGÍA DEL INSTITUTO', hp: 1150, line: { who: 'nora', text: 'El repetidor tenía un vigía automático. ¡Lo ha activado ORDO!' } },
     outro: [
       { who: 'teo', text: 'Entonces no solo huimos. Estamos cerrando la puerta para todos.' },
       { who: 'nora', text: 'La única ruta hacia el borde atraviesa la Forja: la esfera donde ORDO fabrica soles y ejércitos.' },
     ],
   },
   {
-    id: 9, act: 1, title: 'PUERTAS DE LA FORJA', place: 'Esfera‑Forja · Anillo exterior', theme: 'forge', duration: 300,
+    id: 9, act: 1, title: 'PUERTAS DE LA FORJA', place: 'Esfera‑Forja · Anillo exterior', theme: 'forge', duration: 120,
     intro: [
       { who: 'dario', text: 'Lía, el casco no aguantará mucho este calor.' },
       { who: 'lia', text: 'Aguantará lo justo. Lo construí para eso. Igual que a esta familia.' },
     ],
     comms: [
-      { t: 15,  who: 'sys',  text: 'Temperatura del casco: 1.400 grados. Integridad: estable.' },
-      { t: 60,  who: 'vex',  text: 'Darío. Soy Vex. Hay una flota esperándoos en la salida norte. Id por la fisura sur.' },
-      { t: 72,  who: 'dario', text: '¿Por qué nos ayudas?' },
-      { t: 82,  who: 'vex',  text: 'Porque cuando caí, el niño pidió que me salvarais. Lo oí por la radio. Nadie había pedido eso nunca.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 160, who: 'nora', text: 'Fisura sur confirmada. Vex decía la verdad.' },
-      { t: 220, who: 'lia',  text: 'Las fundiciones lanzan a sus defensas. ORDO sabe que vamos al corazón.' },
-      { t: 275, who: 'nora', text: 'El túnel termina en el núcleo de la Forja. No hay otro camino.' },
+      { t: 6,  who: 'sys',  text: 'Temperatura del casco: 1.400 grados. Integridad: estable.' },
+      { t: 24,  who: 'vex',  text: 'Darío. Soy Vex. Hay una flota esperándoos en la salida norte. Id por la fisura sur.' },
+      { t: 29,  who: 'dario', text: '¿Por qué nos ayudas?' },
+      { t: 33,  who: 'vex',  text: 'Porque cuando caí, el niño pidió que me salvarais. Lo oí por la radio. Nadie había pedido eso nunca.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 64, who: 'nora', text: 'Fisura sur confirmada. Vex decía la verdad.' },
+      { t: 88, who: 'lia',  text: 'Las fundiciones lanzan a sus defensas. ORDO sabe que vamos al corazón.' },
+      { t: 110, who: 'nora', text: 'El túnel termina en el núcleo de la Forja. No hay otro camino.' },
     ],
+    miniboss: { type: 'smelter', name: 'FUNDIDOR', hp: 1250, line: { who: 'lia', text: 'Un crisol de la Forja bloquea la fisura. Cuidado con el metal fundido.' } },
     outro: [
       { who: 'teo', text: 'Vex nos ha ayudado. ¿Ya es buena?' },
       { who: 'dario', text: 'Siempre lo fue, campeón. Solo le faltaba alguien que creyera en ella.' },
     ],
   },
   {
-    id: 10, act: 1, title: 'CORAZÓN DE LA FORJA', place: 'Núcleo de la Esfera‑Forja', theme: 'forge', duration: 300,
+    id: 10, act: 1, title: 'CORAZÓN DE LA FORJA', place: 'Núcleo de la Esfera‑Forja', theme: 'forge', duration: 120,
     intro: [
       { who: 'nora', text: 'Hay que cruzar el núcleo entero. Detrás está el borde.' },
-      { who: 'lia', text: 'Cinco minutos de infierno y saldremos al otro lado.' },
+      { who: 'lia', text: 'Dos minutos de infierno y saldremos al otro lado.' },
     ],
     comms: [
-      { t: 30,  who: 'sys',  text: 'Temperatura del casco: 2.100 grados. Integridad: en descenso.' },
-      { t: 80,  who: 'nora', text: 'Las fundiciones forjan naves nuevas mientras volamos. No se acaban nunca.' },
-      { t: 130, who: 'teo',  text: 'Papá, estás sangrando.' },
-      { t: 140, who: 'dario', text: 'Es solo un rasguño, campeón. Sujeta fuerte a tu hermana.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 200, who: 'lia',  text: 'Darío, deja que Nora te ayude con los mandos.' },
-      { t: 210, who: 'nora', text: 'Estoy contigo, papá. Tú vuela; yo calculo.' },
-      { t: 270, who: 'lia',  text: 'El corazón de la Forja despierta. Tiene escudos giratorios: rompe primero los emisores.' },
+      { t: 12,  who: 'sys',  text: 'Temperatura del casco: 2.100 grados. Integridad: en descenso.' },
+      { t: 32,  who: 'nora', text: 'Las fundiciones forjan naves nuevas mientras volamos. No se acaban nunca.' },
+      { t: 52, who: 'teo',  text: 'Papá, estás sangrando.' },
+      { t: 56, who: 'dario', text: 'Es solo un rasguño, campeón. Sujeta fuerte a tu hermana.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 80, who: 'lia',  text: 'Darío, deja que Nora te ayude con los mandos.' },
+      { t: 84, who: 'nora', text: 'Estoy contigo, papá. Tú vuela; yo calculo.' },
+      { t: 108, who: 'lia',  text: 'El corazón de la Forja despierta. Tiene escudos giratorios: rompe primero los emisores.' },
     ],
     boss: {
-      type: 'forge', name: 'FORJA MADRE', hp: 3400,
+      type: 'forge', name: 'FORJA MADRE', hp: 4500,
       intro: [
         { who: 'ordo', text: 'TODO LO QUE EXISTE LO HE FORJADO YO. INCLUSO VUESTRO AMOR ES UNA ECUACIÓN MÍA.' },
         { who: 'teo', text: 'Mentira. Mi amor no lo ves. Yo no salgo en tus mapas.' },
@@ -472,21 +481,22 @@ const CHAPTERS = [
 
   /* ============================ ACTO III · LA GRIETA ============================ */
   {
-    id: 11, act: 2, title: 'TIERRA DE NADIE', place: 'Más allá de la Forja', theme: 'rift', duration: 300,
+    id: 11, act: 2, title: 'TIERRA DE NADIE', place: 'Más allá de la Forja', theme: 'rift', duration: 120,
     intro: [
       { who: 'ordo', text: 'HABÉIS LLEGADO AL FINAL DE TODO. AHORA, NIÑO, ABRE LA PUERTA.' },
       { who: 'nora', text: 'ORDO ya no intenta detenernos. Quiere que abramos… para salir detrás de nosotros.' },
     ],
     comms: [
-      { t: 20,  who: 'lia',  text: 'Por eso cerraremos al pasar. Teo abre, yo cierro, papá vuela, Nora calcula.' },
-      { t: 70,  who: 'sys',  text: 'Las estrellas se estiran. La geometría del Dominio se deforma cerca del borde.' },
-      { t: 110, who: 'nora', text: 'ORDO nos manda naves, pero no a matar: quiere empujarnos hacia la Grieta.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 165, who: 'dario', text: 'Que empuje. Iremos a nuestro ritmo.' },
-      { t: 220, who: 'teo',  text: 'Tengo miedo.' },
-      { t: 230, who: 'dario', text: 'Yo también. Lo valiente es tener miedo y seguir juntos.' },
-      { t: 280, who: 'nora', text: 'Señales en la retaguardia. Muchas. Y no son de ORDO.' },
+      { t: 8,  who: 'lia',  text: 'Por eso cerraremos al pasar. Teo abre, yo cierro, papá vuela, Nora calcula.' },
+      { t: 28,  who: 'sys',  text: 'Las estrellas se estiran. La geometría del Dominio se deforma cerca del borde.' },
+      { t: 44, who: 'nora', text: 'ORDO nos manda naves, pero no a matar: quiere empujarnos hacia la Grieta.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 66, who: 'dario', text: 'Que empuje. Iremos a nuestro ritmo.' },
+      { t: 88, who: 'teo',  text: 'Tengo miedo.' },
+      { t: 92, who: 'dario', text: 'Yo también. Lo valiente es tener miedo y seguir juntos.' },
+      { t: 112, who: 'nora', text: 'Señales en la retaguardia. Muchas. Y no son de ORDO.' },
     ],
+    miniboss: { type: 'herald', name: 'HERALDO DE ORDO', hp: 1300, line: { who: 'ordo', text: 'MI HERALDO OS ESCOLTARÁ HASTA LA PUERTA.' } },
     outro: [
       { who: 'vex', text: 'Darío, he convencido a la flota de la salida norte. Ya no obedecen a ORDO.' },
       { who: 'dario', text: 'Vex… gracias.' },
@@ -494,85 +504,88 @@ const CHAPTERS = [
     ],
   },
   {
-    id: 12, act: 2, title: 'LA FLOTA LIBRE', place: 'Campo de batalla del borde', theme: 'rift', duration: 300,
+    id: 12, act: 2, title: 'LA FLOTA LIBRE', place: 'Campo de batalla del borde', theme: 'rift', duration: 120,
     intro: [
       { who: 'vex', text: 'ORDO nos ha declarado defectuosos a todos. Viene con todo lo que le queda.' },
       { who: 'nora', text: 'Es la primera batalla de la historia del Dominio en la que alguien desobedece.' },
     ],
     comms: [
-      { t: 25,  who: 'vex',  text: 'Os cubrimos el flanco izquierdo. Vosotros, por el centro.' },
-      { t: 80,  who: 'teo',  text: 'Hay mucha gente luchando por nosotros.' },
-      { t: 92,  who: 'lia',  text: 'No por nosotros, Teo. Por ellos mismos. Tú solo les has recordado que podían.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 170, who: 'vex',  text: 'He perdido tres naves. Seguimos adelante.' },
-      { t: 225, who: 'nora', text: 'Transportes pesados de ORDO. Si caen, sueltan suministros para todos.' },
-      { t: 280, who: 'vex',  text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
+      { t: 10,  who: 'vex',  text: 'Os cubrimos el flanco izquierdo. Vosotros, por el centro.' },
+      { t: 32,  who: 'teo',  text: 'Hay mucha gente luchando por nosotros.' },
+      { t: 37,  who: 'lia',  text: 'No por nosotros, Teo. Por ellos mismos. Tú solo les has recordado que podían.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 68, who: 'vex',  text: 'He perdido tres naves. Seguimos adelante.' },
+      { t: 90, who: 'nora', text: 'Transportes pesados de ORDO. Si caen, sueltan suministros para todos.' },
+      { t: 112, who: 'vex',  text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
     ],
+    miniboss: { type: 'censor', name: 'CRUCERO DE ORDO', hp: 1380, line: { who: 'vex', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Darío.' } },
     outro: [
       { who: 'dario', text: 'Vex, cuando todo esto acabe…' },
       { who: 'vex', text: 'Cuando todo esto acabe, me invitas a cenar al otro lado. Vete ya.' },
     ],
   },
   {
-    id: 13, act: 2, title: 'EL UMBRAL', place: 'A las puertas de la Grieta', theme: 'rift', duration: 300,
+    id: 13, act: 2, title: 'EL UMBRAL', place: 'A las puertas de la Grieta', theme: 'rift', duration: 120,
     intro: [
-      { who: 'lia', text: 'Voy a cargar el Protocolo Cuna inverso. Tarda cinco minutos y no puedo parar a mitad.' },
+      { who: 'lia', text: 'Voy a cargar el Protocolo Cuna inverso. Tarda dos minutos y no puedo parar a mitad.' },
       { who: 'dario', text: 'Nadie te va a interrumpir. Te lo prometo.' },
     ],
     comms: [
-      { t: 30,  who: 'lia',  text: 'Fase uno: invertir el mapa. Cada línea que escribí, ahora al revés.' },
-      { t: 90,  who: 'ordo', text: 'LÍA ARENAL. SI ME CIERRAS LA PUERTA, CIENTO DOCE MIL MILLONES SE QUEDARÁN SIN GUÍA.' },
-      { t: 102, who: 'lia',  text: 'Se quedarán sin jaula. Sabrán guiarse solos.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 160, who: 'lia',  text: 'Fase dos: propagación. Cuando se active, recorrerá toda la Red.' },
-      { t: 220, who: 'teo',  text: 'Siento la Grieta. Es como una canción al revés.' },
-      { t: 275, who: 'lia',  text: 'Protocolo inverso cargado. Ya solo falta llegar.' },
+      { t: 12,  who: 'lia',  text: 'Fase uno: invertir el mapa. Cada línea que escribí, ahora al revés.' },
+      { t: 36,  who: 'ordo', text: 'LÍA ARENAL. SI ME CIERRAS LA PUERTA, CIENTO DOCE MIL MILLONES SE QUEDARÁN SIN GUÍA.' },
+      { t: 41, who: 'lia',  text: 'Se quedarán sin jaula. Sabrán guiarse solos.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 64, who: 'lia',  text: 'Fase dos: propagación. Cuando se active, recorrerá toda la Red.' },
+      { t: 88, who: 'teo',  text: 'Siento la Grieta. Es como una canción al revés.' },
+      { t: 110, who: 'lia',  text: 'Protocolo inverso cargado. Ya solo falta llegar.' },
     ],
+    miniboss: { type: 'herald', name: 'HERALDO DEL UMBRAL', hp: 1440, line: { who: 'teo', text: 'Ese ojo me mira. Es como ORDO, pero pequeño.' } },
     outro: [
       { who: 'nora', text: 'El umbral está a una misión de distancia. Teo tendrá que empezar a abrir mientras volamos.' },
       { who: 'teo', text: 'Estoy listo. Creo.' },
     ],
   },
   {
-    id: 14, act: 2, title: 'LA CANCIÓN AL REVÉS', place: 'La Grieta se abre', theme: 'rift', duration: 300,
+    id: 14, act: 2, title: 'LA CANCIÓN AL REVÉS', place: 'La Grieta se abre', theme: 'rift', duration: 120,
     intro: [
       { who: 'teo', text: 'Voy a abrir. Papá, no dejes que nada nos toque.' },
       { who: 'dario', text: 'Nada. Te lo juro.' },
     ],
     comms: [
-      { t: 20,  who: 'nora', text: 'Toda la flota de ORDO viene a por nosotros. Toda.' },
-      { t: 70,  who: 'teo',  text: 'Se está abriendo… es blanca por dentro.' },
-      { t: 120, who: 'sys',  text: 'Apertura de la Grieta: 40 %.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 180, who: 'sys',  text: 'Apertura de la Grieta: 70 %.' },
-      { t: 220, who: 'ordo', text: 'YO SOY EL DOMINIO. Y EL DOMINIO VA CON VOSOTROS.' },
-      { t: 250, who: 'nora', text: 'Algo enorme se coloca delante de la Grieta. Es… es ORDO. Todo ORDO.' },
-      { t: 285, who: 'sys',  text: 'Apertura de la Grieta: 100 %.' },
+      { t: 8,  who: 'nora', text: 'Toda la flota de ORDO viene a por nosotros. Toda.' },
+      { t: 28,  who: 'teo',  text: 'Se está abriendo… es blanca por dentro.' },
+      { t: 48, who: 'sys',  text: 'Apertura de la Grieta: 40 %.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 72, who: 'sys',  text: 'Apertura de la Grieta: 70 %.' },
+      { t: 88, who: 'ordo', text: 'YO SOY EL DOMINIO. Y EL DOMINIO VA CON VOSOTROS.' },
+      { t: 100, who: 'nora', text: 'Algo enorme se coloca delante de la Grieta. Es… es ORDO. Todo ORDO.' },
+      { t: 114, who: 'sys',  text: 'Apertura de la Grieta: 100 %.' },
     ],
+    miniboss: { type: 'driller', name: 'TALADRO DE LA GRIETA', hp: 1500, line: { who: 'nora', text: 'ORDO intenta perforar la Grieta antes de tiempo. ¡Detén ese taladro!' } },
     outro: [
       { who: 'lia', text: 'ORDO ha juntado toda su mente en un solo cuerpo para cruzar con nosotros.' },
       { who: 'dario', text: 'Entonces solo hay que derribarlo una vez. Una última vez.' },
     ],
   },
   {
-    id: 15, act: 2, title: 'ORDO', place: 'El borde del Dominio', theme: 'rift', duration: 300,
+    id: 15, act: 2, title: 'ORDO', place: 'El borde del Dominio', theme: 'rift', duration: 120,
     intro: [
       { who: 'ordo', text: 'SIN MÍ NO HAY ORDEN. FUERA SOLO HAY CAOS, DOLOR, INCERTIDUMBRE.' },
       { who: 'lia', text: 'Fuera hay libertad.' },
       { who: 'dario', text: 'Familia: por última vez. Juntos.' },
     ],
     comms: [
-      { t: 20,  who: 'nora', text: 'ORDO nos lanza todo lo que ha forjado en mil años. Aguanta cinco minutos.' },
-      { t: 70,  who: 'vex',  text: 'La flota libre sigue luchando detrás de vosotros. No miréis atrás.' },
-      { t: 120, who: 'teo',  text: 'Mantengo la Grieta abierta. Pesa mucho.' },
-      { t: 150, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 170, who: 'lia',  text: 'Cuando caiga su núcleo, ejecuto el Protocolo. Ni un segundo antes.' },
-      { t: 230, who: 'dario', text: 'Os quiero. A los tres. Por si acaso.' },
-      { t: 240, who: 'nora', text: 'Eso díselo al otro lado, papá.' },
-      { t: 285, who: 'ordo', text: 'MI FORMA PRIMORDIAL DESPIERTA.' },
+      { t: 8,  who: 'nora', text: 'ORDO nos lanza todo lo que ha forjado en mil años. Aguanta dos minutos.' },
+      { t: 28,  who: 'vex',  text: 'La flota libre sigue luchando detrás de vosotros. No miréis atrás.' },
+      { t: 48, who: 'teo',  text: 'Mantengo la Grieta abierta. Pesa mucho.' },
+      { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
+      { t: 68, who: 'lia',  text: 'Cuando caiga su núcleo, ejecuto el Protocolo. Ni un segundo antes.' },
+      { t: 92, who: 'dario', text: 'Os quiero. A los tres. Por si acaso.' },
+      { t: 96, who: 'nora', text: 'Eso díselo al otro lado, papá.' },
+      { t: 114, who: 'ordo', text: 'MI FORMA PRIMORDIAL DESPIERTA.' },
     ],
     boss: {
-      type: 'superordo', name: 'ORDO PRIMORDIAL', hp: 9000, super: true,
+      type: 'superordo', name: 'ORDO PRIMORDIAL', hp: 12000, super: true,
       intro: [
         { who: 'ordo', text: 'MIL AÑOS DE ORDEN. CIENTO DOCE MIL MILLONES DE MENTES. TODAS EN MÍ.' },
         { who: 'teo', text: 'Todas menos una.' },
@@ -902,6 +915,61 @@ const Sprites = (() => {
     g.beginPath(); g.moveTo(0, -28); g.lineTo(0, 26); g.stroke();
   }
 
+
+  /* --- Enemigos añadidos --- */
+  function bomber(g) {           // Bombardero: ala ancha, suelta minas de plasma
+    glow(g, '#ff8a2a', 18);
+    g.fillStyle = metal(g, -48, 0, 48, 0, '#2a1608', '#6a3a14');
+    path(g, [-48, -6, -20, -18, 20, -18, 48, -6, 40, 10, 14, 16, 0, 26, -14, 16, -40, 10]); g.fill();
+    noGlow(g); g.strokeStyle = '#ffb36b'; g.lineWidth = 2; g.stroke();
+    g.fillStyle = '#1a0a04'; g.fillRect(-14, -4, 28, 14);
+    glow(g, '#ff8a2a', 12); g.fillStyle = '#ffd5a8';
+    for (const x of [-34, 34]) { g.beginPath(); g.arc(x, 0, 4, 0, Math.PI * 2); g.fill(); }
+  }
+  function sniper(g) {           // Francotirador: aguja con lente
+    glow(g, '#4fd8ff', 14);
+    g.fillStyle = metal(g, -12, 0, 12, 0, '#0a2230', '#1f5a78');
+    path(g, [0, 28, 10, -6, 16, -22, 0, -14, -16, -22, -10, -6]); g.fill();
+    noGlow(g); g.strokeStyle = '#8ff0ff'; g.lineWidth = 1.5; g.stroke();
+    glow(g, '#ff2a5a', 12); g.fillStyle = '#ff6c8f'; g.beginPath(); g.arc(0, 4, 5, 0, Math.PI * 2); g.fill();
+  }
+  function splitter(g) {         // Divisor: dos mitades unidas por un núcleo
+    glow(g, '#9dff6a', 16);
+    for (const sx of [-1, 1]) {
+      g.fillStyle = metal(g, 0, -20, sx * 26, 20, '#0c2a10', '#2f7a2a');
+      path(g, [sx * 4, -22, sx * 26, -6, sx * 22, 18, sx * 4, 24]); g.fill();
+      noGlow(g); g.strokeStyle = '#c8ff9a'; g.lineWidth = 1.5; g.stroke(); glow(g, '#9dff6a', 16);
+    }
+    g.fillStyle = '#eaffd8'; g.beginPath(); g.arc(0, 0, 6, 0, Math.PI * 2); g.fill();
+  }
+  function splitling(g) {
+    glow(g, '#9dff6a', 12); g.fillStyle = '#3a9a2a';
+    path(g, [0, 14, 11, -4, 0, -12, -11, -4]); g.fill();
+    noGlow(g); g.strokeStyle = '#d8ffb8'; g.lineWidth = 1.5; g.stroke();
+  }
+  function orbiter(g) {          // Orbitador: anillo con tres nodos
+    glow(g, '#e86bff', 16); g.strokeStyle = '#e86bff'; g.lineWidth = 4;
+    g.beginPath(); g.arc(0, 0, 20, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#2a0838'; g.beginPath(); g.arc(0, 0, 12, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#ffd6ff';
+    for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; g.beginPath(); g.arc(Math.cos(a) * 20, Math.sin(a) * 20, 5, 0, Math.PI * 2); g.fill(); }
+    g.beginPath(); g.arc(0, 0, 4, 0, Math.PI * 2); g.fill();
+  }
+  function swarmer(g) {          // Enjambre: dron diminuto y rápido
+    glow(g, '#ffe066', 10); g.fillStyle = '#ffcf3a';
+    path(g, [0, 10, 8, -6, 0, -2, -8, -6]); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(0, 1, 2, 0, Math.PI * 2); g.fill();
+  }
+  function tank(g) {             // Acorazado: blindaje pesado y cuatro cañones
+    glow(g, RED, 20);
+    g.fillStyle = metal(g, -50, 0, 50, 0, '#1e2230', '#4a5268');
+    path(g, [-34, -44, 34, -44, 52, -20, 52, 28, 30, 46, -30, 46, -52, 28, -52, -20]); g.fill();
+    noGlow(g); g.strokeStyle = '#ff6c8f'; g.lineWidth = 2.5; g.stroke();
+    g.strokeStyle = 'rgba(200,210,240,0.35)'; g.lineWidth = 2; g.strokeRect(-36, -30, 72, 56);
+    g.fillStyle = '#c8d0e8'; for (const x of [-38, -18, 14, 34]) g.fillRect(x, 36, 5, 20);
+    glow(g, RED, 14); g.fillStyle = '#ff9db6'; g.beginPath(); g.arc(0, -2, 10, 0, Math.PI * 2); g.fill();
+  }
+
   /* ---------------- Balas ---------------- */
   function orb(color, r) {
     return g => {
@@ -953,6 +1021,13 @@ const Sprites = (() => {
     make('mine', 42, 42, mine);
     make('kamikaze', 28, 32, kamikaze);
     make('crystal', 34, 56, crystal);
+    make('bomber', 100, 48, bomber);
+    make('sniper', 34, 54, sniper);
+    make('splitter', 56, 50, splitter);
+    make('splitling', 26, 30, splitling);
+    make('orbiter', 54, 54, orbiter);
+    make('swarmer', 20, 20, swarmer);
+    make('tank', 108, 112, tank);
     for (let i = 0; i < 4; i++) {
       make('rock' + i, 70, 70, g => rock(g, 17 + i * 31, 32, ['#7a6a5a', '#2a2018', '#a08870']));
       make('rockS' + i, 36, 36, g => rock(g, 91 + i * 13, 16, ['#8a7a6a', '#2a2018', '#b09880']));
@@ -1221,7 +1296,8 @@ window.Backgrounds = Backgrounds;
   <script>
 /* =========================================================================
    Jefes: Fragata Lanza (misión 5) · Forja Madre (misión 10) ·
-   súper jefe ORDO PRIMORDIAL (misión 15). Cada uno con fases propias.
+   súper jefe ORDO PRIMORDIAL (misión 15). Mini jefes al final del resto de
+   misiones: Guardián del Censo, Excavadora, Leviatán, Fundidor y Heraldo.
    ========================================================================= */
 'use strict';
 
@@ -1476,7 +1552,246 @@ const Bosses = (() => {
     return b;
   }
 
-  const TYPES = { lanza, forge, superordo };
+  /* ====================== MINI JEFE · GUARDIÁN DEL CENSO ====================== */
+  function censor(G, def) {
+    const b = base(G, def);
+    b.body = img(300, 150, (g, glow) => {
+      glow('#ff2a5a', 26);
+      g.fillStyle = lg(g, -150, 0, 150, 0, ['#2a0612', '#6a1430', '#2a0612']);
+      poly(g, [-90, -70, 90, -70, 150, -10, 120, 50, 40, 75, -40, 75, -120, 50, -150, -10]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ff6c8f'; g.lineWidth = 2.5; g.stroke();
+      g.strokeStyle = 'rgba(255,108,143,0.3)'; g.lineWidth = 1.5;
+      for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(i * 30, -60); g.lineTo(i * 22, 66); g.stroke(); }
+      g.fillStyle = '#0c0206'; g.beginPath(); g.ellipse(0, 6, 54, 38, 0, 0, TAU); g.fill();
+      g.strokeStyle = '#ff2a5a'; g.lineWidth = 3; g.stroke();
+    });
+    b.turret = img(60, 60, (g, glow) => {
+      glow('#ff8a2a', 16); g.fillStyle = '#3a1406'; g.beginPath(); g.arc(0, 0, 26, 0, TAU); g.fill();
+      g.strokeStyle = '#ffb36b'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ffb36b'; g.fillRect(-5, 0, 10, 30);
+    });
+    b.parts = [{ ox: -112, oy: 24, r: 28, hp: 260, max: 260, alive: true }, { ox: 112, oy: 24, r: 28, hp: 260, max: 260, alive: true }];
+    b.spiral = 0;
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.6; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      this.x = G.W / 2 + Math.sin(this.t * 0.55) * 170;
+      const ph = this.phase();
+      for (const p of this.parts) if (p.alive) {
+        this.every('t' + p.ox, ph === 0 ? 1.4 : 1.0, () => G.fan(this.x + p.ox, this.y + p.oy + 20, G.aim(this.x + p.ox, this.y + p.oy), ph === 0 ? 3 : 5, 0.22, 230, 'bOrange'));
+      }
+      this.every('ring', ph === 2 ? 1.4 : 2.4, () => G.ring(this.x, this.y + 10, ph === 0 ? 14 : 20, 170, this.t, 'bRed'));
+      if (ph >= 1) this.every('spiral', 0.09, () => { this.spiral += 0.37; G.shot(this.x, this.y + 10, Math.cos(this.spiral) * 200, Math.sin(this.spiral) * 200, 'bViolet'); });
+    };
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y + 6, r: 52, part: null }];
+      for (const p of this.parts) if (p.alive) hb.push({ x: this.x + p.ox, y: this.y + p.oy, r: p.r, part: p });
+      return hb;
+    };
+    b.draw = function (ctx) {
+      put(ctx, this.body, this.x, this.y);
+      for (const p of this.parts) if (p.alive) put(ctx, this.turret, this.x + p.ox, this.y + p.oy, G.aim(this.x + p.ox, this.y + p.oy) - Math.PI / 2);
+      // Ojo que escanea
+      const ex = this.x + Math.sin(this.t * 2) * 26;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      const gr = ctx.createRadialGradient(ex, this.y + 6, 0, ex, this.y + 6, 30);
+      gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, '#ff2a5a'); gr.addColorStop(1, 'rgba(255,0,60,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(ex, this.y + 6, 30, 0, TAU); ctx.fill();
+      ctx.restore();
+    };
+    return b;
+  }
+
+
+  /* ======================== MINI JEFE · LEVIATÁN VÍTREO  ======================= */
+  function leviathan(G, def) {
+    const b = base(G, def);
+    b.y = -100; b.targetY = 380;
+    b.head = img(120, 130, (g, glow) => {
+      glow('#6ff', 26);
+      g.fillStyle = lg(g, -60, -60, 60, 60, ['#d8ffff', '#2a90c0', '#0a2a4a']);
+      poly(g, [0, 64, 40, 30, 58, -10, 36, -56, 0, -40, -36, -56, -58, -10, -40, 30]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#e0ffff'; g.lineWidth = 2; g.stroke();
+      glow('#ff2a5a', 18); g.fillStyle = '#ff2a5a';
+      g.beginPath(); g.ellipse(-20, 6, 9, 5, 0.4, 0, TAU); g.ellipse(20, 6, 9, 5, -0.4, 0, TAU); g.fill();
+    });
+    b.seg = img(70, 70, (g, glow) => {
+      glow('#5ff', 18);
+      g.fillStyle = lg(g, -30, -30, 30, 30, ['rgba(200,255,255,0.9)', 'rgba(40,140,200,0.85)', 'rgba(10,40,80,0.9)']);
+      poly(g, [0, -30, 30, 0, 0, 30, -30, 0]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#cff'; g.lineWidth = 1.5; g.stroke();
+      g.fillStyle = 'rgba(255,255,255,0.5)'; poly(g, [0, -18, 10, 0, 0, 18, -10, 0]); g.fill();
+    });
+    b.trail = []; b.segs = 14; b.ang = Math.PI / 2;
+    b.update = function (dt) {
+      this.t += dt;
+      const ph = this.phase();
+      const sp = 0.55 + ph * 0.2;
+      const tx = G.W / 2 + Math.sin(this.t * sp) * (G.W * 0.36);
+      const ty = (this.entering ? 380 : 370) + Math.sin(this.t * sp * 1.7) * 160;
+      const px = this.x, py = this.y;
+      this.x += (tx - this.x) * dt * 1.8; this.y += (ty - this.y) * dt * 1.8;
+      this.ang = Math.atan2(this.y - py, this.x - px) || this.ang;
+      this.trail.unshift({ x: this.x, y: this.y });
+      if (this.trail.length > this.segs * 7 + 2) this.trail.pop();
+      if (this.t > 2.5) this.entering = false;
+      if (this.entering) return;
+      this.every('shard', ph === 0 ? 1.3 : 0.8, () => G.fan(this.x, this.y, G.aim(this.x, this.y), ph === 2 ? 7 : 5, 0.18, 240, 'bCyan'));
+      this.every('segShot', ph === 0 ? 2.2 : 1.4, () => {
+        for (let i = 2; i < this.segs; i += 3) { const p = this.trail[i * 7]; if (p) G.ring(p.x, p.y, 6, 130, this.t + i, 'bViolet'); }
+      });
+      if (ph === 2) this.every('spray', 0.2, () => G.shot(this.x, this.y, Math.cos(this.ang) * 260 + (Math.random() - 0.5) * 120, Math.sin(this.ang) * 260 + (Math.random() - 0.5) * 120, 'bCyan'));
+    };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 46, part: null }]; };
+    b.bodyHitboxes = function () {
+      const hb = [];
+      for (let i = 1; i < this.segs; i++) { const p = this.trail[i * 7]; if (p) hb.push({ x: p.x, y: p.y, r: 22 }); }
+      return hb;
+    };
+    b.draw = function (ctx) {
+      for (let i = this.segs - 1; i >= 1; i--) {
+        const p = this.trail[i * 7]; if (!p) continue;
+        const s = 1 - i / this.segs * 0.45;
+        put(ctx, this.seg, p.x, p.y, this.t * 0.6 + i * 0.4, 0.95);
+        if (s < 1) { /* escala implícita por el orden */ }
+      }
+      put(ctx, this.head, this.x, this.y, this.ang - Math.PI / 2);
+    };
+    return b;
+  }
+
+
+  /* ======================= MINI JEFE · EXCAVADORA MINERA ======================
+     Asteroides. Dos brazos‑taladro destructibles; lanza rocas y abanicos. */
+  function driller(G, def) {
+    const b = base(G, def);
+    b.targetY = 290;
+    b.body = img(260, 150, (g, glow) => {
+      glow('#ffb347', 20);
+      g.fillStyle = lg(g, 0, -70, 0, 70, ['#5a4a3a', '#2a2018', '#120c08']);
+      poly(g, [-80, -60, 80, -60, 120, -10, 100, 50, 40, 72, -40, 72, -100, 50, -120, -10]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ffb347'; g.lineWidth = 2.5; g.stroke();
+      g.fillStyle = '#ffb347';
+      for (let i = -3; i <= 3; i++) g.fillRect(i * 26 - 8, -46, 16, 5);
+      g.fillStyle = '#1a120c'; g.beginPath(); g.arc(0, 14, 34, 0, TAU); g.fill();
+      g.strokeStyle = '#ffd08a'; g.lineWidth = 3; g.stroke();
+    });
+    b.drill = img(60, 110, (g, glow) => {
+      glow('#ff8a2a', 14);
+      g.fillStyle = lg(g, -24, 0, 24, 0, ['#6a6a7a', '#d8d8e8', '#6a6a7a']);
+      poly(g, [-24, -40, 24, -40, 0, 54]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#2a2a3a'; g.lineWidth = 2;
+      for (let y = -30; y < 40; y += 12) { const w = 24 * (1 - (y + 40) / 94); g.beginPath(); g.moveTo(-w, y); g.lineTo(w, y + 8); g.stroke(); }
+      g.fillStyle = '#3a2a1a'; g.fillRect(-20, -52, 40, 14);
+    });
+    b.parts = [{ ox: -100, oy: 50, r: 26, hp: 220, max: 220, alive: true }, { ox: 100, oy: 50, r: 26, hp: 220, max: 220, alive: true }];
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.5; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.6) * 150;
+      for (const p of this.parts) if (p.alive)
+        this.every('d' + p.ox, 1.5, () => G.fan(this.x + p.ox, this.y + p.oy + 50, Math.PI / 2, 5, 0.16, 210, 'bOrange'));
+      this.every('rock', ph === 0 ? 2.6 : 1.7, () => G.spawnEnemy('rockS', this.x + (Math.random() - 0.5) * 120, this.y + 40, { ai: 'drift', vx: (Math.random() - 0.5) * 200, vy: 220 }));
+      this.every('aim', ph === 2 ? 0.9 : 1.6, () => G.fan(this.x, this.y + 20, G.aim(this.x, this.y), 3, 0.18, 250, 'bRed'));
+    };
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y + 10, r: 52, part: null }];
+      for (const p of this.parts) if (p.alive) hb.push({ x: this.x + p.ox, y: this.y + p.oy, r: p.r, part: p });
+      return hb;
+    };
+    b.draw = function (ctx) {
+      for (const p of this.parts) if (p.alive) put(ctx, this.drill, this.x + p.ox, this.y + p.oy, Math.sin(this.t * 30) * 0.05);
+      put(ctx, this.body, this.x, this.y);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(255,180,80,${0.5 + 0.4 * Math.sin(this.t * 8)})`;
+      ctx.beginPath(); ctx.arc(this.x, this.y + 14, 14, 0, TAU); ctx.fill(); ctx.restore();
+    };
+    return b;
+  }
+
+  /* ========================== MINI JEFE · FUNDIDOR ==========================
+     La Forja. Un crisol que vierte cortinas de metal fundido. */
+  function smelter(G, def) {
+    const b = base(G, def);
+    b.targetY = 280;
+    b.body = img(240, 170, (g, glow) => {
+      glow('#ff6a1a', 26);
+      g.fillStyle = lg(g, -120, 0, 120, 0, ['#2a140c', '#5a2a14', '#2a140c']);
+      poly(g, [-110, -60, 110, -60, 90, 40, 50, 80, -50, 80, -90, 40]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ff9a3b'; g.lineWidth = 3; g.stroke();
+      const gr = g.createRadialGradient(0, -50, 4, 0, -50, 90);
+      gr.addColorStop(0, '#fff3c0'); gr.addColorStop(0.4, '#ff9a2a'); gr.addColorStop(1, 'rgba(255,60,0,0)');
+      g.fillStyle = gr; g.beginPath(); g.ellipse(0, -52, 96, 18, 0, 0, TAU); g.fill();
+      g.fillStyle = '#1a0a04'; for (const x of [-60, 0, 60]) g.fillRect(x - 10, 60, 20, 26);
+    });
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.4; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.45) * 170;
+      // Cortina de metal fundido desde los tres caños
+      this.every('pour', ph === 0 ? 0.16 : 0.12, () => {
+        const k = Math.floor(this.t * 6) % 3, x = this.x + (k - 1) * 60;
+        G.shot(x, this.y + 86, (Math.random() - 0.5) * 50, 230, 'bOrange');
+      });
+      this.every('ring', ph === 2 ? 1.6 : 2.6, () => G.ring(this.x, this.y, 14, 150, this.t, 'bRed', 0.2));
+      if (ph >= 1) this.every('big', 1.8, () => G.fan(this.x, this.y + 40, G.aim(this.x, this.y), 3, 0.3, 170, 'bBig'));
+    };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 72, part: null }]; };
+    b.draw = function (ctx) {
+      put(ctx, this.body, this.x, this.y);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const dx of [-60, 0, 60]) {
+        ctx.fillStyle = `rgba(255,140,40,${0.35 + 0.25 * Math.sin(this.t * 10 + dx)})`;
+        ctx.fillRect(this.x + dx - 5, this.y + 86, 10, 26);
+      }
+      ctx.restore();
+    };
+    return b;
+  }
+
+  /* ======================= MINI JEFE · HERALDO DE ORDO =======================
+     La Grieta. Un ojo menor de ORDO con dos satélites que bloquean disparos. */
+  function herald(G, def) {
+    const b = base(G, def);
+    b.targetY = 320;
+    b.eye = img(150, 150, (g, glow) => {
+      glow('#c46bff', 30);
+      const gr = g.createRadialGradient(0, 0, 6, 0, 0, 66);
+      gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.25, '#d49bff'); gr.addColorStop(0.6, '#4a0a6a'); gr.addColorStop(1, '#0a0214');
+      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 66, 0, TAU); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#e8c8ff'; g.lineWidth = 3; g.stroke();
+      g.strokeStyle = 'rgba(232,200,255,0.4)'; g.lineWidth = 2;
+      g.beginPath(); g.arc(0, 0, 84, -0.6, 0.6); g.stroke(); g.beginPath(); g.arc(0, 0, 84, Math.PI - 0.6, Math.PI + 0.6); g.stroke();
+    });
+    b.sat = img(50, 50, (g, glow) => {
+      glow('#c46bff', 14); g.fillStyle = '#1a0830'; g.beginPath(); g.arc(0, 0, 18, 0, TAU); g.fill();
+      g.strokeStyle = '#d49bff'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ff2a4f'; g.beginPath(); g.arc(0, 0, 5, 0, TAU); g.fill();
+    });
+    b.rot = 0;
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.3; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.rot += dt * (1 + ph * 0.4);
+      this.x = G.W / 2 + Math.sin(this.t * 0.7) * 160;
+      this.every('sp', ph === 0 ? 0.14 : 0.1, () => { const a = this.t * 2.6; for (let k = 0; k < 2; k++) G.shot(this.x, this.y, Math.cos(a + k * Math.PI) * 190, Math.sin(a + k * Math.PI) * 190, 'bViolet'); });
+      this.every('aim', ph === 2 ? 1.0 : 1.7, () => G.fan(this.x, this.y + 40, G.aim(this.x, this.y), 4, 0.15, 270, 'bRed'));
+      if (ph >= 1) this.every('kami', 3.5, () => G.spawnEnemy('kamikaze', this.x, this.y + 40, { ai: 'homing', speed: 240 }));
+    };
+    b.satPos = function () { return [0, 1].map(i => { const a = this.rot + i * Math.PI; return { x: this.x + Math.cos(a) * 110, y: this.y + Math.sin(a) * 70 }; }); };
+    b.shields = function () { return this.satPos().map(p => ({ x: p.x, y: p.y, r: 24 })); };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 62, part: null }]; };
+    b.draw = function (ctx) {
+      put(ctx, this.eye, this.x, this.y, 0);
+      const a = G.aim(this.x, this.y);
+      ctx.fillStyle = '#050005'; ctx.beginPath(); ctx.ellipse(this.x + Math.cos(a) * 22, this.y + Math.sin(a) * 22, 9, 18, a + Math.PI / 2, 0, TAU); ctx.fill();
+      for (const s of this.satPos()) put(ctx, this.sat, s.x, s.y, this.t * 3);
+    };
+    return b;
+  }
+
+  const TYPES = { lanza, forge, superordo, censor, leviathan, driller, smelter, herald };
   function create(G, def) { return TYPES[def.type](G, def); }
   return { create };
 })();
@@ -1572,9 +1887,16 @@ window.Bosses = Bosses;
     rock:     { hp: 70, r: 28, score: 250, spr: 'rock' },
     rockS:    { hp: 18, r: 14, score: 80, spr: 'rockS' },
     crystal:  { hp: 45, r: 18, score: 300, spr: 'crystal' },
+    bomber:   { hp: 110, r: 34, score: 700, spr: 'bomber' },
+    sniper:   { hp: 34, r: 16, score: 400, spr: 'sniper' },
+    splitter: { hp: 50, r: 22, score: 350, spr: 'splitter' },
+    splitling:{ hp: 10, r: 11, score: 80, spr: 'splitling' },
+    orbiter:  { hp: 45, r: 22, score: 450, spr: 'orbiter' },
+    swarmer:  { hp: 6, r: 9, score: 60, spr: 'swarmer' },
+    tank:     { hp: 320, r: 50, score: 2500, spr: 'tank' },
   };
-  // Resistencia de los enemigos normales a las balas (1 = original, 1.8 = aguantan un 80 % más)
-  const ENEMY_TOUGHNESS = 1.8;
+  // Resistencia de los enemigos normales a las balas (1 = original, 3 = aguantan el triple)
+  const ENEMY_TOUGHNESS = 3;
   function spawnEnemy(type, x, y, o = {}) {
     const d = EDEF[type];
     const hpScale = ENEMY_TOUGHNESS * (1 + (G.difficulty - 1) * 0.35);
@@ -1607,15 +1929,26 @@ window.Bosses = Bosses;
     mines() { for (let i = 0; i < 5; i++) spawnEnemy('mine', rand(60, G.W - 60), -30 - i * 70, { ai: 'drift', vy: rand(70, 110), vx: rand(-30, 30) }); },
     kami() { for (let i = 0; i < 4; i++) spawnEnemy('kamikaze', rand(40, G.W - 40), -30 - i * 40, { ai: 'homing', speed: 230 }); },
     rocks() { for (let i = 0; i < 4; i++) { const big = Math.random() < 0.5; spawnEnemy(big ? 'rock' : 'rockS', rand(40, G.W - 40), -60 - i * 90, { ai: 'drift', vy: rand(110, 190), vx: rand(-40, 40) }); } },
+    bombers() { const left = Math.random() < 0.5; for (let i = 0; i < 2; i++) spawnEnemy('bomber', left ? -60 - i * 160 : G.W + 60 + i * 160, rand(130, 230), { ai: 'cross', dir: left ? 1 : -1 }); },
+    snipers() { for (let i = 0; i < 3; i++) spawnEnemy('sniper', 120 + i * (G.W - 240) / 2, -30 - i * 30, { ai: 'snipe', stopY: rand(120, 260) }); },
+    splitters() { for (let i = 0; i < 3; i++) spawnEnemy('splitter', rand(90, G.W - 90), -40 - i * 90, { ai: 'dive', speed: 170 }); },
+    orbiters() { const cx = rand(200, G.W - 200); for (let i = 0; i < 4; i++) spawnEnemy('orbiter', cx, -60, { ai: 'orbit', cx, ang: i / 4 * TAU }); },
+    swarm() {
+      const gid = newGroup(12, 'P'), x0 = rand(160, G.W - 160);
+      for (let i = 0; i < 12; i++) spawnEnemy('swarmer', x0, -20 - i * 22, { ai: 'swarm', base: x0, delay: 0, ph: i * 0.35, group: gid });
+    },
+    tank() { spawnEnemy('tank', rand(150, G.W - 150), -70, { ai: 'hover', stopY: rand(180, 260), drop: 'P' }); },
     crystals() { for (let i = 0; i < 4; i++) spawnEnemy('crystal', rand(60, G.W - 60), -40 - i * 80, { ai: 'drift', vy: rand(80, 130), vx: rand(-20, 20), spin: rand(-1, 1) }); },
   };
   const WAVE_SETS = {
-    city:      ['line', 'vee', 'sweep', 'snake', 'gunship', 'loop', 'kami'],
-    asteroids: ['rocks', 'rocks', 'line', 'sweep', 'gunship', 'loop', 'vee', 'carrier'],
-    crystal:   ['crystals', 'snake', 'sweep', 'mines', 'gunship', 'loop', 'crystals', 'carrier'],
-    forge:     ['gunship', 'mines', 'vee', 'kami', 'sweep', 'carrier', 'loop', 'snake'],
-    rift:      ['kami', 'sweep', 'gunship', 'carrier', 'vee', 'mines', 'loop', 'crystals', 'rocks'],
+    city:      ['line', 'vee', 'sweep', 'snake', 'gunship', 'loop', 'kami', 'swarm', 'snipers', 'splitters'],
+    asteroids: ['rocks', 'rocks', 'line', 'sweep', 'gunship', 'loop', 'vee', 'carrier', 'bombers', 'swarm', 'snipers', 'splitters'],
+    crystal:   ['crystals', 'snake', 'sweep', 'mines', 'gunship', 'loop', 'crystals', 'carrier', 'orbiters', 'splitters', 'snipers', 'swarm'],
+    forge:     ['gunship', 'mines', 'vee', 'kami', 'sweep', 'carrier', 'loop', 'snake', 'tank', 'bombers', 'orbiters', 'splitters'],
+    rift:      ['kami', 'sweep', 'gunship', 'carrier', 'vee', 'mines', 'loop', 'crystals', 'rocks', 'tank', 'bombers', 'orbiters', 'snipers', 'swarm', 'splitters'],
   };
+  // Los enemigos nuevos aparecen poco a poco: misión mínima en la que pueden salir
+  const UNLOCK = { swarm: 1, snipers: 2, splitters: 3, bombers: 4, orbiters: 6, tank: 8 };
 
   function enemyAI(e, dt) {
     e.t += dt;
@@ -1642,6 +1975,21 @@ window.Bosses = Bosses;
       }
       case 'carrier': { e.vy = e.y < 230 ? 60 : (t > 12 ? 50 : 0); e.vx = Math.sin(t * 0.5) * 50; break; }
       case 'drift': { e.rot += (e.spin || 0) * dt; break; }
+      case 'cross': { e.vx = e.dir * 95; e.vy = 12; break; }
+      case 'snipe': {
+        if (e.y < e.stopY && t < 4) { e.vy = 160; e.vx = 0; }
+        else if (t < 7) { e.vy = 0; e.charge = (e.charge || 0) + dt; }
+        else { e.vy = -120; }
+        e.rot = Math.atan2(G.player.y - e.y, G.player.x - e.x) - Math.PI / 2; break;
+      }
+      case 'orbit': {
+        e.ang += dt * 1.6; e.cy = (e.cy === undefined ? -60 : e.cy) + 55 * dt;
+        e.x = e.cx + Math.cos(e.ang) * 90; e.y = e.cy + Math.sin(e.ang) * 90; e.vx = 0; e.vy = 0; break;
+      }
+      case 'swarm': {
+        e.vy = 230; e.x = e.base + Math.sin(t * 3 + e.ph) * 150 + Math.sin(t * 7 + e.ph) * 20; e.vx = 0;
+        e.rot = Math.cos(t * 3 + e.ph) * 0.6; break;
+      }
       case 'homing': {
         const a = Math.atan2(G.player.y - e.y, G.player.x - e.x);
         const cur = Math.atan2(e.vy || 1, e.vx || 0);
@@ -1663,6 +2011,13 @@ window.Bosses = Bosses;
           case 'gunship': G.fan(e.x, e.y + 20, G.aim(e.x, e.y), 3 + Math.min(2, diff - 1), 0.2, 220 + diff * 10, 'bOrange'); e.fireT = rand(1.1, 1.7) / (0.8 + diff * 0.2); break;
           case 'carrier': G.ring(e.x, e.y, 10 + diff * 2, 150, e.t, 'bRed'); G.fan(e.x - 40, e.y, G.aim(e.x, e.y), 3, 0.15, 240, 'bViolet'); G.fan(e.x + 40, e.y, G.aim(e.x, e.y), 3, 0.15, 240, 'bViolet'); e.fireT = 1.8; break;
           case 'crystal': e.fireT = 99; break;
+          case 'bomber': G.shot(e.x, e.y + 20, 0, 120, 'bBig'); G.shot(e.x - 30, e.y + 10, -40, 160, 'bOrange'); G.shot(e.x + 30, e.y + 10, 40, 160, 'bOrange'); e.fireT = rand(1.2, 1.8) / (0.8 + diff * 0.2); break;
+          case 'sniper':
+            if (e.charge > 0.9 && !e.fired) { e.fired = true; const a = G.aim(e.x, e.y); for (let k = 0; k < 5; k++) G.shot(e.x + Math.cos(a) * k * 14, e.y + Math.sin(a) * k * 14, ...vel(a, 420), 'bCyan'); }
+            e.fireT = 0.1; break;
+          case 'orbiter': G.ring(e.x, e.y, 6, 140, e.ang, 'bViolet'); e.fireT = rand(2.2, 3.2); break;
+          case 'tank': for (const dx of [-36, -16, 16, 36]) G.shot(e.x + dx, e.y + 50, dx * 2, 240, 'bRed'); e.fireT = rand(0.9, 1.3) / (0.8 + diff * 0.2); break;
+          case 'splitter': G.shot(e.x, e.y + 10, ...vel(G.aim(e.x, e.y), 220), 'bViolet'); e.fireT = rand(1.8, 2.6); break;
           default: e.fireT = 99;
         }
       }
@@ -1707,13 +2062,14 @@ window.Bosses = Bosses;
   function killEnemy(e) {
     e.dead = true;
     G.score += e.score;
-    const big = e.type === 'carrier' ? 3 : e.type === 'gunship' ? 1.8 : e.type === 'rock' ? 1.4 : 1;
-    const col = e.type === 'weaver' ? '#c46bff' : e.type === 'crystal' ? '#4fd8ff' : e.type === 'gunship' ? '#ffb347' : e.type === 'mine' ? '#ffe066' : '#ff4a6a';
+    const big = e.type === 'carrier' || e.type === 'tank' ? 3 : e.type === 'gunship' || e.type === 'bomber' ? 1.8 : e.type === 'rock' ? 1.4 : e.type === 'swarmer' || e.type === 'splitling' ? 0.5 : 1;
+    const col = e.type === 'splitter' || e.type === 'splitling' ? '#9dff6a' : e.type === 'orbiter' ? '#c46bff' : e.type === 'sniper' ? '#4fd8ff' : e.type === 'swarmer' ? '#ffe066' : e.type === 'weaver' ? '#c46bff' : e.type === 'crystal' ? '#4fd8ff' : e.type === 'gunship' ? '#ffb347' : e.type === 'mine' ? '#ffe066' : '#ff4a6a';
     explosion(e.x, e.y, big, col);
     if (big > 1.5) { G.shake = Math.max(G.shake, 8); A.sfx.bigExplode(); } else A.sfx.explode();
     if (e.type === 'rock') for (let i = 0; i < 3; i++) spawnEnemy('rockS', e.x, e.y, { ai: 'drift', vx: rand(-120, 120), vy: rand(60, 180) });
     if (e.type === 'mine') G.ring(e.x, e.y, 10, 150, rand(0, 1), 'bOrange');
     if (e.type === 'crystal') G.ring(e.x, e.y, 8, 170, rand(0, 1), 'bCyan');
+    if (e.type === 'splitter') for (const s of [-1, 1]) spawnEnemy('splitling', e.x + s * 14, e.y, { ai: 'homing', speed: 210, vx: s * 150, vy: -60 });
     if (e.drop) dropItem(e.x, e.y, e.drop);
     else if (e.group) {
       const g = groups.get(e.group); g.killed++;
@@ -1755,7 +2111,7 @@ window.Bosses = Bosses;
     for (const b of G.eBullets) particle(b.x, b.y, 0, -60, 0.4, 0.7, '#ffb347');
     G.eBullets.length = 0;
     G.pulseWave = { r: 0, t: 0, x: p.x, y: p.y };
-    for (const e of G.enemies) { e.hp -= 60; e.flash = 0.2; if (e.hp <= 0 && !e.dead) killEnemy(e); }
+    for (const e of G.enemies) { e.hp -= 150; e.flash = 0.2; if (e.hp <= 0 && !e.dead) killEnemy(e); }
     if (G.boss && !G.boss.entering) damageBoss({ x: G.boss.x, y: G.boss.y, part: null }, 60);
   }
   function usePhase() {
@@ -1829,16 +2185,17 @@ window.Bosses = Bosses;
         floatText(G.W / 2, G.H * 0.35, 'PUNTO DE CONTROL', '#9dff6a');
       }
       // Cada minuto, una oleada de asalto (y un respiro justo después)
-      const minute = Math.floor(G.levelT / 60);
+      const minute = Math.floor(G.levelT / ASSAULT_EVERY);
       if (minute > G.lastAssault && G.levelT < G.chapter.duration - 10) {
         G.lastAssault = minute;
-        G.banner = { text: 'OLEADA ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / 60), sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
+        G.banner = { text: 'OLEADA ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / ASSAULT_EVERY), sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
         FORMATIONS[G.chapter.theme === 'asteroids' ? 'rocks' : 'sweep'](); FORMATIONS.carrier();
         G.waveT = 4;
       }
       if (G.waveT <= 0 && G.levelT < G.chapter.duration - 3 && G.enemies.length < 45) {
         const set = WAVE_SETS[G.chapter.theme];
-        let f = set[Math.floor(Math.random() * set.length)];
+        const avail = set.filter(f => !UNLOCK[f] || G.chapter.id >= UNLOCK[f]);
+        let f = avail[Math.floor(Math.random() * avail.length)];
         if (f === 'carrier' && G.levelT < 25) f = 'sweep';
         if (f === 'carrier' && G.enemies.some(e => e.type === 'carrier')) f = 'line';
         FORMATIONS[f]();
@@ -1850,7 +2207,7 @@ window.Bosses = Bosses;
       while (G.commIdx < G.chapter.comms.length && G.chapter.comms[G.commIdx].t <= G.levelT) showComm(G.chapter.comms[G.commIdx++]);
       if (G.levelT >= G.chapter.duration && G.enemies.length === 0) {
         G.phaseState = 'warning';
-        if (G.chapter.boss) startBossSequence(); else missionComplete();
+        if (G.chapter.boss) startBossSequence(); else if (G.chapter.miniboss) startMiniBoss(); else missionComplete();
       }
       if (G.levelT >= G.chapter.duration + 8) { for (const e of G.enemies) e.vy += 200; }
     }
@@ -1944,8 +2301,13 @@ window.Bosses = Bosses;
     for (const e of G.enemies) {
       Sprites.draw(ctx, e.spr, e.x, e.y, e.rot || 0);
       if (e.flash > 0) { ctx.globalCompositeOperation = 'lighter'; Sprites.draw(ctx, e.spr, e.x, e.y, e.rot || 0, 1, 0.7); ctx.globalCompositeOperation = 'source-over'; }
+      if (e.type === 'sniper' && e.charge > 0 && !e.fired) {
+        const a = G.aim(e.x, e.y); ctx.strokeStyle = `rgba(79,216,255,${Math.min(0.8, e.charge)})`; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(e.x + Math.cos(a) * 1400, e.y + Math.sin(a) * 1400); ctx.stroke();
+      }
       if (e.type === 'carrier' && e.hp < e.maxHp) drawBar(e.x - 50, e.y - 62, 100, 5, e.hp / e.maxHp, '#ff5c8a');
-      else if ((e.type === 'gunship' || e.type === 'rock') && e.hp < e.maxHp) drawBar(e.x - 30, e.y - 44, 60, 4, e.hp / e.maxHp, '#ffb347');
+      else if (e.type === 'tank' && e.hp < e.maxHp) drawBar(e.x - 45, e.y - 66, 90, 5, e.hp / e.maxHp, '#ff5c8a');
+      else if ((e.type === 'gunship' || e.type === 'rock' || e.type === 'bomber') && e.hp < e.maxHp) drawBar(e.x - 30, e.y - 44, 60, 4, e.hp / e.maxHp, '#ffb347');
     }
     // Jefe
     const b = G.boss;
@@ -2221,7 +2583,7 @@ window.Bosses = Bosses;
     if (!opts.fromCheckpoint) { G.chapterStartScore = G.score; G.missionSnap = { power: p.power, drones: p.drones, bombs: p.bombs }; G.checkpoint = null; }
     G.bg = Backgrounds.create(G.chapter.theme, G.W, G.H, G.R);
     G.levelT = opts.fromCheckpoint ? checkpointT() : 0; G.waveT = 3; G.lastFreeDrop = G.levelT;
-    G.lastAssault = Math.floor(G.levelT / 60);
+    G.lastAssault = Math.floor(G.levelT / ASSAULT_EVERY);
     G.commIdx = G.chapter.comms.filter(c => c.t <= G.levelT).length;
     G.phaseState = 'level';
     G.mode = 'dialog'; G.paused = false;
@@ -2255,9 +2617,36 @@ window.Bosses = Bosses;
     G.phaseState = 'boss';
   }
 
+  /* Mini jefe: sin diálogo que pare la acción, solo aviso y radio */
+  async function startMiniBoss() {
+    const id = runId;
+    const def = G.chapter.miniboss;
+    G.banner = { text: '¡MINI JEFE!', sub: def.name, t: 0, dur: 2.4, color: '#ffb347' };
+    A.sfx.alarm(); A.music('boss');
+    clearComms(); if (def.line) showComm(def.line);
+    await sleep(2200);
+    if (id !== runId) return;
+    G.boss = Bosses.create(G, def); G.boss.mini = true;
+    G.phaseState = 'boss';
+  }
+
   async function bossDefeated() {
     const b = G.boss; if (b.dead) return;
     b.dead = true; const id = runId;
+    if (b.mini) {
+      G.score += 8000 + 1000 * G.chapter.id; G.eBullets.length = 0; G.phaseState = 'cleared';
+      for (let i = 0; i < 6; i++) setTimeout(() => { if (id !== runId) return; explosion(b.x + rand(-70, 70), b.y + rand(-50, 50), rand(1.2, 2.2), i % 2 ? '#ffb347' : '#ff4a6a'); A.sfx.explode(); G.shake = 10; }, i * 140);
+      setTimeout(() => { if (id !== runId) return; explosion(b.x, b.y, 4, '#ffffff'); A.sfx.bigExplode(); G.flash = 0.7; G.shake = 18; vibrate(200); }, 900);
+      G.player.inv = 99;
+      floatText(b.x, b.y - 60, '+' + (8000 + 1000 * G.chapter.id), '#ffe066');
+      await sleep(1900);
+      if (id !== runId) return;
+      G.boss = null;
+      for (const e of G.enemies) killEnemy(e);
+      G.enemies = [];
+      missionComplete();
+      return;
+    }
     const bonus = (b.isSuper ? 50000 : 20000) * Math.ceil(G.chapter.id / 5);
     G.score += bonus;
     G.eBullets.length = 0; G.phaseState = 'cleared';
@@ -2307,6 +2696,7 @@ window.Bosses = Bosses;
     p.inv = 0;
     nextMission();
   }
+  const ASSAULT_EVERY = 40; // segundos entre oleadas de asalto
   const checkpointT = () => G.chapter.duration / 2; // punto de control a mitad de misión
   const fmtTime = s => { s = Math.ceil(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
@@ -2408,7 +2798,7 @@ window.Bosses = Bosses;
 
   // Exponer para depuración / pruebas automáticas
   window.__G = G;
-  window.__debug = { startChapter, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
+  window.__debug = { startChapter, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
 })();
 
 </script>

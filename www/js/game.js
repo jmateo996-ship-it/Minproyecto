@@ -85,9 +85,16 @@
     rock:     { hp: 70, r: 28, score: 250, spr: 'rock' },
     rockS:    { hp: 18, r: 14, score: 80, spr: 'rockS' },
     crystal:  { hp: 45, r: 18, score: 300, spr: 'crystal' },
+    bomber:   { hp: 110, r: 34, score: 700, spr: 'bomber' },
+    sniper:   { hp: 34, r: 16, score: 400, spr: 'sniper' },
+    splitter: { hp: 50, r: 22, score: 350, spr: 'splitter' },
+    splitling:{ hp: 10, r: 11, score: 80, spr: 'splitling' },
+    orbiter:  { hp: 45, r: 22, score: 450, spr: 'orbiter' },
+    swarmer:  { hp: 6, r: 9, score: 60, spr: 'swarmer' },
+    tank:     { hp: 320, r: 50, score: 2500, spr: 'tank' },
   };
-  // Resistencia de los enemigos normales a las balas (1 = original, 1.8 = aguantan un 80 % más)
-  const ENEMY_TOUGHNESS = 1.8;
+  // Resistencia de los enemigos normales a las balas (1 = original, 3 = aguantan el triple)
+  const ENEMY_TOUGHNESS = 3;
   function spawnEnemy(type, x, y, o = {}) {
     const d = EDEF[type];
     const hpScale = ENEMY_TOUGHNESS * (1 + (G.difficulty - 1) * 0.35);
@@ -120,15 +127,26 @@
     mines() { for (let i = 0; i < 5; i++) spawnEnemy('mine', rand(60, G.W - 60), -30 - i * 70, { ai: 'drift', vy: rand(70, 110), vx: rand(-30, 30) }); },
     kami() { for (let i = 0; i < 4; i++) spawnEnemy('kamikaze', rand(40, G.W - 40), -30 - i * 40, { ai: 'homing', speed: 230 }); },
     rocks() { for (let i = 0; i < 4; i++) { const big = Math.random() < 0.5; spawnEnemy(big ? 'rock' : 'rockS', rand(40, G.W - 40), -60 - i * 90, { ai: 'drift', vy: rand(110, 190), vx: rand(-40, 40) }); } },
+    bombers() { const left = Math.random() < 0.5; for (let i = 0; i < 2; i++) spawnEnemy('bomber', left ? -60 - i * 160 : G.W + 60 + i * 160, rand(130, 230), { ai: 'cross', dir: left ? 1 : -1 }); },
+    snipers() { for (let i = 0; i < 3; i++) spawnEnemy('sniper', 120 + i * (G.W - 240) / 2, -30 - i * 30, { ai: 'snipe', stopY: rand(120, 260) }); },
+    splitters() { for (let i = 0; i < 3; i++) spawnEnemy('splitter', rand(90, G.W - 90), -40 - i * 90, { ai: 'dive', speed: 170 }); },
+    orbiters() { const cx = rand(200, G.W - 200); for (let i = 0; i < 4; i++) spawnEnemy('orbiter', cx, -60, { ai: 'orbit', cx, ang: i / 4 * TAU }); },
+    swarm() {
+      const gid = newGroup(12, 'P'), x0 = rand(160, G.W - 160);
+      for (let i = 0; i < 12; i++) spawnEnemy('swarmer', x0, -20 - i * 22, { ai: 'swarm', base: x0, delay: 0, ph: i * 0.35, group: gid });
+    },
+    tank() { spawnEnemy('tank', rand(150, G.W - 150), -70, { ai: 'hover', stopY: rand(180, 260), drop: 'P' }); },
     crystals() { for (let i = 0; i < 4; i++) spawnEnemy('crystal', rand(60, G.W - 60), -40 - i * 80, { ai: 'drift', vy: rand(80, 130), vx: rand(-20, 20), spin: rand(-1, 1) }); },
   };
   const WAVE_SETS = {
-    city:      ['line', 'vee', 'sweep', 'snake', 'gunship', 'loop', 'kami'],
-    asteroids: ['rocks', 'rocks', 'line', 'sweep', 'gunship', 'loop', 'vee', 'carrier'],
-    crystal:   ['crystals', 'snake', 'sweep', 'mines', 'gunship', 'loop', 'crystals', 'carrier'],
-    forge:     ['gunship', 'mines', 'vee', 'kami', 'sweep', 'carrier', 'loop', 'snake'],
-    rift:      ['kami', 'sweep', 'gunship', 'carrier', 'vee', 'mines', 'loop', 'crystals', 'rocks'],
+    city:      ['line', 'vee', 'sweep', 'snake', 'gunship', 'loop', 'kami', 'swarm', 'snipers', 'splitters'],
+    asteroids: ['rocks', 'rocks', 'line', 'sweep', 'gunship', 'loop', 'vee', 'carrier', 'bombers', 'swarm', 'snipers', 'splitters'],
+    crystal:   ['crystals', 'snake', 'sweep', 'mines', 'gunship', 'loop', 'crystals', 'carrier', 'orbiters', 'splitters', 'snipers', 'swarm'],
+    forge:     ['gunship', 'mines', 'vee', 'kami', 'sweep', 'carrier', 'loop', 'snake', 'tank', 'bombers', 'orbiters', 'splitters'],
+    rift:      ['kami', 'sweep', 'gunship', 'carrier', 'vee', 'mines', 'loop', 'crystals', 'rocks', 'tank', 'bombers', 'orbiters', 'snipers', 'swarm', 'splitters'],
   };
+  // Los enemigos nuevos aparecen poco a poco: misión mínima en la que pueden salir
+  const UNLOCK = { swarm: 1, snipers: 2, splitters: 3, bombers: 4, orbiters: 6, tank: 8 };
 
   function enemyAI(e, dt) {
     e.t += dt;
@@ -155,6 +173,21 @@
       }
       case 'carrier': { e.vy = e.y < 230 ? 60 : (t > 12 ? 50 : 0); e.vx = Math.sin(t * 0.5) * 50; break; }
       case 'drift': { e.rot += (e.spin || 0) * dt; break; }
+      case 'cross': { e.vx = e.dir * 95; e.vy = 12; break; }
+      case 'snipe': {
+        if (e.y < e.stopY && t < 4) { e.vy = 160; e.vx = 0; }
+        else if (t < 7) { e.vy = 0; e.charge = (e.charge || 0) + dt; }
+        else { e.vy = -120; }
+        e.rot = Math.atan2(G.player.y - e.y, G.player.x - e.x) - Math.PI / 2; break;
+      }
+      case 'orbit': {
+        e.ang += dt * 1.6; e.cy = (e.cy === undefined ? -60 : e.cy) + 55 * dt;
+        e.x = e.cx + Math.cos(e.ang) * 90; e.y = e.cy + Math.sin(e.ang) * 90; e.vx = 0; e.vy = 0; break;
+      }
+      case 'swarm': {
+        e.vy = 230; e.x = e.base + Math.sin(t * 3 + e.ph) * 150 + Math.sin(t * 7 + e.ph) * 20; e.vx = 0;
+        e.rot = Math.cos(t * 3 + e.ph) * 0.6; break;
+      }
       case 'homing': {
         const a = Math.atan2(G.player.y - e.y, G.player.x - e.x);
         const cur = Math.atan2(e.vy || 1, e.vx || 0);
@@ -176,6 +209,13 @@
           case 'gunship': G.fan(e.x, e.y + 20, G.aim(e.x, e.y), 3 + Math.min(2, diff - 1), 0.2, 220 + diff * 10, 'bOrange'); e.fireT = rand(1.1, 1.7) / (0.8 + diff * 0.2); break;
           case 'carrier': G.ring(e.x, e.y, 10 + diff * 2, 150, e.t, 'bRed'); G.fan(e.x - 40, e.y, G.aim(e.x, e.y), 3, 0.15, 240, 'bViolet'); G.fan(e.x + 40, e.y, G.aim(e.x, e.y), 3, 0.15, 240, 'bViolet'); e.fireT = 1.8; break;
           case 'crystal': e.fireT = 99; break;
+          case 'bomber': G.shot(e.x, e.y + 20, 0, 120, 'bBig'); G.shot(e.x - 30, e.y + 10, -40, 160, 'bOrange'); G.shot(e.x + 30, e.y + 10, 40, 160, 'bOrange'); e.fireT = rand(1.2, 1.8) / (0.8 + diff * 0.2); break;
+          case 'sniper':
+            if (e.charge > 0.9 && !e.fired) { e.fired = true; const a = G.aim(e.x, e.y); for (let k = 0; k < 5; k++) G.shot(e.x + Math.cos(a) * k * 14, e.y + Math.sin(a) * k * 14, ...vel(a, 420), 'bCyan'); }
+            e.fireT = 0.1; break;
+          case 'orbiter': G.ring(e.x, e.y, 6, 140, e.ang, 'bViolet'); e.fireT = rand(2.2, 3.2); break;
+          case 'tank': for (const dx of [-36, -16, 16, 36]) G.shot(e.x + dx, e.y + 50, dx * 2, 240, 'bRed'); e.fireT = rand(0.9, 1.3) / (0.8 + diff * 0.2); break;
+          case 'splitter': G.shot(e.x, e.y + 10, ...vel(G.aim(e.x, e.y), 220), 'bViolet'); e.fireT = rand(1.8, 2.6); break;
           default: e.fireT = 99;
         }
       }
@@ -220,13 +260,14 @@
   function killEnemy(e) {
     e.dead = true;
     G.score += e.score;
-    const big = e.type === 'carrier' ? 3 : e.type === 'gunship' ? 1.8 : e.type === 'rock' ? 1.4 : 1;
-    const col = e.type === 'weaver' ? '#c46bff' : e.type === 'crystal' ? '#4fd8ff' : e.type === 'gunship' ? '#ffb347' : e.type === 'mine' ? '#ffe066' : '#ff4a6a';
+    const big = e.type === 'carrier' || e.type === 'tank' ? 3 : e.type === 'gunship' || e.type === 'bomber' ? 1.8 : e.type === 'rock' ? 1.4 : e.type === 'swarmer' || e.type === 'splitling' ? 0.5 : 1;
+    const col = e.type === 'splitter' || e.type === 'splitling' ? '#9dff6a' : e.type === 'orbiter' ? '#c46bff' : e.type === 'sniper' ? '#4fd8ff' : e.type === 'swarmer' ? '#ffe066' : e.type === 'weaver' ? '#c46bff' : e.type === 'crystal' ? '#4fd8ff' : e.type === 'gunship' ? '#ffb347' : e.type === 'mine' ? '#ffe066' : '#ff4a6a';
     explosion(e.x, e.y, big, col);
     if (big > 1.5) { G.shake = Math.max(G.shake, 8); A.sfx.bigExplode(); } else A.sfx.explode();
     if (e.type === 'rock') for (let i = 0; i < 3; i++) spawnEnemy('rockS', e.x, e.y, { ai: 'drift', vx: rand(-120, 120), vy: rand(60, 180) });
     if (e.type === 'mine') G.ring(e.x, e.y, 10, 150, rand(0, 1), 'bOrange');
     if (e.type === 'crystal') G.ring(e.x, e.y, 8, 170, rand(0, 1), 'bCyan');
+    if (e.type === 'splitter') for (const s of [-1, 1]) spawnEnemy('splitling', e.x + s * 14, e.y, { ai: 'homing', speed: 210, vx: s * 150, vy: -60 });
     if (e.drop) dropItem(e.x, e.y, e.drop);
     else if (e.group) {
       const g = groups.get(e.group); g.killed++;
@@ -268,7 +309,7 @@
     for (const b of G.eBullets) particle(b.x, b.y, 0, -60, 0.4, 0.7, '#ffb347');
     G.eBullets.length = 0;
     G.pulseWave = { r: 0, t: 0, x: p.x, y: p.y };
-    for (const e of G.enemies) { e.hp -= 60; e.flash = 0.2; if (e.hp <= 0 && !e.dead) killEnemy(e); }
+    for (const e of G.enemies) { e.hp -= 150; e.flash = 0.2; if (e.hp <= 0 && !e.dead) killEnemy(e); }
     if (G.boss && !G.boss.entering) damageBoss({ x: G.boss.x, y: G.boss.y, part: null }, 60);
   }
   function usePhase() {
@@ -342,16 +383,17 @@
         floatText(G.W / 2, G.H * 0.35, 'PUNTO DE CONTROL', '#9dff6a');
       }
       // Cada minuto, una oleada de asalto (y un respiro justo después)
-      const minute = Math.floor(G.levelT / 60);
+      const minute = Math.floor(G.levelT / ASSAULT_EVERY);
       if (minute > G.lastAssault && G.levelT < G.chapter.duration - 10) {
         G.lastAssault = minute;
-        G.banner = { text: 'OLEADA ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / 60), sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
+        G.banner = { text: 'OLEADA ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / ASSAULT_EVERY), sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
         FORMATIONS[G.chapter.theme === 'asteroids' ? 'rocks' : 'sweep'](); FORMATIONS.carrier();
         G.waveT = 4;
       }
       if (G.waveT <= 0 && G.levelT < G.chapter.duration - 3 && G.enemies.length < 45) {
         const set = WAVE_SETS[G.chapter.theme];
-        let f = set[Math.floor(Math.random() * set.length)];
+        const avail = set.filter(f => !UNLOCK[f] || G.chapter.id >= UNLOCK[f]);
+        let f = avail[Math.floor(Math.random() * avail.length)];
         if (f === 'carrier' && G.levelT < 25) f = 'sweep';
         if (f === 'carrier' && G.enemies.some(e => e.type === 'carrier')) f = 'line';
         FORMATIONS[f]();
@@ -363,7 +405,7 @@
       while (G.commIdx < G.chapter.comms.length && G.chapter.comms[G.commIdx].t <= G.levelT) showComm(G.chapter.comms[G.commIdx++]);
       if (G.levelT >= G.chapter.duration && G.enemies.length === 0) {
         G.phaseState = 'warning';
-        if (G.chapter.boss) startBossSequence(); else missionComplete();
+        if (G.chapter.boss) startBossSequence(); else if (G.chapter.miniboss) startMiniBoss(); else missionComplete();
       }
       if (G.levelT >= G.chapter.duration + 8) { for (const e of G.enemies) e.vy += 200; }
     }
@@ -457,8 +499,13 @@
     for (const e of G.enemies) {
       Sprites.draw(ctx, e.spr, e.x, e.y, e.rot || 0);
       if (e.flash > 0) { ctx.globalCompositeOperation = 'lighter'; Sprites.draw(ctx, e.spr, e.x, e.y, e.rot || 0, 1, 0.7); ctx.globalCompositeOperation = 'source-over'; }
+      if (e.type === 'sniper' && e.charge > 0 && !e.fired) {
+        const a = G.aim(e.x, e.y); ctx.strokeStyle = `rgba(79,216,255,${Math.min(0.8, e.charge)})`; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(e.x + Math.cos(a) * 1400, e.y + Math.sin(a) * 1400); ctx.stroke();
+      }
       if (e.type === 'carrier' && e.hp < e.maxHp) drawBar(e.x - 50, e.y - 62, 100, 5, e.hp / e.maxHp, '#ff5c8a');
-      else if ((e.type === 'gunship' || e.type === 'rock') && e.hp < e.maxHp) drawBar(e.x - 30, e.y - 44, 60, 4, e.hp / e.maxHp, '#ffb347');
+      else if (e.type === 'tank' && e.hp < e.maxHp) drawBar(e.x - 45, e.y - 66, 90, 5, e.hp / e.maxHp, '#ff5c8a');
+      else if ((e.type === 'gunship' || e.type === 'rock' || e.type === 'bomber') && e.hp < e.maxHp) drawBar(e.x - 30, e.y - 44, 60, 4, e.hp / e.maxHp, '#ffb347');
     }
     // Jefe
     const b = G.boss;
@@ -734,7 +781,7 @@
     if (!opts.fromCheckpoint) { G.chapterStartScore = G.score; G.missionSnap = { power: p.power, drones: p.drones, bombs: p.bombs }; G.checkpoint = null; }
     G.bg = Backgrounds.create(G.chapter.theme, G.W, G.H, G.R);
     G.levelT = opts.fromCheckpoint ? checkpointT() : 0; G.waveT = 3; G.lastFreeDrop = G.levelT;
-    G.lastAssault = Math.floor(G.levelT / 60);
+    G.lastAssault = Math.floor(G.levelT / ASSAULT_EVERY);
     G.commIdx = G.chapter.comms.filter(c => c.t <= G.levelT).length;
     G.phaseState = 'level';
     G.mode = 'dialog'; G.paused = false;
@@ -768,9 +815,36 @@
     G.phaseState = 'boss';
   }
 
+  /* Mini jefe: sin diálogo que pare la acción, solo aviso y radio */
+  async function startMiniBoss() {
+    const id = runId;
+    const def = G.chapter.miniboss;
+    G.banner = { text: '¡MINI JEFE!', sub: def.name, t: 0, dur: 2.4, color: '#ffb347' };
+    A.sfx.alarm(); A.music('boss');
+    clearComms(); if (def.line) showComm(def.line);
+    await sleep(2200);
+    if (id !== runId) return;
+    G.boss = Bosses.create(G, def); G.boss.mini = true;
+    G.phaseState = 'boss';
+  }
+
   async function bossDefeated() {
     const b = G.boss; if (b.dead) return;
     b.dead = true; const id = runId;
+    if (b.mini) {
+      G.score += 8000 + 1000 * G.chapter.id; G.eBullets.length = 0; G.phaseState = 'cleared';
+      for (let i = 0; i < 6; i++) setTimeout(() => { if (id !== runId) return; explosion(b.x + rand(-70, 70), b.y + rand(-50, 50), rand(1.2, 2.2), i % 2 ? '#ffb347' : '#ff4a6a'); A.sfx.explode(); G.shake = 10; }, i * 140);
+      setTimeout(() => { if (id !== runId) return; explosion(b.x, b.y, 4, '#ffffff'); A.sfx.bigExplode(); G.flash = 0.7; G.shake = 18; vibrate(200); }, 900);
+      G.player.inv = 99;
+      floatText(b.x, b.y - 60, '+' + (8000 + 1000 * G.chapter.id), '#ffe066');
+      await sleep(1900);
+      if (id !== runId) return;
+      G.boss = null;
+      for (const e of G.enemies) killEnemy(e);
+      G.enemies = [];
+      missionComplete();
+      return;
+    }
     const bonus = (b.isSuper ? 50000 : 20000) * Math.ceil(G.chapter.id / 5);
     G.score += bonus;
     G.eBullets.length = 0; G.phaseState = 'cleared';
@@ -820,6 +894,7 @@
     p.inv = 0;
     nextMission();
   }
+  const ASSAULT_EVERY = 40; // segundos entre oleadas de asalto
   const checkpointT = () => G.chapter.duration / 2; // punto de control a mitad de misión
   const fmtTime = s => { s = Math.ceil(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
@@ -921,5 +996,5 @@
 
   // Exponer para depuración / pruebas automáticas
   window.__G = G;
-  window.__debug = { startChapter, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
+  window.__debug = { startChapter, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
 })();

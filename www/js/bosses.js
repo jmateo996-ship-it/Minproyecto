@@ -1,6 +1,7 @@
 /* =========================================================================
    Jefes: Fragata Lanza (misión 5) · Forja Madre (misión 10) ·
-   súper jefe ORDO PRIMORDIAL (misión 15). Cada uno con fases propias.
+   súper jefe ORDO PRIMORDIAL (misión 15). Mini jefes al final del resto de
+   misiones: Guardián del Censo, Excavadora, Leviatán, Fundidor y Heraldo.
    ========================================================================= */
 'use strict';
 
@@ -255,7 +256,246 @@ const Bosses = (() => {
     return b;
   }
 
-  const TYPES = { lanza, forge, superordo };
+  /* ====================== MINI JEFE · GUARDIÁN DEL CENSO ====================== */
+  function censor(G, def) {
+    const b = base(G, def);
+    b.body = img(300, 150, (g, glow) => {
+      glow('#ff2a5a', 26);
+      g.fillStyle = lg(g, -150, 0, 150, 0, ['#2a0612', '#6a1430', '#2a0612']);
+      poly(g, [-90, -70, 90, -70, 150, -10, 120, 50, 40, 75, -40, 75, -120, 50, -150, -10]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ff6c8f'; g.lineWidth = 2.5; g.stroke();
+      g.strokeStyle = 'rgba(255,108,143,0.3)'; g.lineWidth = 1.5;
+      for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(i * 30, -60); g.lineTo(i * 22, 66); g.stroke(); }
+      g.fillStyle = '#0c0206'; g.beginPath(); g.ellipse(0, 6, 54, 38, 0, 0, TAU); g.fill();
+      g.strokeStyle = '#ff2a5a'; g.lineWidth = 3; g.stroke();
+    });
+    b.turret = img(60, 60, (g, glow) => {
+      glow('#ff8a2a', 16); g.fillStyle = '#3a1406'; g.beginPath(); g.arc(0, 0, 26, 0, TAU); g.fill();
+      g.strokeStyle = '#ffb36b'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ffb36b'; g.fillRect(-5, 0, 10, 30);
+    });
+    b.parts = [{ ox: -112, oy: 24, r: 28, hp: 260, max: 260, alive: true }, { ox: 112, oy: 24, r: 28, hp: 260, max: 260, alive: true }];
+    b.spiral = 0;
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.6; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      this.x = G.W / 2 + Math.sin(this.t * 0.55) * 170;
+      const ph = this.phase();
+      for (const p of this.parts) if (p.alive) {
+        this.every('t' + p.ox, ph === 0 ? 1.4 : 1.0, () => G.fan(this.x + p.ox, this.y + p.oy + 20, G.aim(this.x + p.ox, this.y + p.oy), ph === 0 ? 3 : 5, 0.22, 230, 'bOrange'));
+      }
+      this.every('ring', ph === 2 ? 1.4 : 2.4, () => G.ring(this.x, this.y + 10, ph === 0 ? 14 : 20, 170, this.t, 'bRed'));
+      if (ph >= 1) this.every('spiral', 0.09, () => { this.spiral += 0.37; G.shot(this.x, this.y + 10, Math.cos(this.spiral) * 200, Math.sin(this.spiral) * 200, 'bViolet'); });
+    };
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y + 6, r: 52, part: null }];
+      for (const p of this.parts) if (p.alive) hb.push({ x: this.x + p.ox, y: this.y + p.oy, r: p.r, part: p });
+      return hb;
+    };
+    b.draw = function (ctx) {
+      put(ctx, this.body, this.x, this.y);
+      for (const p of this.parts) if (p.alive) put(ctx, this.turret, this.x + p.ox, this.y + p.oy, G.aim(this.x + p.ox, this.y + p.oy) - Math.PI / 2);
+      // Ojo que escanea
+      const ex = this.x + Math.sin(this.t * 2) * 26;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      const gr = ctx.createRadialGradient(ex, this.y + 6, 0, ex, this.y + 6, 30);
+      gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, '#ff2a5a'); gr.addColorStop(1, 'rgba(255,0,60,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(ex, this.y + 6, 30, 0, TAU); ctx.fill();
+      ctx.restore();
+    };
+    return b;
+  }
+
+
+  /* ======================== MINI JEFE · LEVIATÁN VÍTREO  ======================= */
+  function leviathan(G, def) {
+    const b = base(G, def);
+    b.y = -100; b.targetY = 380;
+    b.head = img(120, 130, (g, glow) => {
+      glow('#6ff', 26);
+      g.fillStyle = lg(g, -60, -60, 60, 60, ['#d8ffff', '#2a90c0', '#0a2a4a']);
+      poly(g, [0, 64, 40, 30, 58, -10, 36, -56, 0, -40, -36, -56, -58, -10, -40, 30]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#e0ffff'; g.lineWidth = 2; g.stroke();
+      glow('#ff2a5a', 18); g.fillStyle = '#ff2a5a';
+      g.beginPath(); g.ellipse(-20, 6, 9, 5, 0.4, 0, TAU); g.ellipse(20, 6, 9, 5, -0.4, 0, TAU); g.fill();
+    });
+    b.seg = img(70, 70, (g, glow) => {
+      glow('#5ff', 18);
+      g.fillStyle = lg(g, -30, -30, 30, 30, ['rgba(200,255,255,0.9)', 'rgba(40,140,200,0.85)', 'rgba(10,40,80,0.9)']);
+      poly(g, [0, -30, 30, 0, 0, 30, -30, 0]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#cff'; g.lineWidth = 1.5; g.stroke();
+      g.fillStyle = 'rgba(255,255,255,0.5)'; poly(g, [0, -18, 10, 0, 0, 18, -10, 0]); g.fill();
+    });
+    b.trail = []; b.segs = 14; b.ang = Math.PI / 2;
+    b.update = function (dt) {
+      this.t += dt;
+      const ph = this.phase();
+      const sp = 0.55 + ph * 0.2;
+      const tx = G.W / 2 + Math.sin(this.t * sp) * (G.W * 0.36);
+      const ty = (this.entering ? 380 : 370) + Math.sin(this.t * sp * 1.7) * 160;
+      const px = this.x, py = this.y;
+      this.x += (tx - this.x) * dt * 1.8; this.y += (ty - this.y) * dt * 1.8;
+      this.ang = Math.atan2(this.y - py, this.x - px) || this.ang;
+      this.trail.unshift({ x: this.x, y: this.y });
+      if (this.trail.length > this.segs * 7 + 2) this.trail.pop();
+      if (this.t > 2.5) this.entering = false;
+      if (this.entering) return;
+      this.every('shard', ph === 0 ? 1.3 : 0.8, () => G.fan(this.x, this.y, G.aim(this.x, this.y), ph === 2 ? 7 : 5, 0.18, 240, 'bCyan'));
+      this.every('segShot', ph === 0 ? 2.2 : 1.4, () => {
+        for (let i = 2; i < this.segs; i += 3) { const p = this.trail[i * 7]; if (p) G.ring(p.x, p.y, 6, 130, this.t + i, 'bViolet'); }
+      });
+      if (ph === 2) this.every('spray', 0.2, () => G.shot(this.x, this.y, Math.cos(this.ang) * 260 + (Math.random() - 0.5) * 120, Math.sin(this.ang) * 260 + (Math.random() - 0.5) * 120, 'bCyan'));
+    };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 46, part: null }]; };
+    b.bodyHitboxes = function () {
+      const hb = [];
+      for (let i = 1; i < this.segs; i++) { const p = this.trail[i * 7]; if (p) hb.push({ x: p.x, y: p.y, r: 22 }); }
+      return hb;
+    };
+    b.draw = function (ctx) {
+      for (let i = this.segs - 1; i >= 1; i--) {
+        const p = this.trail[i * 7]; if (!p) continue;
+        const s = 1 - i / this.segs * 0.45;
+        put(ctx, this.seg, p.x, p.y, this.t * 0.6 + i * 0.4, 0.95);
+        if (s < 1) { /* escala implícita por el orden */ }
+      }
+      put(ctx, this.head, this.x, this.y, this.ang - Math.PI / 2);
+    };
+    return b;
+  }
+
+
+  /* ======================= MINI JEFE · EXCAVADORA MINERA ======================
+     Asteroides. Dos brazos‑taladro destructibles; lanza rocas y abanicos. */
+  function driller(G, def) {
+    const b = base(G, def);
+    b.targetY = 290;
+    b.body = img(260, 150, (g, glow) => {
+      glow('#ffb347', 20);
+      g.fillStyle = lg(g, 0, -70, 0, 70, ['#5a4a3a', '#2a2018', '#120c08']);
+      poly(g, [-80, -60, 80, -60, 120, -10, 100, 50, 40, 72, -40, 72, -100, 50, -120, -10]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ffb347'; g.lineWidth = 2.5; g.stroke();
+      g.fillStyle = '#ffb347';
+      for (let i = -3; i <= 3; i++) g.fillRect(i * 26 - 8, -46, 16, 5);
+      g.fillStyle = '#1a120c'; g.beginPath(); g.arc(0, 14, 34, 0, TAU); g.fill();
+      g.strokeStyle = '#ffd08a'; g.lineWidth = 3; g.stroke();
+    });
+    b.drill = img(60, 110, (g, glow) => {
+      glow('#ff8a2a', 14);
+      g.fillStyle = lg(g, -24, 0, 24, 0, ['#6a6a7a', '#d8d8e8', '#6a6a7a']);
+      poly(g, [-24, -40, 24, -40, 0, 54]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#2a2a3a'; g.lineWidth = 2;
+      for (let y = -30; y < 40; y += 12) { const w = 24 * (1 - (y + 40) / 94); g.beginPath(); g.moveTo(-w, y); g.lineTo(w, y + 8); g.stroke(); }
+      g.fillStyle = '#3a2a1a'; g.fillRect(-20, -52, 40, 14);
+    });
+    b.parts = [{ ox: -100, oy: 50, r: 26, hp: 220, max: 220, alive: true }, { ox: 100, oy: 50, r: 26, hp: 220, max: 220, alive: true }];
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.5; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.6) * 150;
+      for (const p of this.parts) if (p.alive)
+        this.every('d' + p.ox, 1.5, () => G.fan(this.x + p.ox, this.y + p.oy + 50, Math.PI / 2, 5, 0.16, 210, 'bOrange'));
+      this.every('rock', ph === 0 ? 2.6 : 1.7, () => G.spawnEnemy('rockS', this.x + (Math.random() - 0.5) * 120, this.y + 40, { ai: 'drift', vx: (Math.random() - 0.5) * 200, vy: 220 }));
+      this.every('aim', ph === 2 ? 0.9 : 1.6, () => G.fan(this.x, this.y + 20, G.aim(this.x, this.y), 3, 0.18, 250, 'bRed'));
+    };
+    b.hitboxes = function () {
+      const hb = [{ x: this.x, y: this.y + 10, r: 52, part: null }];
+      for (const p of this.parts) if (p.alive) hb.push({ x: this.x + p.ox, y: this.y + p.oy, r: p.r, part: p });
+      return hb;
+    };
+    b.draw = function (ctx) {
+      for (const p of this.parts) if (p.alive) put(ctx, this.drill, this.x + p.ox, this.y + p.oy, Math.sin(this.t * 30) * 0.05);
+      put(ctx, this.body, this.x, this.y);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(255,180,80,${0.5 + 0.4 * Math.sin(this.t * 8)})`;
+      ctx.beginPath(); ctx.arc(this.x, this.y + 14, 14, 0, TAU); ctx.fill(); ctx.restore();
+    };
+    return b;
+  }
+
+  /* ========================== MINI JEFE · FUNDIDOR ==========================
+     La Forja. Un crisol que vierte cortinas de metal fundido. */
+  function smelter(G, def) {
+    const b = base(G, def);
+    b.targetY = 280;
+    b.body = img(240, 170, (g, glow) => {
+      glow('#ff6a1a', 26);
+      g.fillStyle = lg(g, -120, 0, 120, 0, ['#2a140c', '#5a2a14', '#2a140c']);
+      poly(g, [-110, -60, 110, -60, 90, 40, 50, 80, -50, 80, -90, 40]); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#ff9a3b'; g.lineWidth = 3; g.stroke();
+      const gr = g.createRadialGradient(0, -50, 4, 0, -50, 90);
+      gr.addColorStop(0, '#fff3c0'); gr.addColorStop(0.4, '#ff9a2a'); gr.addColorStop(1, 'rgba(255,60,0,0)');
+      g.fillStyle = gr; g.beginPath(); g.ellipse(0, -52, 96, 18, 0, 0, TAU); g.fill();
+      g.fillStyle = '#1a0a04'; for (const x of [-60, 0, 60]) g.fillRect(x - 10, 60, 20, 26);
+    });
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.4; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.x = G.W / 2 + Math.sin(this.t * 0.45) * 170;
+      // Cortina de metal fundido desde los tres caños
+      this.every('pour', ph === 0 ? 0.16 : 0.12, () => {
+        const k = Math.floor(this.t * 6) % 3, x = this.x + (k - 1) * 60;
+        G.shot(x, this.y + 86, (Math.random() - 0.5) * 50, 230, 'bOrange');
+      });
+      this.every('ring', ph === 2 ? 1.6 : 2.6, () => G.ring(this.x, this.y, 14, 150, this.t, 'bRed', 0.2));
+      if (ph >= 1) this.every('big', 1.8, () => G.fan(this.x, this.y + 40, G.aim(this.x, this.y), 3, 0.3, 170, 'bBig'));
+    };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 72, part: null }]; };
+    b.draw = function (ctx) {
+      put(ctx, this.body, this.x, this.y);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (const dx of [-60, 0, 60]) {
+        ctx.fillStyle = `rgba(255,140,40,${0.35 + 0.25 * Math.sin(this.t * 10 + dx)})`;
+        ctx.fillRect(this.x + dx - 5, this.y + 86, 10, 26);
+      }
+      ctx.restore();
+    };
+    return b;
+  }
+
+  /* ======================= MINI JEFE · HERALDO DE ORDO =======================
+     La Grieta. Un ojo menor de ORDO con dos satélites que bloquean disparos. */
+  function herald(G, def) {
+    const b = base(G, def);
+    b.targetY = 320;
+    b.eye = img(150, 150, (g, glow) => {
+      glow('#c46bff', 30);
+      const gr = g.createRadialGradient(0, 0, 6, 0, 0, 66);
+      gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.25, '#d49bff'); gr.addColorStop(0.6, '#4a0a6a'); gr.addColorStop(1, '#0a0214');
+      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 66, 0, TAU); g.fill();
+      g.shadowBlur = 0; g.strokeStyle = '#e8c8ff'; g.lineWidth = 3; g.stroke();
+      g.strokeStyle = 'rgba(232,200,255,0.4)'; g.lineWidth = 2;
+      g.beginPath(); g.arc(0, 0, 84, -0.6, 0.6); g.stroke(); g.beginPath(); g.arc(0, 0, 84, Math.PI - 0.6, Math.PI + 0.6); g.stroke();
+    });
+    b.sat = img(50, 50, (g, glow) => {
+      glow('#c46bff', 14); g.fillStyle = '#1a0830'; g.beginPath(); g.arc(0, 0, 18, 0, TAU); g.fill();
+      g.strokeStyle = '#d49bff'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ff2a4f'; g.beginPath(); g.arc(0, 0, 5, 0, TAU); g.fill();
+    });
+    b.rot = 0;
+    b.update = function (dt) {
+      this.t += dt;
+      if (this.entering) { this.y += (this.targetY - this.y) * dt * 1.3; if (Math.abs(this.y - this.targetY) < 2) this.entering = false; return; }
+      const ph = this.phase();
+      this.rot += dt * (1 + ph * 0.4);
+      this.x = G.W / 2 + Math.sin(this.t * 0.7) * 160;
+      this.every('sp', ph === 0 ? 0.14 : 0.1, () => { const a = this.t * 2.6; for (let k = 0; k < 2; k++) G.shot(this.x, this.y, Math.cos(a + k * Math.PI) * 190, Math.sin(a + k * Math.PI) * 190, 'bViolet'); });
+      this.every('aim', ph === 2 ? 1.0 : 1.7, () => G.fan(this.x, this.y + 40, G.aim(this.x, this.y), 4, 0.15, 270, 'bRed'));
+      if (ph >= 1) this.every('kami', 3.5, () => G.spawnEnemy('kamikaze', this.x, this.y + 40, { ai: 'homing', speed: 240 }));
+    };
+    b.satPos = function () { return [0, 1].map(i => { const a = this.rot + i * Math.PI; return { x: this.x + Math.cos(a) * 110, y: this.y + Math.sin(a) * 70 }; }); };
+    b.shields = function () { return this.satPos().map(p => ({ x: p.x, y: p.y, r: 24 })); };
+    b.hitboxes = function () { return [{ x: this.x, y: this.y, r: 62, part: null }]; };
+    b.draw = function (ctx) {
+      put(ctx, this.eye, this.x, this.y, 0);
+      const a = G.aim(this.x, this.y);
+      ctx.fillStyle = '#050005'; ctx.beginPath(); ctx.ellipse(this.x + Math.cos(a) * 22, this.y + Math.sin(a) * 22, 9, 18, a + Math.PI / 2, 0, TAU); ctx.fill();
+      for (const s of this.satPos()) put(ctx, this.sat, s.x, s.y, this.t * 3);
+    };
+    return b;
+  }
+
+  const TYPES = { lanza, forge, superordo, censor, leviathan, driller, smelter, herald };
   function create(G, def) { return TYPES[def.type](G, def); }
   return { create };
 })();

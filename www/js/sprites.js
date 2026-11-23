@@ -154,6 +154,61 @@ const Sprites = (() => {
     g.beginPath(); g.moveTo(0, -28); g.lineTo(0, 26); g.stroke();
   }
 
+
+  /* --- Enemigos añadidos --- */
+  function bomber(g) {           // Bombardero: ala ancha, suelta minas de plasma
+    glow(g, '#ff8a2a', 18);
+    g.fillStyle = metal(g, -48, 0, 48, 0, '#2a1608', '#6a3a14');
+    path(g, [-48, -6, -20, -18, 20, -18, 48, -6, 40, 10, 14, 16, 0, 26, -14, 16, -40, 10]); g.fill();
+    noGlow(g); g.strokeStyle = '#ffb36b'; g.lineWidth = 2; g.stroke();
+    g.fillStyle = '#1a0a04'; g.fillRect(-14, -4, 28, 14);
+    glow(g, '#ff8a2a', 12); g.fillStyle = '#ffd5a8';
+    for (const x of [-34, 34]) { g.beginPath(); g.arc(x, 0, 4, 0, Math.PI * 2); g.fill(); }
+  }
+  function sniper(g) {           // Francotirador: aguja con lente
+    glow(g, '#4fd8ff', 14);
+    g.fillStyle = metal(g, -12, 0, 12, 0, '#0a2230', '#1f5a78');
+    path(g, [0, 28, 10, -6, 16, -22, 0, -14, -16, -22, -10, -6]); g.fill();
+    noGlow(g); g.strokeStyle = '#8ff0ff'; g.lineWidth = 1.5; g.stroke();
+    glow(g, '#ff2a5a', 12); g.fillStyle = '#ff6c8f'; g.beginPath(); g.arc(0, 4, 5, 0, Math.PI * 2); g.fill();
+  }
+  function splitter(g) {         // Divisor: dos mitades unidas por un núcleo
+    glow(g, '#9dff6a', 16);
+    for (const sx of [-1, 1]) {
+      g.fillStyle = metal(g, 0, -20, sx * 26, 20, '#0c2a10', '#2f7a2a');
+      path(g, [sx * 4, -22, sx * 26, -6, sx * 22, 18, sx * 4, 24]); g.fill();
+      noGlow(g); g.strokeStyle = '#c8ff9a'; g.lineWidth = 1.5; g.stroke(); glow(g, '#9dff6a', 16);
+    }
+    g.fillStyle = '#eaffd8'; g.beginPath(); g.arc(0, 0, 6, 0, Math.PI * 2); g.fill();
+  }
+  function splitling(g) {
+    glow(g, '#9dff6a', 12); g.fillStyle = '#3a9a2a';
+    path(g, [0, 14, 11, -4, 0, -12, -11, -4]); g.fill();
+    noGlow(g); g.strokeStyle = '#d8ffb8'; g.lineWidth = 1.5; g.stroke();
+  }
+  function orbiter(g) {          // Orbitador: anillo con tres nodos
+    glow(g, '#e86bff', 16); g.strokeStyle = '#e86bff'; g.lineWidth = 4;
+    g.beginPath(); g.arc(0, 0, 20, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#2a0838'; g.beginPath(); g.arc(0, 0, 12, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#ffd6ff';
+    for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; g.beginPath(); g.arc(Math.cos(a) * 20, Math.sin(a) * 20, 5, 0, Math.PI * 2); g.fill(); }
+    g.beginPath(); g.arc(0, 0, 4, 0, Math.PI * 2); g.fill();
+  }
+  function swarmer(g) {          // Enjambre: dron diminuto y rápido
+    glow(g, '#ffe066', 10); g.fillStyle = '#ffcf3a';
+    path(g, [0, 10, 8, -6, 0, -2, -8, -6]); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(0, 1, 2, 0, Math.PI * 2); g.fill();
+  }
+  function tank(g) {             // Acorazado: blindaje pesado y cuatro cañones
+    glow(g, RED, 20);
+    g.fillStyle = metal(g, -50, 0, 50, 0, '#1e2230', '#4a5268');
+    path(g, [-34, -44, 34, -44, 52, -20, 52, 28, 30, 46, -30, 46, -52, 28, -52, -20]); g.fill();
+    noGlow(g); g.strokeStyle = '#ff6c8f'; g.lineWidth = 2.5; g.stroke();
+    g.strokeStyle = 'rgba(200,210,240,0.35)'; g.lineWidth = 2; g.strokeRect(-36, -30, 72, 56);
+    g.fillStyle = '#c8d0e8'; for (const x of [-38, -18, 14, 34]) g.fillRect(x, 36, 5, 20);
+    glow(g, RED, 14); g.fillStyle = '#ff9db6'; g.beginPath(); g.arc(0, -2, 10, 0, Math.PI * 2); g.fill();
+  }
+
   /* ---------------- Balas ---------------- */
   function orb(color, r) {
     return g => {
@@ -205,6 +260,13 @@ const Sprites = (() => {
     make('mine', 42, 42, mine);
     make('kamikaze', 28, 32, kamikaze);
     make('crystal', 34, 56, crystal);
+    make('bomber', 100, 48, bomber);
+    make('sniper', 34, 54, sniper);
+    make('splitter', 56, 50, splitter);
+    make('splitling', 26, 30, splitling);
+    make('orbiter', 54, 54, orbiter);
+    make('swarmer', 20, 20, swarmer);
+    make('tank', 108, 112, tank);
     for (let i = 0; i < 4; i++) {
       make('rock' + i, 70, 70, g => rock(g, 17 + i * 31, 32, ['#7a6a5a', '#2a2018', '#a08870']));
       make('rockS' + i, 36, 36, g => rock(g, 91 + i * 13, 16, ['#8a7a6a', '#2a2018', '#b09880']));
