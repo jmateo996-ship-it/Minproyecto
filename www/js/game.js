@@ -390,8 +390,10 @@
     if (b.analyzed) dmg *= 1.35; // punto débil conocido gracias a los objetos de las estancias
     if (hb.part) {
       hb.part.hp -= dmg;
-      if (hb.part.hp <= 0 && hb.part.alive) { hb.part.alive = false; explosion(hb.x, hb.y, 2, '#ffb347'); A.sfx.bigExplode(); G.score += 2500; G.shake = 8; b.hp -= b.maxHp * 0.06; }
-      b.hp -= dmg * 0.25;
+      // Cada jefe decide cuánto le duele perder una pieza (partBonus) y cuánto daño le pasa cada impacto en ella (partShare)
+      const bonus = b.partBonus !== undefined ? b.partBonus : 0.06, share = b.partShare !== undefined ? b.partShare : 0.25;
+      if (hb.part.hp <= 0 && hb.part.alive) { hb.part.alive = false; explosion(hb.x, hb.y, 2, '#ffb347'); A.sfx.bigExplode(); G.score += 2500; G.shake = 8; b.hp -= b.maxHp * bonus; }
+      b.hp -= dmg * share;
     } else b.hp -= dmg * (hb.armor !== undefined ? hb.armor : 1);
     b.flash = 0.06;
     if (b.hp <= 0) bossDefeated();

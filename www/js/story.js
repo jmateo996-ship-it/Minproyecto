@@ -77,7 +77,7 @@ const CHAPTERS = [
       { t: 98, who: 'dario', text: 'Hablaremos de eso cuando salgamos vivos.' },
       { t: 110, who: 'nora', text: 'La cúpula de Nexo‑9 ya se ve. Es la última barrera.' },
     ],
-    miniboss: { type: 'censor', name: 'TORRE CENTINELA', hp: 700, line: { who: 'dario', text: 'Esa torre se mueve… es una Centinela. Va a por nosotros.' } },
+    miniboss: { type: 'sentinel', name: 'TORRE CENTINELA', hp: 700, line: { who: 'dario', text: 'Esa torre se mueve… es una Centinela. ¡Y está lanzando cazas escolta! Derriba sus subnaves para romper su escudo.' } },
     outro: [
       { who: 'nora', text: 'La cúpula tiene compuertas de mantenimiento. Si abrimos una, salimos al espacio.' },
       { who: 'dario', text: 'Y si no la abrimos, la atravesamos.' },

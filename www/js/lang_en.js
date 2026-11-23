@@ -726,5 +726,6 @@ window.LANG_EN = {
  "Fuerza": "Strength",
  "Ingeniería": "Engineering",
  "Informática": "Computing",
- "Pequeño · invisible": "Small · invisible"
+ "Pequeño · invisible": "Small · invisible",
+ "Esa torre se mueve… es una Centinela. ¡Y está lanzando cazas escolta! Derriba sus subnaves para romper su escudo.": "That tower is moving… it's a Sentinel. And it's launching escort fighters! Take down its subships to break its shield."
 };
