@@ -25,6 +25,7 @@
     <div class="menu">
       <button id="btnPlay" class="btn primary" data-i18n>NUEVA PARTIDA</button>
       <button id="btnChapters" class="btn" data-i18n>MISIONES</button>
+      <button id="btnDuels" class="btn" data-i18n>JEFES 1 VS 1</button>
       <div class="menu-grid">
         <button id="btnHangar" class="btn small" data-i18n>HANGAR</button>
         <button id="btnModes" class="btn small" data-i18n>MODOS EXTRA</button>
@@ -53,6 +54,15 @@
       <div class="best" id="rushBest"></div>
       <button id="modesBack" class="btn small" data-i18n>VOLVER</button>
     </div>
+  </section>
+
+  <!-- Jefes 1 vs 1 -->
+  <section id="duels" class="screen dim top">
+    <h2 data-i18n>JEFES 1 VS 1</h2>
+    <div class="ach-count" id="duelCount"></div>
+    <div class="help" data-i18n>Lucha contra cada jefe por separado. Derrota a uno para desbloquear el siguiente.</div>
+    <div id="duelList" class="chapter-list"></div>
+    <button id="duelsBack" class="btn small" data-i18n>VOLVER</button>
   </section>
 
   <!-- Hangar -->
@@ -173,6 +183,7 @@
     <p class="go-quote" id="goQuote"></p>
     <div class="menu">
       <button id="btnCheckpoint" class="btn primary" data-i18n>CONTINUAR DESDE EL PUNTO DE CONTROL</button>
+      <button id="btnNextDuel" class="btn primary" data-i18n>SIGUIENTE JEFE</button>
       <button id="btnRetry" class="btn" data-i18n>REINICIAR MISIÓN</button>
       <button id="btnGoHangar" class="btn small" data-i18n>HANGAR</button>
       <button id="btnMenu" class="btn small" data-i18n>MENÚ</button>

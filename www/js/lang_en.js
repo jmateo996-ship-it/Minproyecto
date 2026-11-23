@@ -727,5 +727,17 @@ window.LANG_EN = {
  "Ingeniería": "Engineering",
  "Informática": "Computing",
  "Pequeño · invisible": "Small · invisible",
- "Esa torre se mueve… es una Centinela. ¡Y está lanzando cazas escolta! Derriba sus subnaves para romper su escudo.": "That tower is moving… it's a Sentinel. And it's launching escort fighters! Take down its subships to break its shield."
+ "Esa torre se mueve… es una Centinela. ¡Y está lanzando cazas escolta! Derriba sus subnaves para romper su escudo.": "That tower is moving… it's a Sentinel. And it's launching escort fighters! Take down its subships to break its shield.",
+ "Duelista": "Duelist",
+ "Derrota a los 15 jefes en el modo Jefes 1 vs 1.": "Defeat all 15 bosses in 1 vs 1 Boss mode.",
+ "JEFES 1 VS 1": "BOSSES 1 VS 1",
+ "Le quedaba": "It had",
+ "de vida": "health left",
+ "Derrotados": "Defeated",
+ "Derrota al anterior para desbloquearlo": "Defeat the previous one to unlock it",
+ "Sin derrotar": "Not defeated yet",
+ "¡JEFE DERROTADO!": "BOSS DEFEATED!",
+ "REPETIR": "REPLAY",
+ "Lucha contra cada jefe por separado. Derrota a uno para desbloquear el siguiente.": "Fight each boss one at a time. Defeat one to unlock the next.",
+ "SIGUIENTE JEFE": "NEXT BOSS"
 };

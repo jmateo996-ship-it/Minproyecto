@@ -30,6 +30,7 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
 - **Hangar**: los créditos ganados en cada misión compran 6 mejoras permanentes con 3 niveles: cañones, escudo, drones, reactor de pulso, imán y motor de fase.
 - **4 modos de arma, uno por personaje**: Asalto (Darío), Láser que atraviesa enemigos (Lía), proyectiles teledirigidos (Nora) y Fase (Teo). Se desbloquean al escapar de las estancias 1, 2 y 3.
 - **Una elección con dos finales**: en la misión 5 decides si salvas a Vex. Cambia diálogos de las misiones 7, 9, 11, 12 y 15, la estancia 4 y el epílogo; en la ruta sin Vex aparece el capitán Orén.
+- **Jefes 1 vs 1** (menú principal): los 15 jefes y mini jefes en el orden de la historia, uno contra uno. Se desbloquean derrotando al anterior o llegando a su misión; guardan tu mejor tiempo y dan créditos.
 - **Modos extra**: **Arcade** infinito, con un mini jefe y cambio de escenario cada 75 segundos, y **modo Jefes** (8 jefes seguidos contra el reloj).
 - **20 logros** con aviso en pantalla y un punto de enganche para Game Center y Google Play Games (`Meta.reportAchievement`).
 - **Tutorial jugable** en la misión 1: moverse, disparar, FASE, PULSO y cápsulas.

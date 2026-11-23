@@ -68,6 +68,7 @@ const Meta = (() => {
     { id: 'hard_clear',   name: 'Sin miedo',            desc: 'Termina la historia en dificultad Difícil.' },
     { id: 'arcade5',      name: 'Superviviente',        desc: 'Aguanta 5 minutos en el modo Arcade.' },
     { id: 'bossrush',     name: 'Cazajefes',            desc: 'Completa el modo Jefes.' },
+    { id: 'duels_all',    name: 'Duelista',             desc: 'Derrota a los 15 jefes en el modo Jefes 1 vs 1.' },
   ];
 
   /* ------------------------------ Vibración ------------------------------ */

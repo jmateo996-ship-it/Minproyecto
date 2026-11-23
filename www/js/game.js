@@ -24,7 +24,7 @@
     try { s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'); } catch (e) { s = {}; }
     s = Object.assign({ unlocked: 1, hiscore: 0, sound: true, seenPrologue: false, analysis: {}, files: [], roomsDone: [],
       credits: 0, upgrades: {}, shipMode: 'dario', ach: {}, stats: { kills: 0, pulses: 0 }, flags: {}, tutorialDone: false,
-      fullGame: false, arcadeBest: 0, arcadeBestTime: 0, rushBest: 0 }, s);
+      fullGame: false, arcadeBest: 0, arcadeBestTime: 0, rushBest: 0, duels: {} }, s);
     s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
     return s;
   })();
@@ -669,7 +669,9 @@
     ctx.shadowBlur = 0;
     ctx.font = '600 14px system-ui, sans-serif'; ctx.fillStyle = 'rgba(232,244,255,0.6)';
     const head = G.gameMode === 'story' ? T('MISIÓN') + ' ' + G.chapter.id + '/' + CHAPTERS.length + ' · ' + T(G.chapter.title)
-      : G.gameMode === 'arcade' ? T('ARCADE') + ' · ' + T('NIVEL') + ' ' + G.arcadeLevel : T('MODO JEFES') + ' · ' + (G.rushIdx + 1) + '/' + RUSH.length;
+      : G.gameMode === 'arcade' ? T('ARCADE') + ' · ' + T('NIVEL') + ' ' + G.arcadeLevel
+      : G.gameMode === 'duel' ? T('JEFES 1 VS 1') + ' · ' + (G.duelIdx + 1) + '/' + DUELS.length
+      : T('MODO JEFES') + ' · ' + (G.rushIdx + 1) + '/' + RUSH.length;
     ctx.fillText(head, 20, top + 32);
     const clock = G.gameMode === 'story' ? (G.phaseState === 'level' ? fmtTime(Math.max(0, G.chapter.duration - G.levelT)) : '') : fmtTime(G.runT || 0);
     if (clock) {
@@ -765,7 +767,7 @@
   });
 
   /* ---------------------------- Pantallas UI --------------------------- */
-  const screens = ['title', 'chapters', 'story', 'card', 'pause', 'gameover', 'found', 'files', 'roomFail', 'modes', 'hangar', 'achievements', 'settings', 'buy'];
+  const screens = ['title', 'chapters', 'story', 'card', 'pause', 'gameover', 'found', 'files', 'roomFail', 'modes', 'hangar', 'achievements', 'settings', 'buy', 'duels'];
   function show(id) { for (const s of screens) $(s).classList.toggle('show', s === id); }
   function hideAll() { show(null); }
   A.select = () => A.sfx.select();
@@ -1099,6 +1101,7 @@
 
     if (G.gameMode === 'arcade') { p.shield = p.maxShield; G.phaseState = 'level'; A.music(G.chapter.theme); return; }
     if (G.gameMode === 'bossrush') { p.shield = p.maxShield; rushNext(); return; }
+    if (G.gameMode === 'duel') { duelWin(); return; }
 
     if (b.mini) { unlockAch('mini_down'); missionComplete(); return; }
     if (b.name === 'FRAGATA LANZA') unlockAch('lanza');
@@ -1186,6 +1189,7 @@
       G.mode = 'over'; $('controls').classList.remove('show');
       const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
       $('btnCheckpoint').style.display = G.checkpoint && G.gameMode === 'story' ? '' : 'none';
+      $('btnNextDuel').style.display = 'none';
       if (G.gameMode === 'arcade') {
         const t = G.runT || 0, best = G.score > save.arcadeBest;
         save.arcadeBest = Math.max(save.arcadeBest, G.score); save.arcadeBestTime = Math.max(save.arcadeBestTime, t);
@@ -1193,6 +1197,11 @@
         $('goTitle').textContent = T('FIN DEL ARCADE');
         $('goQuote').textContent = T('Puntos') + ': ' + G.score + ' · ' + T('Tiempo') + ': ' + fmtTime(t) + (best ? ' · ' + T('¡NUEVO RÉCORD!') : '');
         $('btnRetry').textContent = T('JUGAR OTRA VEZ'); goRetry = startArcade;
+      } else if (G.gameMode === 'duel') {
+        const b = G.boss, left = b ? Math.max(0, Math.round(b.hp / b.maxHp * 100)) : 0;
+        $('goTitle').textContent = T('EL ESPERANZA HA CAÍDO');
+        $('goQuote').textContent = T(DUELS[G.duelIdx].def.name) + ' · ' + T('Le quedaba') + ' ' + left + ' % ' + T('de vida');
+        $('btnRetry').textContent = T('REINTENTAR'); const i = G.duelIdx; goRetry = () => startDuel(i);
       } else if (G.gameMode === 'bossrush') {
         $('goTitle').textContent = T('EL ESPERANZA HA CAÍDO');
         $('goQuote').textContent = T('Jefes derrotados') + ': ' + G.rushIdx + '/' + RUSH.length;
@@ -1352,7 +1361,7 @@
     G.mode = 'over'; $('controls').classList.remove('show');
     $('goTitle').textContent = T('¡MODO JEFES COMPLETADO!');
     $('goQuote').textContent = T('Tiempo') + ': ' + fmtTime(t) + (best ? ' · ' + T('¡NUEVO RÉCORD!') : '') + ' · +3000 ' + T('créditos');
-    $('btnCheckpoint').style.display = 'none';
+    $('btnCheckpoint').style.display = 'none'; $('btnNextDuel').style.display = 'none';
     $('btnRetry').textContent = T('JUGAR OTRA VEZ'); goRetry = startBossRush;
     show('gameover');
   }
@@ -1360,6 +1369,71 @@
     $('arcadeBest').textContent = save.arcadeBest ? T('RÉCORD') + ' ' + save.arcadeBest + ' · ' + fmtTime(save.arcadeBestTime) : '';
     $('rushBest').textContent = !isFull() ? T('Juego completo') : save.rushBest ? T('MEJOR TIEMPO') + ' ' + fmtTime(save.rushBest) : '';
   }
+
+  /* ---------------------------- Jefes 1 vs 1 ----------------------------
+     Todos los mini jefes, jefes y el súper jefe, en el orden de la historia.
+     Se desbloquean derrotando al anterior o llegando a su misión. */
+  const DUELS = CHAPTERS.map((c, i) => ({
+    idx: i, mission: c.id, theme: c.theme, def: c.boss || c.miniboss,
+    kind: c.boss ? (c.boss.super ? 'SÚPER JEFE' : 'JEFE') : 'MINI JEFE',
+  }));
+  const duelDone = d => save.duels[d.def.name] !== undefined;
+  const duelOpen = i => i === 0 || duelDone(DUELS[i - 1]) || save.unlocked >= DUELS[i].mission;
+  function buildDuels() {
+    const list = $('duelList'); list.innerHTML = '';
+    $('duelCount').textContent = T('Derrotados') + ': ' + DUELS.filter(duelDone).length + ' / ' + DUELS.length;
+    DUELS.forEach((d, i) => {
+      const open = duelOpen(i), paywall = d.mission >= 6 && !isFull(), best = save.duels[d.def.name];
+      const b = document.createElement('button');
+      b.className = 'btn duel-entry' + (open ? '' : ' locked') + (d.kind === 'MINI JEFE' ? '' : d.kind === 'JEFE' ? ' boss' : ' super');
+      b.innerHTML = `${i + 1}. ${T(d.def.name)}<em>${T(d.kind)}</em><small>${!open ? T('Derrota al anterior para desbloquearlo')
+        : paywall ? T('Juego completo') : T('MISIÓN') + ' ' + d.mission + ' · ' + (best !== undefined ? `<span class="ok">✓ ${T('MEJOR TIEMPO')} ${fmtTime(best)}</span>` : T('Sin derrotar'))}</small>`;
+      if (open) b.addEventListener('click', () => { A.init(); A.sfx.select(); if (paywall) { showBuy(null); return; } startDuel(i); });
+      list.appendChild(b);
+    });
+  }
+  async function startDuel(i) {
+    const d = DUELS[i];
+    runId++; const id = runId;
+    A.init(); hideAll(); clearComms();
+    G.gameMode = 'duel'; G.duelIdx = i; G.score = 0; resetField();
+    G.chapter = { id: d.mission, title: d.def.name, theme: d.theme, duration: Infinity, comms: [], act: 0 };
+    G.difficulty = 1 + i * 0.15;
+    // Nave con la potencia típica de ese punto de la historia (o la del hangar si es mayor)
+    const p = G.player = newPlayer();
+    p.power = Math.max(p.power, Math.min(5, 2 + Math.floor(i / 3))); p.drones = Math.max(p.drones, i >= 6 ? 1 : 0);
+    G.runT = 0; G.checkpoint = null; G.comms = []; G.mode = 'play'; G.paused = false; G.phaseState = 'warning';
+    G.bg = Backgrounds.create(d.theme, G.W, G.H, G.R); A.music('boss');
+    $('controls').classList.add('show');
+    G.banner = { text: T(d.kind === 'MINI JEFE' ? '¡MINI JEFE!' : '¡ALERTA!'), sub: T(d.def.name), t: 0, dur: 2.2, color: d.kind === 'MINI JEFE' ? '#ffb347' : '#ff2a5a' };
+    A.sfx.alarm();
+    await sleep(2200);
+    if (id !== runId) return;
+    G.boss = scaleBoss(Bosses.create(G, d.def)); G.boss.mini = d.kind === 'MINI JEFE'; G.boss.analyzed = isAnalyzed(d.def.name);
+    G.runT = 0; G.phaseState = 'boss';
+  }
+  function duelWin() {
+    const d = DUELS[G.duelIdx], t = G.runT, prev = save.duels[d.def.name], best = prev === undefined || t < prev;
+    if (best) save.duels[d.def.name] = t;
+    const reward = prev === undefined ? 400 + 150 * G.duelIdx : 100;
+    save.credits += reward; persist();
+    if (DUELS.every(duelDone)) unlockAch('duels_all');
+    G.mode = 'over'; $('controls').classList.remove('show');
+    $('goTitle').textContent = T('¡JEFE DERROTADO!');
+    $('goQuote').textContent = T(d.def.name) + ' · ' + T('Tiempo') + ': ' + fmtTime(t) + (best && prev !== undefined ? ' · ' + T('¡NUEVO RÉCORD!') : '') + ' · +' + reward + ' ' + T('créditos');
+    $('btnCheckpoint').style.display = 'none';
+    const next = G.duelIdx + 1;
+    $('btnNextDuel').style.display = next < DUELS.length ? '' : 'none';
+    $('btnRetry').textContent = T('REPETIR'); const i = G.duelIdx; goRetry = () => startDuel(i);
+    show('gameover');
+  }
+  $('btnDuels').addEventListener('click', () => { A.init(); A.sfx.select(); buildDuels(); show('duels'); A.music('title'); });
+  $('duelsBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
+  $('btnNextDuel').addEventListener('click', () => {
+    const next = G.duelIdx + 1; hideAll();
+    if (DUELS[next].mission >= 6 && !isFull()) { showBuy(null); return; }
+    startDuel(next);
+  });
 
   /* ------------------------------ Tutorial ------------------------------ */
   const TUT = [
