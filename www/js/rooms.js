@@ -420,10 +420,11 @@ const Rooms = (() => {
 
     /* =============================== 4 =============================== */
     {
-      id: 4, after: 12, title: 'EL PECIO DEL HERALDO', place: 'Restos del Heraldo de ORDO, remolcados por Vex', time: 360,
+      id: 4, after: 12, title: 'EL PECIO DEL HERALDO', place: 'Restos del Heraldo de ORDO, remolcados por la flota libre', time: 360,
       pal: { wall: ['#220814', '#0c0208'], floor: ['#16040c', '#050003'], line: 'rgba(255,60,110,0.14)', light: 'rgba(200,80,255,A)' },
       intro: [
-        { who: 'vex', text: 'Hemos remolcado los restos del Heraldo que derribasteis. Su núcleo aún late: dentro hay datos de ORDO.' },
+        { if: 'vexSaved', who: 'vex', text: 'Hemos remolcado los restos del Heraldo que derribasteis. Su núcleo aún late: dentro hay datos de ORDO.' },
+        { ifNot: 'vexSaved', who: 'oren', text: 'Hemos remolcado los restos del Heraldo que derribasteis. Su núcleo aún late: dentro hay datos de ORDO.' },
         { who: 'dario', text: 'Entramos, cogemos lo que haya y salimos.' },
         { who: 'ordo', text: 'INTRUSOS REGISTRADOS. SALA SELLADA. REACTIVACIÓN DEL HERALDO EN SEIS MINUTOS.' },
         { who: 'nora', text: 'Si este pecio vuelve a la vida con nosotros dentro, estamos perdidos.' },
@@ -432,7 +433,8 @@ const Rooms = (() => {
         { who: 'lia', text: 'La compuerta se ha abierto con mi Protocolo inverso. Funciona. Cuando llegue el momento, funcionará con la Grieta.' },
         { who: 'nora', text: 'Y el núcleo nos lo cuenta todo sobre ORDO PRIMORDIAL: sus fases, sus satélites… y su núcleo.' },
         { who: 'teo', text: 'ORDO no me vio cruzar la barrera. De verdad no salgo en sus mapas.' },
-        { who: 'vex', text: 'Pues entonces tenéis una ventaja que nadie ha tenido nunca. Volved a la nave.' },
+        { if: 'vexSaved', who: 'vex', text: 'Pues entonces tenéis una ventaja que nadie ha tenido nunca. Volved a la nave.' },
+        { ifNot: 'vexSaved', who: 'oren', text: 'Pues entonces tenéis una ventaja que nadie ha tenido nunca. Volved a la nave.' },
       ],
       object: {
         name: 'NÚCLEO DE MEMORIA DE ORDO',

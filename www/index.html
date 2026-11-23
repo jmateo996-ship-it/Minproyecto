@@ -20,22 +20,86 @@
     <div class="logo">
       <div class="logo-top">ÉXODO</div>
       <div class="logo-num">2942</div>
-      <div class="tagline">Una familia. Un universo que no les deja ir.</div>
+      <div class="tagline" data-i18n>Una familia. Un universo que no les deja ir.</div>
     </div>
     <div class="menu">
-      <button id="btnPlay" class="btn primary">NUEVA PARTIDA</button>
-      <button id="btnChapters" class="btn">MISIONES</button>
-      <button id="btnFiles" class="btn small">EXPEDIENTES</button>
-      <button id="btnSound" class="btn small">SONIDO: SÍ</button>
+      <button id="btnPlay" class="btn primary" data-i18n>NUEVA PARTIDA</button>
+      <button id="btnChapters" class="btn" data-i18n>MISIONES</button>
+      <div class="menu-grid">
+        <button id="btnHangar" class="btn small" data-i18n>HANGAR</button>
+        <button id="btnModes" class="btn small" data-i18n>MODOS EXTRA</button>
+        <button id="btnAch" class="btn small" data-i18n>LOGROS</button>
+        <button id="btnFiles" class="btn small" data-i18n>EXPEDIENTES</button>
+      </div>
+      <button id="btnSettings" class="btn small" data-i18n>AJUSTES</button>
     </div>
     <div class="hiscore" id="hiscore"></div>
   </section>
 
-  <!-- Selector de capítulos -->
+  <!-- Selector de misiones -->
   <section id="chapters" class="screen">
-    <h2>MISIONES</h2>
+    <h2 data-i18n>MISIONES</h2>
     <div id="chapterList" class="chapter-list"></div>
-    <button id="btnBack" class="btn small">VOLVER</button>
+    <button id="btnBack" class="btn small" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Modos extra -->
+  <section id="modes" class="screen dim">
+    <h2 data-i18n>MODOS EXTRA</h2>
+    <div class="menu">
+      <button id="btnArcade" class="btn primary"><span data-i18n>ARCADE</span><small class="btn-sub" data-i18n>Oleadas sin fin. ¿Cuánto aguantas?</small></button>
+      <div class="best" id="arcadeBest"></div>
+      <button id="btnBossRush" class="btn"><span data-i18n>MODO JEFES</span><small class="btn-sub" data-i18n>Los 8 jefes seguidos, contra el reloj.</small></button>
+      <div class="best" id="rushBest"></div>
+      <button id="modesBack" class="btn small" data-i18n>VOLVER</button>
+    </div>
+  </section>
+
+  <!-- Hangar -->
+  <section id="hangar" class="screen dim top">
+    <h2 data-i18n>HANGAR</h2>
+    <div class="credits"><span data-i18n>CRÉDITOS</span> <b id="creditsVal">0</b></div>
+    <div class="hangar-scroll">
+      <div class="hangar-sub" data-i18n>MODO DE ARMAS</div>
+      <div id="shipModes" class="ship-modes"></div>
+      <div class="hangar-sub" data-i18n>MEJORAS DEL ESPERANZA</div>
+      <div id="upgradeList" class="upgrade-list"></div>
+    </div>
+    <button id="hangarBack" class="btn primary" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Logros -->
+  <section id="achievements" class="screen dim top">
+    <h2 data-i18n>LOGROS</h2>
+    <div class="ach-count" id="achCount"></div>
+    <div id="achList" class="ach-list"></div>
+    <button id="achBack" class="btn small" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Ajustes -->
+  <section id="settings" class="screen dim top">
+    <h2 data-i18n>AJUSTES</h2>
+    <div id="settingsList" class="settings-list"></div>
+    <button id="settingsBack" class="btn primary" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Compra del juego completo -->
+  <section id="buy" class="screen dim">
+    <div class="buy-card">
+      <div class="found-kicker" data-i18n>FIN DE LA DEMO</div>
+      <div class="found-name" data-i18n>La familia Vega aún no está a salvo</div>
+      <div class="found-desc" data-i18n>Has completado el Acto I. Desbloquea el juego completo para descubrir la verdad sobre el Protocolo Cuna y cruzar la Grieta.</div>
+      <ul class="buy-list">
+        <li data-i18n>Actos II y III: 10 misiones más</li>
+        <li data-i18n>3 estancias de personajes y sus secretos</li>
+        <li data-i18n>La Forja Madre y el súper jefe ORDO PRIMORDIAL</li>
+        <li data-i18n>Dos finales y el modo Jefes</li>
+        <li data-i18n>Un único pago. Sin anuncios.</li>
+      </ul>
+      <button id="buyBtn" class="btn primary"></button>
+      <button id="buyRestore" class="btn small" data-i18n>RESTAURAR COMPRA</button>
+      <button id="buyBack" class="btn small" data-i18n>MENÚ</button>
+    </div>
   </section>
 
   <!-- Diapositivas de historia (prólogo / epílogo) -->
@@ -43,12 +107,12 @@
     <div class="story-card">
       <div class="story-title" id="storyTitle"></div>
       <div class="story-text" id="storyText"></div>
-      <div class="hint">Toca para continuar</div>
+      <div class="hint" data-i18n>Toca para continuar</div>
     </div>
-    <button class="skip" id="storySkip">SALTAR ▸▸</button>
+    <button class="skip" id="storySkip" data-i18n>SALTAR ▸▸</button>
   </section>
 
-  <!-- Tarjeta de capítulo -->
+  <!-- Tarjeta de misión -->
   <section id="card" class="screen">
     <div class="card-num" id="cardNum"></div>
     <div class="card-title" id="cardTitle"></div>
@@ -63,9 +127,10 @@
         <div class="dlg-name" id="dlgName"></div>
         <div class="dlg-role" id="dlgRole"></div>
         <div class="dlg-text" id="dlgText"></div>
+        <div class="dlg-choices" id="dlgChoices"></div>
       </div>
     </div>
-    <button class="skip" id="dlgSkip">SALTAR ▸▸</button>
+    <button class="skip" id="dlgSkip" data-i18n>SALTAR ▸▸</button>
   </section>
 
   <!-- Radio durante el vuelo -->
@@ -74,32 +139,43 @@
     <div><div class="comm-name" id="commName"></div><div class="comm-text" id="commText"></div></div>
   </div>
 
+  <!-- Tutorial -->
+  <div id="tutorial" class="tutorial">
+    <div class="tut-step" id="tutStep"></div>
+    <div class="tut-text" id="tutText"></div>
+    <button id="tutSkip" class="tut-skip" data-i18n>SALTAR TUTORIAL</button>
+  </div>
+
+  <!-- Aviso de logro -->
+  <div id="toast" class="toast"><div class="toast-kicker" data-i18n>LOGRO DESBLOQUEADO</div><div id="toastText"></div></div>
+
   <!-- Controles táctiles -->
   <div id="controls" class="controls">
-    <button id="btnBomb" class="ctl bomb"><span class="ctl-label">PULSO</span><span class="ctl-count" id="bombCount">3</span></button>
-    <button id="btnPhase" class="ctl phase"><svg viewBox="0 0 100 100"><circle id="phaseRing" cx="50" cy="50" r="44"/></svg><span class="ctl-label">FASE</span></button>
+    <button id="btnBomb" class="ctl bomb"><span class="ctl-label" data-i18n>PULSO</span><span class="ctl-count" id="bombCount">3</span></button>
+    <button id="btnPhase" class="ctl phase"><svg viewBox="0 0 100 100"><circle id="phaseRing" cx="50" cy="50" r="44"/></svg><span class="ctl-label" data-i18n>FASE</span></button>
     <button id="btnPause" class="pause">II</button>
   </div>
 
   <!-- Pausa -->
   <section id="pause" class="screen dim">
-    <h2>PAUSA</h2>
+    <h2 data-i18n>PAUSA</h2>
     <div class="menu">
-      <button id="btnResume" class="btn primary">CONTINUAR</button>
-      <button id="btnSound2" class="btn small">SONIDO: SÍ</button>
-      <button id="btnQuit" class="btn small">SALIR AL MENÚ</button>
+      <button id="btnResume" class="btn primary" data-i18n>CONTINUAR</button>
+      <button id="btnSettings2" class="btn small" data-i18n>AJUSTES</button>
+      <button id="btnQuit" class="btn small" data-i18n>SALIR AL MENÚ</button>
     </div>
-    <div class="help">Arrastra en cualquier parte para pilotar · FASE: intangibilidad · PULSO: limpia la pantalla<br>Teclado: flechas/WASD · Z fase · X pulso · P pausa</div>
+    <div class="help" data-i18n>Arrastra en cualquier parte para pilotar · FASE: intangibilidad · PULSO: limpia la pantalla · Teclado: flechas/WASD, Z fase, X pulso, P pausa</div>
   </section>
 
   <!-- Fin de partida -->
   <section id="gameover" class="screen dim">
-    <h2 class="red">EL ESPERANZA HA CAÍDO</h2>
+    <h2 class="red" id="goTitle" data-i18n>EL ESPERANZA HA CAÍDO</h2>
     <p class="go-quote" id="goQuote"></p>
     <div class="menu">
-      <button id="btnCheckpoint" class="btn primary">CONTINUAR DESDE EL PUNTO DE CONTROL</button>
-      <button id="btnRetry" class="btn">REINICIAR MISIÓN</button>
-      <button id="btnMenu" class="btn small">MENÚ</button>
+      <button id="btnCheckpoint" class="btn primary" data-i18n>CONTINUAR DESDE EL PUNTO DE CONTROL</button>
+      <button id="btnRetry" class="btn" data-i18n>REINICIAR MISIÓN</button>
+      <button id="btnGoHangar" class="btn small" data-i18n>HANGAR</button>
+      <button id="btnMenu" class="btn small" data-i18n>MENÚ</button>
     </div>
   </section>
 
@@ -108,11 +184,11 @@
     <div class="room-top">
       <div class="room-title"><div id="roomTitle"></div><div id="roomPlace" class="room-place"></div></div>
       <div id="roomTimer" class="room-timer">6:00</div>
-      <button id="roomHint" class="room-btn">PISTA</button>
+      <button id="roomHint" class="room-btn" data-i18n>PISTA</button>
       <button id="roomPause" class="room-btn">II</button>
     </div>
     <div id="roomStage" class="room-stage"><canvas id="roomCanvas"></canvas><div id="roomHot"></div></div>
-    <div id="roomInv" class="room-inv"></div>
+    <div id="roomInv" class="room-inv" data-empty="INVENTARIO VACÍO"></div>
     <div id="roomChars" class="room-chars"></div>
   </section>
 
@@ -123,42 +199,47 @@
       <div class="pad-hint" id="codeHint"></div>
       <div class="pad-display" id="codeDisplay"></div>
       <div class="pad-keys" id="codeKeys"></div>
-      <button class="btn small" id="codeCancel">CERRAR</button>
+      <button class="btn small" id="codeCancel" data-i18n>CERRAR</button>
     </div>
   </section>
 
   <!-- Objeto de la historia encontrado -->
   <section id="found" class="screen dim">
     <div class="found-card">
-      <div class="found-kicker">OBJETO ENCONTRADO</div>
+      <div class="found-kicker" data-i18n>OBJETO ENCONTRADO</div>
       <div class="found-name" id="foundName"></div>
       <div class="found-desc" id="foundDesc"></div>
-      <div class="found-kicker small">ANÁLISIS DESBLOQUEADO · +35 % DE DAÑO</div>
+      <div class="found-kicker small" data-i18n>ANÁLISIS DESBLOQUEADO · +35 % DE DAÑO</div>
       <div id="foundBosses" class="found-bosses"></div>
-      <button id="foundOk" class="btn primary">CONTINUAR</button>
+      <div id="foundUnlock" class="found-unlock"></div>
+      <button id="foundOk" class="btn primary" data-i18n>CONTINUAR</button>
     </div>
   </section>
 
   <!-- Expedientes -->
   <section id="files" class="screen dim">
-    <h2>EXPEDIENTES</h2>
+    <h2 data-i18n>EXPEDIENTES</h2>
     <div id="filesList" class="files-list"></div>
-    <button id="filesBack" class="btn small">VOLVER</button>
+    <button id="filesBack" class="btn small" data-i18n>VOLVER</button>
   </section>
 
   <!-- Fallo en la estancia -->
   <section id="roomFail" class="screen dim">
-    <h2 class="red">OS HAN ATRAPADO</h2>
+    <h2 class="red" data-i18n>OS HAN ATRAPADO</h2>
     <p class="go-quote" id="roomFailText"></p>
     <div class="menu">
-      <button id="roomRetry" class="btn primary">REINTENTAR ESTANCIA</button>
-      <button id="roomMenu" class="btn small">MENÚ</button>
+      <button id="roomRetry" class="btn primary" data-i18n>REINTENTAR ESTANCIA</button>
+      <button id="roomMenu" class="btn small" data-i18n>MENÚ</button>
     </div>
   </section>
 
-  <div id="rotate" class="rotate">Gira el dispositivo en vertical</div>
+  <div id="rotate" class="rotate" data-i18n>Gira el dispositivo en vertical</div>
 
+  <script src="js/config.js"></script>
+  <script src="js/lang_en.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/story.js"></script>
+  <script src="js/meta.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/sprites.js"></script>
   <script src="js/backgrounds.js"></script>

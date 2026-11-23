@@ -32,7 +32,7 @@ const Bosses = (() => {
       entering: true, dead: false, flash: 0, parts: [], timers: {},
       phase() { const r = this.hp / this.maxHp; return r > 0.66 ? 0 : r > 0.33 ? 1 : 2; },
       every(name, period, fn) {
-        this.timers[name] = (this.timers[name] || 0) + G.dt;
+        this.timers[name] = (this.timers[name] || 0) + (G.fireDt || G.dt); // la dificultad acelera o frena la cadencia
         if (this.timers[name] >= period) { this.timers[name] -= period; fn(); }
       },
     };

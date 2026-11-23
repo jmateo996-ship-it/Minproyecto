@@ -37,13 +37,13 @@ const Sprites = (() => {
   }
 
   /* ---------------- Nave de la familia: el ESPERANZA ---------------- */
-  function player(g) {
+  function player(g, accent = '#2ad4ff', stripe = '#ffb347') {
     // Alas
-    glow(g, '#2ad4ff', 18);
+    glow(g, accent, 18);
     g.fillStyle = metal(g, -40, 0, 40, 0, '#1b3350', '#5d87b3');
     path(g, [0, -10, 38, 18, 40, 30, 12, 24, 0, 30, -12, 24, -40, 30, -38, 18]); g.fill();
     noGlow(g);
-    g.strokeStyle = '#7ee8ff'; g.lineWidth = 1.5; g.stroke();
+    g.strokeStyle = accent === '#2ad4ff' ? '#7ee8ff' : accent; g.lineWidth = 1.5; g.stroke();
     // Fuselaje
     g.fillStyle = metal(g, -12, 0, 12, 0, '#9fb6cc', '#f1f7ff');
     path(g, [0, -38, 10, -18, 12, 20, 6, 34, -6, 34, -12, 20, -10, -18]); g.fill();
@@ -54,7 +54,7 @@ const Sprites = (() => {
     g.fillStyle = cg; glow(g, '#5ff', 10);
     path(g, [0, -30, 6, -16, 4, -6, -4, -6, -6, -16]); g.fill(); noGlow(g);
     // Franjas ámbar (la firma de Lía)
-    g.fillStyle = '#ffb347';
+    g.fillStyle = stripe;
     g.fillRect(-30, 20, 14, 3); g.fillRect(16, 20, 14, 3);
     // Cañones
     g.fillStyle = '#cfe9ff'; g.fillRect(-26, 4, 3, 16); g.fillRect(23, 4, 3, 16);
@@ -211,6 +211,11 @@ const Sprites = (() => {
 
   /* ---------------- Balas ---------------- */
   function orb(color, r) {
+    if (cb) return g => {     // alto contraste: anillo oscuro y núcleo muy brillante
+      g.fillStyle = '#000'; g.beginPath(); g.arc(0, 0, r + 3, 0, Math.PI * 2); g.fill();
+      glow(g, color, r * 1.6); g.fillStyle = color; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
+      noGlow(g); g.fillStyle = '#fff'; g.beginPath(); g.arc(0, 0, r * 0.45, 0, Math.PI * 2); g.fill();
+    };
     return g => {
       glow(g, color, r * 2.4);
       g.fillStyle = color; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
@@ -247,10 +252,14 @@ const Sprites = (() => {
     };
   }
 
-  function build(scale) {
-    R = scale;
+  let cb = false;
+  // Modos de arma: cada personaje tiñe el Esperanza con su color
+  const MODE_COLORS = { dario: ['#2ad4ff', '#ffb347'], lia: ['#ffb347', '#2ad4ff'], nora: ['#9dff6a', '#ffb347'], teo: ['#ffe066', '#c46bff'] };
+  function build(scale, opts = {}) {
+    R = scale; cb = !!opts.colorblind;
     for (const k in cache) delete cache[k];
     make('player', 84, 80, player);
+    for (const [m, [a, st]] of Object.entries(MODE_COLORS)) make('player_' + m, 84, 80, g => player(g, a, st));
     make('flame', 14, 42, flame);
     make('drone', 26, 26, drone);
     make('dart', 44, 46, dart);
@@ -271,11 +280,14 @@ const Sprites = (() => {
       make('rock' + i, 70, 70, g => rock(g, 17 + i * 31, 32, ['#7a6a5a', '#2a2018', '#a08870']));
       make('rockS' + i, 36, 36, g => rock(g, 91 + i * 13, 16, ['#8a7a6a', '#2a2018', '#b09880']));
     }
-    make('bRed', 16, 16, orb('#ff3b6b', 6));
-    make('bViolet', 16, 16, orb('#c46bff', 6));
-    make('bOrange', 20, 20, orb('#ff9a3b', 8));
-    make('bBig', 30, 30, orb('#ff2a4f', 12));
-    make('bCyan', 16, 16, orb('#6ff', 6));
+    // Balas enemigas; en modo daltónico, solo amarillo y magenta de alto contraste
+    make('bRed', 16, 16, orb(cb ? '#ffe600' : '#ff3b6b', 6));
+    make('bViolet', 16, 16, orb(cb ? '#ff3dff' : '#c46bff', 6));
+    make('bOrange', 20, 20, orb(cb ? '#ffe600' : '#ff9a3b', 8));
+    make('bBig', 30, 30, orb(cb ? '#ff3dff' : '#ff2a4f', 12));
+    make('bCyan', 16, 16, orb(cb ? '#ffffff' : '#6ff', 6));
+    make('pLaser', 10, 46, laser('#ffb347', 10, 46));
+    make('pHack', 12, 12, orb('#9dff6a', 5));
     make('pShot', 9, 28, laser('#3fe0ff', 9, 28));
     make('pShot2', 12, 34, laser('#ffffff', 12, 34));
     make('pWave', 10, 22, laser('#ffb347', 10, 22));

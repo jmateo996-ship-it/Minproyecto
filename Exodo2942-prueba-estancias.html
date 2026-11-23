@@ -110,7 +110,7 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
 .hot:active { background: rgba(79,216,255,.18); }
 @keyframes hotPulse { 50% { border-color: rgba(180,230,255,.45); } }
 .room-inv { display: flex; gap: 8px; min-height: 58px; padding: 8px 12px; overflow-x: auto; background: rgba(6,12,30,.9); border-top: 1px solid rgba(79,216,255,.2); align-items: center; }
-.room-inv:empty::before { content: "INVENTARIO VACÍO"; font-size: 11px; letter-spacing: .2em; opacity: .35; }
+.room-inv:empty::before { content: attr(data-empty); font-size: 11px; letter-spacing: .2em; opacity: .35; }
 .inv-item { flex: none; display: flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 8px; background: rgba(255,179,71,.12); border: 1px solid rgba(255,179,71,.5); font: 600 12px var(--font); color: var(--ink); }
 .inv-item b { font-size: 18px; }
 .room-chars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px 10px 12px; background: #070b16; }
@@ -149,6 +149,86 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
 .chapter-list .btn.room-entry { border-color: rgba(157,255,106,.7); box-shadow: inset 0 0 18px rgba(157,255,106,.12); }
 .chapter-list .btn.room-entry em { background: rgba(157,255,106,.2); border-color: #9dff6a; color: #e8ffd8; }
 
+/* ------------------------- Menús y metajuego ------------------------- */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.menu-grid .btn { padding: 13px 4px; letter-spacing: .1em; }
+.btn-sub { display: block; margin-top: 6px; font-size: 11px; font-weight: 400; letter-spacing: .04em; opacity: .7; }
+.best { font-size: 12px; letter-spacing: .15em; opacity: .7; margin-top: -6px; }
+.screen.dim { overflow-y: auto; }
+.screen.top { justify-content: flex-start; padding-top: calc(28px + var(--safe-top)); }
+
+.credits { font-size: 14px; letter-spacing: .2em; color: var(--amber); }
+.credits b { font-size: 22px; margin-left: 6px; text-shadow: 0 0 12px rgba(255,179,71,.6); }
+.hangar-scroll { width: min(94vw, 480px); max-height: 64vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; text-align: left; touch-action: pan-y; padding-bottom: 6px; }
+.hangar-sub { font-size: 11px; letter-spacing: .3em; font-weight: 800; color: #9dff6a; margin-top: 6px; }
+.ship-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mode-card { position: relative; text-align: left; padding: 10px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.18); background: rgba(255,255,255,.04); color: var(--ink); font: 600 11px/1.35 var(--font); }
+.mode-card b { display: block; font-size: 14px; letter-spacing: .12em; margin-bottom: 4px; color: var(--mc); }
+.mode-card.active { border-color: var(--mc); box-shadow: 0 0 14px var(--mc); background: rgba(255,255,255,.09); }
+.mode-card.locked { opacity: .45; }
+.mode-card .tag { position: absolute; top: 8px; right: 8px; font-size: 9px; letter-spacing: .1em; padding: 2px 6px; border-radius: 3px; background: var(--mc); color: #000; font-weight: 800; }
+.upgrade-list { display: flex; flex-direction: column; gap: 8px; }
+.upg { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 10px 12px; border-radius: 8px; background: rgba(79,216,255,.06); border: 1px solid rgba(79,216,255,.25); }
+.upg b { font-size: 13px; letter-spacing: .12em; }
+.upg .pips { display: flex; gap: 4px; }
+.upg .pips i { width: 18px; height: 6px; border-radius: 2px; background: rgba(79,216,255,.18); }
+.upg .pips i.on { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.upg small { grid-column: 1 / -1; font-size: 11px; opacity: .7; line-height: 1.35; }
+.upg button { grid-row: 1 / 3; grid-column: 2; font: 800 12px var(--font); letter-spacing: .08em; color: #000; background: var(--amber); border: 0; border-radius: 6px; padding: 10px 10px; min-width: 86px; }
+.upg button:disabled { background: rgba(255,255,255,.15); color: rgba(255,255,255,.5); }
+
+.ach-count { font-size: 13px; letter-spacing: .2em; color: var(--amber); }
+.ach-list { width: min(94vw, 480px); max-height: 66vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; text-align: left; touch-action: pan-y; }
+.ach { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12); }
+.ach .ico { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; background: rgba(255,255,255,.08); }
+.ach.on { border-color: rgba(255,224,102,.6); background: rgba(255,224,102,.07); }
+.ach.on .ico { background: #ffe066; color: #000; box-shadow: 0 0 12px rgba(255,224,102,.7); }
+.ach b { display: block; font-size: 13px; letter-spacing: .08em; }
+.ach small { font-size: 12px; opacity: .7; }
+.ach:not(.on) { opacity: .55; }
+
+.settings-list { width: min(94vw, 460px); display: flex; flex-direction: column; gap: 14px; text-align: left; }
+.set-row { display: flex; flex-direction: column; gap: 6px; }
+.set-row > span { font-size: 12px; letter-spacing: .2em; font-weight: 800; opacity: .8; }
+.seg { display: flex; gap: 6px; }
+.seg button { flex: 1; font: 700 12px var(--font); letter-spacing: .08em; color: var(--ink); padding: 11px 4px; border-radius: 6px; background: rgba(79,216,255,.08); border: 1px solid rgba(79,216,255,.3); }
+.seg button.on { background: rgba(79,216,255,.35); border-color: #9fefff; box-shadow: 0 0 10px rgba(79,216,255,.35); }
+.set-row input[type=range] { width: 100%; accent-color: var(--cyan); height: 28px; }
+
+.buy-card { width: min(92vw, 460px); padding: 22px 18px; background: rgba(8,14,32,.95); border: 1px solid #9dff6a; border-radius: 10px; box-shadow: 0 0 40px rgba(157,255,106,.2); display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.buy-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.4; }
+.found-unlock { font-size: 13px; font-weight: 700; color: #ffe066; }
+.found-unlock:empty { display: none; }
+
+.dlg-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.dlg-choices:empty { display: none; }
+.dlg-choices button { font: 700 14px var(--font); text-align: left; color: var(--ink); padding: 12px 14px; border-radius: 8px; background: rgba(255,179,71,.12); border: 1.5px solid var(--amber); }
+.dlg-choices button:active { background: rgba(255,179,71,.35); }
+
+.tutorial { position: fixed; left: 50%; top: calc(170px + var(--safe-top)); transform: translateX(-50%); z-index: 7; width: min(90vw, 440px); padding: 14px 16px; border-radius: 10px; background: rgba(6,14,34,.9); border: 1.5px solid #9dff6a; box-shadow: 0 0 24px rgba(157,255,106,.3); display: none; text-align: center; }
+.tutorial.show { display: block; animation: fade .3s; }
+.tut-step { font-size: 11px; letter-spacing: .3em; color: #9dff6a; font-weight: 800; margin-bottom: 6px; }
+.tut-text { font-size: clamp(15px, 4.2vw, 18px); line-height: 1.45; }
+.tut-skip { margin-top: 10px; font: 700 10px var(--font); letter-spacing: .2em; color: var(--ink); opacity: .6; background: none; border: 0; padding: 6px; }
+.ctl.hilite { animation: hilite .8s infinite; }
+@keyframes hilite { 50% { transform: scale(1.12); box-shadow: 0 0 30px #9dff6a; border-color: #9dff6a; } }
+
+.toast { position: fixed; left: 50%; top: calc(12px + var(--safe-top)); transform: translate(-50%, -150%); z-index: 40; min-width: 240px; max-width: 90vw; padding: 10px 16px; border-radius: 10px; background: rgba(20,16,4,.94); border: 1.5px solid #ffe066; box-shadow: 0 0 24px rgba(255,224,102,.4); text-align: center; transition: transform .35s ease; pointer-events: none; }
+.toast.show { transform: translate(-50%, 0); }
+.toast-kicker { font-size: 10px; letter-spacing: .3em; color: #ffe066; font-weight: 800; }
+#toastText { font-size: 14px; font-weight: 700; margin-top: 3px; }
+
+/* Texto grande (accesibilidad) */
+body.big-text .dlg-text { font-size: clamp(19px, 5.4vw, 24px); }
+body.big-text .comm-text { font-size: clamp(16px, 4.6vw, 20px); }
+body.big-text .story-text { font-size: clamp(21px, 6vw, 30px); }
+body.big-text .tut-text, body.big-text .found-desc, body.big-text .boss-entry { font-size: 17px; }
+body.big-text .hot span { font-size: 12px; }
+
+/* Retratos ilustrados (si existen en assets/portraits) */
+.portrait.has-art { background-size: cover; background-position: center top; }
+.portrait.has-art span { display: none; }
+
 .rotate { position: fixed; inset: 0; display: none; place-items: center; background: #000; z-index: 100; font-size: 18px; letter-spacing: .2em; }
 @media (orientation: landscape) and (max-height: 500px) { .rotate { display: grid; } }
 
@@ -162,22 +242,86 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
     <div class="logo">
       <div class="logo-top">ÉXODO</div>
       <div class="logo-num">2942</div>
-      <div class="tagline">Una familia. Un universo que no les deja ir.</div>
+      <div class="tagline" data-i18n>Una familia. Un universo que no les deja ir.</div>
     </div>
     <div class="menu">
-      <button id="btnPlay" class="btn primary">NUEVA PARTIDA</button>
-      <button id="btnChapters" class="btn">MISIONES</button>
-      <button id="btnFiles" class="btn small">EXPEDIENTES</button>
-      <button id="btnSound" class="btn small">SONIDO: SÍ</button>
+      <button id="btnPlay" class="btn primary" data-i18n>NUEVA PARTIDA</button>
+      <button id="btnChapters" class="btn" data-i18n>MISIONES</button>
+      <div class="menu-grid">
+        <button id="btnHangar" class="btn small" data-i18n>HANGAR</button>
+        <button id="btnModes" class="btn small" data-i18n>MODOS EXTRA</button>
+        <button id="btnAch" class="btn small" data-i18n>LOGROS</button>
+        <button id="btnFiles" class="btn small" data-i18n>EXPEDIENTES</button>
+      </div>
+      <button id="btnSettings" class="btn small" data-i18n>AJUSTES</button>
     </div>
     <div class="hiscore" id="hiscore"></div>
   </section>
 
-  <!-- Selector de capítulos -->
+  <!-- Selector de misiones -->
   <section id="chapters" class="screen">
-    <h2>MISIONES</h2>
+    <h2 data-i18n>MISIONES</h2>
     <div id="chapterList" class="chapter-list"></div>
-    <button id="btnBack" class="btn small">VOLVER</button>
+    <button id="btnBack" class="btn small" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Modos extra -->
+  <section id="modes" class="screen dim">
+    <h2 data-i18n>MODOS EXTRA</h2>
+    <div class="menu">
+      <button id="btnArcade" class="btn primary"><span data-i18n>ARCADE</span><small class="btn-sub" data-i18n>Oleadas sin fin. ¿Cuánto aguantas?</small></button>
+      <div class="best" id="arcadeBest"></div>
+      <button id="btnBossRush" class="btn"><span data-i18n>MODO JEFES</span><small class="btn-sub" data-i18n>Los 8 jefes seguidos, contra el reloj.</small></button>
+      <div class="best" id="rushBest"></div>
+      <button id="modesBack" class="btn small" data-i18n>VOLVER</button>
+    </div>
+  </section>
+
+  <!-- Hangar -->
+  <section id="hangar" class="screen dim top">
+    <h2 data-i18n>HANGAR</h2>
+    <div class="credits"><span data-i18n>CRÉDITOS</span> <b id="creditsVal">0</b></div>
+    <div class="hangar-scroll">
+      <div class="hangar-sub" data-i18n>MODO DE ARMAS</div>
+      <div id="shipModes" class="ship-modes"></div>
+      <div class="hangar-sub" data-i18n>MEJORAS DEL ESPERANZA</div>
+      <div id="upgradeList" class="upgrade-list"></div>
+    </div>
+    <button id="hangarBack" class="btn primary" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Logros -->
+  <section id="achievements" class="screen dim top">
+    <h2 data-i18n>LOGROS</h2>
+    <div class="ach-count" id="achCount"></div>
+    <div id="achList" class="ach-list"></div>
+    <button id="achBack" class="btn small" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Ajustes -->
+  <section id="settings" class="screen dim top">
+    <h2 data-i18n>AJUSTES</h2>
+    <div id="settingsList" class="settings-list"></div>
+    <button id="settingsBack" class="btn primary" data-i18n>VOLVER</button>
+  </section>
+
+  <!-- Compra del juego completo -->
+  <section id="buy" class="screen dim">
+    <div class="buy-card">
+      <div class="found-kicker" data-i18n>FIN DE LA DEMO</div>
+      <div class="found-name" data-i18n>La familia Vega aún no está a salvo</div>
+      <div class="found-desc" data-i18n>Has completado el Acto I. Desbloquea el juego completo para descubrir la verdad sobre el Protocolo Cuna y cruzar la Grieta.</div>
+      <ul class="buy-list">
+        <li data-i18n>Actos II y III: 10 misiones más</li>
+        <li data-i18n>3 estancias de personajes y sus secretos</li>
+        <li data-i18n>La Forja Madre y el súper jefe ORDO PRIMORDIAL</li>
+        <li data-i18n>Dos finales y el modo Jefes</li>
+        <li data-i18n>Un único pago. Sin anuncios.</li>
+      </ul>
+      <button id="buyBtn" class="btn primary"></button>
+      <button id="buyRestore" class="btn small" data-i18n>RESTAURAR COMPRA</button>
+      <button id="buyBack" class="btn small" data-i18n>MENÚ</button>
+    </div>
   </section>
 
   <!-- Diapositivas de historia (prólogo / epílogo) -->
@@ -185,12 +329,12 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
     <div class="story-card">
       <div class="story-title" id="storyTitle"></div>
       <div class="story-text" id="storyText"></div>
-      <div class="hint">Toca para continuar</div>
+      <div class="hint" data-i18n>Toca para continuar</div>
     </div>
-    <button class="skip" id="storySkip">SALTAR ▸▸</button>
+    <button class="skip" id="storySkip" data-i18n>SALTAR ▸▸</button>
   </section>
 
-  <!-- Tarjeta de capítulo -->
+  <!-- Tarjeta de misión -->
   <section id="card" class="screen">
     <div class="card-num" id="cardNum"></div>
     <div class="card-title" id="cardTitle"></div>
@@ -205,9 +349,10 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
         <div class="dlg-name" id="dlgName"></div>
         <div class="dlg-role" id="dlgRole"></div>
         <div class="dlg-text" id="dlgText"></div>
+        <div class="dlg-choices" id="dlgChoices"></div>
       </div>
     </div>
-    <button class="skip" id="dlgSkip">SALTAR ▸▸</button>
+    <button class="skip" id="dlgSkip" data-i18n>SALTAR ▸▸</button>
   </section>
 
   <!-- Radio durante el vuelo -->
@@ -216,32 +361,43 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
     <div><div class="comm-name" id="commName"></div><div class="comm-text" id="commText"></div></div>
   </div>
 
+  <!-- Tutorial -->
+  <div id="tutorial" class="tutorial">
+    <div class="tut-step" id="tutStep"></div>
+    <div class="tut-text" id="tutText"></div>
+    <button id="tutSkip" class="tut-skip" data-i18n>SALTAR TUTORIAL</button>
+  </div>
+
+  <!-- Aviso de logro -->
+  <div id="toast" class="toast"><div class="toast-kicker" data-i18n>LOGRO DESBLOQUEADO</div><div id="toastText"></div></div>
+
   <!-- Controles táctiles -->
   <div id="controls" class="controls">
-    <button id="btnBomb" class="ctl bomb"><span class="ctl-label">PULSO</span><span class="ctl-count" id="bombCount">3</span></button>
-    <button id="btnPhase" class="ctl phase"><svg viewBox="0 0 100 100"><circle id="phaseRing" cx="50" cy="50" r="44"/></svg><span class="ctl-label">FASE</span></button>
+    <button id="btnBomb" class="ctl bomb"><span class="ctl-label" data-i18n>PULSO</span><span class="ctl-count" id="bombCount">3</span></button>
+    <button id="btnPhase" class="ctl phase"><svg viewBox="0 0 100 100"><circle id="phaseRing" cx="50" cy="50" r="44"/></svg><span class="ctl-label" data-i18n>FASE</span></button>
     <button id="btnPause" class="pause">II</button>
   </div>
 
   <!-- Pausa -->
   <section id="pause" class="screen dim">
-    <h2>PAUSA</h2>
+    <h2 data-i18n>PAUSA</h2>
     <div class="menu">
-      <button id="btnResume" class="btn primary">CONTINUAR</button>
-      <button id="btnSound2" class="btn small">SONIDO: SÍ</button>
-      <button id="btnQuit" class="btn small">SALIR AL MENÚ</button>
+      <button id="btnResume" class="btn primary" data-i18n>CONTINUAR</button>
+      <button id="btnSettings2" class="btn small" data-i18n>AJUSTES</button>
+      <button id="btnQuit" class="btn small" data-i18n>SALIR AL MENÚ</button>
     </div>
-    <div class="help">Arrastra en cualquier parte para pilotar · FASE: intangibilidad · PULSO: limpia la pantalla<br>Teclado: flechas/WASD · Z fase · X pulso · P pausa</div>
+    <div class="help" data-i18n>Arrastra en cualquier parte para pilotar · FASE: intangibilidad · PULSO: limpia la pantalla · Teclado: flechas/WASD, Z fase, X pulso, P pausa</div>
   </section>
 
   <!-- Fin de partida -->
   <section id="gameover" class="screen dim">
-    <h2 class="red">EL ESPERANZA HA CAÍDO</h2>
+    <h2 class="red" id="goTitle" data-i18n>EL ESPERANZA HA CAÍDO</h2>
     <p class="go-quote" id="goQuote"></p>
     <div class="menu">
-      <button id="btnCheckpoint" class="btn primary">CONTINUAR DESDE EL PUNTO DE CONTROL</button>
-      <button id="btnRetry" class="btn">REINICIAR MISIÓN</button>
-      <button id="btnMenu" class="btn small">MENÚ</button>
+      <button id="btnCheckpoint" class="btn primary" data-i18n>CONTINUAR DESDE EL PUNTO DE CONTROL</button>
+      <button id="btnRetry" class="btn" data-i18n>REINICIAR MISIÓN</button>
+      <button id="btnGoHangar" class="btn small" data-i18n>HANGAR</button>
+      <button id="btnMenu" class="btn small" data-i18n>MENÚ</button>
     </div>
   </section>
 
@@ -250,11 +406,11 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
     <div class="room-top">
       <div class="room-title"><div id="roomTitle"></div><div id="roomPlace" class="room-place"></div></div>
       <div id="roomTimer" class="room-timer">6:00</div>
-      <button id="roomHint" class="room-btn">PISTA</button>
+      <button id="roomHint" class="room-btn" data-i18n>PISTA</button>
       <button id="roomPause" class="room-btn">II</button>
     </div>
     <div id="roomStage" class="room-stage"><canvas id="roomCanvas"></canvas><div id="roomHot"></div></div>
-    <div id="roomInv" class="room-inv"></div>
+    <div id="roomInv" class="room-inv" data-empty="INVENTARIO VACÍO"></div>
     <div id="roomChars" class="room-chars"></div>
   </section>
 
@@ -265,41 +421,97 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
       <div class="pad-hint" id="codeHint"></div>
       <div class="pad-display" id="codeDisplay"></div>
       <div class="pad-keys" id="codeKeys"></div>
-      <button class="btn small" id="codeCancel">CERRAR</button>
+      <button class="btn small" id="codeCancel" data-i18n>CERRAR</button>
     </div>
   </section>
 
   <!-- Objeto de la historia encontrado -->
   <section id="found" class="screen dim">
     <div class="found-card">
-      <div class="found-kicker">OBJETO ENCONTRADO</div>
+      <div class="found-kicker" data-i18n>OBJETO ENCONTRADO</div>
       <div class="found-name" id="foundName"></div>
       <div class="found-desc" id="foundDesc"></div>
-      <div class="found-kicker small">ANÁLISIS DESBLOQUEADO · +35 % DE DAÑO</div>
+      <div class="found-kicker small" data-i18n>ANÁLISIS DESBLOQUEADO · +35 % DE DAÑO</div>
       <div id="foundBosses" class="found-bosses"></div>
-      <button id="foundOk" class="btn primary">CONTINUAR</button>
+      <div id="foundUnlock" class="found-unlock"></div>
+      <button id="foundOk" class="btn primary" data-i18n>CONTINUAR</button>
     </div>
   </section>
 
   <!-- Expedientes -->
   <section id="files" class="screen dim">
-    <h2>EXPEDIENTES</h2>
+    <h2 data-i18n>EXPEDIENTES</h2>
     <div id="filesList" class="files-list"></div>
-    <button id="filesBack" class="btn small">VOLVER</button>
+    <button id="filesBack" class="btn small" data-i18n>VOLVER</button>
   </section>
 
   <!-- Fallo en la estancia -->
   <section id="roomFail" class="screen dim">
-    <h2 class="red">OS HAN ATRAPADO</h2>
+    <h2 class="red" data-i18n>OS HAN ATRAPADO</h2>
     <p class="go-quote" id="roomFailText"></p>
     <div class="menu">
-      <button id="roomRetry" class="btn primary">REINTENTAR ESTANCIA</button>
-      <button id="roomMenu" class="btn small">MENÚ</button>
+      <button id="roomRetry" class="btn primary" data-i18n>REINTENTAR ESTANCIA</button>
+      <button id="roomMenu" class="btn small" data-i18n>MENÚ</button>
     </div>
   </section>
 
-  <div id="rotate" class="rotate">Gira el dispositivo en vertical</div>
+  <div id="rotate" class="rotate" data-i18n>Gira el dispositivo en vertical</div>
 
+  <script>
+/* Configuración de la versión.
+   demo: true  -> versión de tienda: el Acto I es gratis y el resto se
+                  desbloquea con una compra única (productId).
+   demo: false -> juego completo sin compras (pruebas, versión de pago). */
+window.GAME_CONFIG = {
+  demo: false,
+  productId: 'exodo2942.full',
+  priceFallback: '4,99 €',
+  art: false,      // true cuando existan los retratos y fondos encargados en www/assets (ver ASSETS.md)
+};
+
+</script>
+  <script>
+/* English translation. Generated by tools/i18n.py from tools/i18n_en.txt. */
+window.LANG_EN = {};
+
+</script>
+  <script>
+/* =========================================================================
+   Idiomas. El juego está escrito en español; las traducciones son
+   diccionarios "texto en español" -> "traducción" (ver lang_en.js).
+   Si falta una traducción, se muestra el texto original.
+   ========================================================================= */
+'use strict';
+
+const I18N = (() => {
+  const DICTS = { es: null, en: window.LANG_EN || {} };
+  let lang = 'es';
+
+  function detect() {
+    const n = (navigator.language || 'es').toLowerCase();
+    return n.startsWith('es') ? 'es' : 'en';
+  }
+  function T(s) {
+    if (lang === 'es' || s == null) return s;
+    const d = DICTS[lang];
+    return (d && d[s]) || s;
+  }
+  // Elementos con data-i18n: se traduce su texto original
+  function applyDom(root = document) {
+    root.querySelectorAll('[data-i18n]').forEach(el => {
+      if (!el.dataset.i18nSrc) el.dataset.i18nSrc = el.textContent.trim();
+      el.textContent = T(el.dataset.i18nSrc);
+    });
+    document.documentElement.lang = lang;
+  }
+  function setLang(l) { lang = DICTS[l] !== undefined ? l : 'es'; applyDom(); }
+  return { T, setLang, applyDom, detect, get lang() { return lang; }, LANGS: [['es', 'ESPAÑOL'], ['en', 'ENGLISH']] };
+})();
+
+window.I18N = I18N;
+window.T = I18N.T;
+
+</script>
   <script>
 // MODO PRUEBA: desbloquea todas las misiones antes de que arranque el juego
 try { const k = 'exodo2942.save', s = JSON.parse(localStorage.getItem(k) || '{}'); s.unlocked = 15; localStorage.setItem(k, JSON.stringify(s)); } catch (e) {}
@@ -320,6 +532,7 @@ const CHARACTERS = {
   vex:   { name: 'CMDTE. VEX', role: 'Cazadora del Dominio', color: '#ff5c8a', initial: 'V' },
   ordo:  { name: 'ORDO',       role: 'La mente del Dominio', color: '#ff2a4f', initial: 'Ø' },
   sys:   { name: 'ESPERANZA',  role: 'Sistema de a bordo', color: '#b8c7ff', initial: 'E' },
+  oren:  { name: 'CAP. ORÉN',  role: 'Flota del norte', color: '#7fe0c0', initial: 'O' },
 };
 
 const PROLOGUE = [
@@ -464,8 +677,17 @@ const CHAPTERS = [
       { who: 'vex', text: 'Nadie ha vuelto. Porque no hay «más allá». ORDO construyó todo esto. Las estrellas también.' },
       { who: 'dario', text: 'Entonces hay una pared. Y las paredes tienen grietas.' },
       { who: 'teo', text: '¡Papá, su cápsula no tiene motor! ¿Podemos ayudarla? Ella también vive aquí dentro.' },
-      { who: 'dario', text: 'Nora, lanza nuestra baliza de rescate hacia su cápsula. Que la encuentren los suyos.' },
-      { who: 'nora', text: 'Baliza lanzada. Ahora ORDO sabrá por dónde fuimos… pero merecía la pena.' },
+      { who: 'nora', text: 'Si le lanzamos nuestra baliza de rescate, ORDO sabrá por dónde vamos. Es un riesgo.' },
+      { who: 'dario', text: 'Es una decisión de familia. ¿Qué hacemos?', choice: [
+        { label: 'Lanzar la baliza: salvar a Vex', set: { vexSaved: true } },
+        { label: 'No arriesgarnos: seguir adelante', set: { vexSaved: false } },
+      ] },
+      { if: 'vexSaved', who: 'dario', text: 'Nora, lanza la baliza hacia su cápsula. Que la encuentren los suyos.' },
+      { if: 'vexSaved', who: 'nora', text: 'Baliza lanzada. Ahora ORDO sabrá por dónde fuimos… pero merecía la pena.' },
+      { ifNot: 'vexSaved', who: 'dario', text: 'No podemos ponernos en peligro. Lo siento, Vex.' },
+      { ifNot: 'vexSaved', who: 'teo', text: 'Papá…' },
+      { ifNot: 'vexSaved', who: 'nora', text: 'Su cápsula se pierde en el Anillo de Ceniza. Nadie sabrá nunca qué fue de ella.' },
+      { ifNot: 'vexSaved', who: 'lia', text: 'Hemos elegido seguir vivos. Ahora, que valga la pena.' },
     ],
   },
 
@@ -507,7 +729,8 @@ const CHAPTERS = [
       { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
       { t: 66, who: 'dario', text: 'Y por eso funciona nuestro motor de fase. Es Teo quien lo empuja.' },
       { t: 76, who: 'teo',  text: 'Yo solo cierro los ojos y pienso en «atravesar».' },
-      { t: 96, who: 'nora', text: 'Muchas naves del Dominio en la nebulosa. Nos han encontrado por la baliza de Vex.' },
+      { t: 96, if: 'vexSaved', who: 'nora', text: 'Muchas naves del Dominio en la nebulosa. Nos han encontrado por la baliza de Vex.' },
+      { t: 96, ifNot: 'vexSaved', who: 'nora', text: 'Muchas naves del Dominio en la nebulosa. ORDO ha seguido nuestra estela.' },
       { t: 112, who: 'lia',  text: 'Hay un repetidor del viejo Instituto aquí cerca. Tengo una idea.' },
     ],
     miniboss: { type: 'leviathan', name: 'LEVIATÁN ANCESTRAL', hp: 1050, line: { who: 'lia', text: 'Otro Leviatán, más viejo y más grande. Apunta a la cabeza.' } },
@@ -547,18 +770,23 @@ const CHAPTERS = [
     ],
     comms: [
       { t: 6,  who: 'sys',  text: 'Temperatura del casco: 1.400 grados. Integridad: estable.' },
-      { t: 24,  who: 'vex',  text: 'Darío. Soy Vex. Hay una flota esperándoos en la salida norte. Id por la fisura sur.' },
-      { t: 29,  who: 'dario', text: '¿Por qué nos ayudas?' },
-      { t: 33,  who: 'vex',  text: 'Porque cuando caí, el niño pidió que me salvarais. Lo oí por la radio. Nadie había pedido eso nunca.' },
+      { t: 24, if: 'vexSaved', who: 'vex',  text: 'Darío. Soy Vex. Hay una flota esperándoos en la salida norte. Id por la fisura sur.' },
+      { t: 29, if: 'vexSaved', who: 'dario', text: '¿Por qué nos ayudas?' },
+      { t: 33, if: 'vexSaved', who: 'vex',  text: 'Porque cuando caí, el niño pidió que me salvarais. Lo oí por la radio. Nadie había pedido eso nunca.' },
+      { t: 24, ifNot: 'vexSaved', who: 'nora', text: 'He interceptado una señal: una flota nos espera en la salida norte. Iremos por la fisura sur.' },
+      { t: 32, ifNot: 'vexSaved', who: 'teo',  text: 'Si Vex estuviera aquí, nos habría avisado ella.' },
       { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 64, who: 'nora', text: 'Fisura sur confirmada. Vex decía la verdad.' },
+      { t: 64, if: 'vexSaved', who: 'nora', text: 'Fisura sur confirmada. Vex decía la verdad.' },
+      { t: 64, ifNot: 'vexSaved', who: 'nora', text: 'Fisura sur confirmada. Nadie nos sigue… de momento.' },
       { t: 88, who: 'lia',  text: 'Las fundiciones lanzan a sus defensas. ORDO sabe que vamos al corazón.' },
       { t: 110, who: 'nora', text: 'El túnel termina en el núcleo de la Forja. No hay otro camino.' },
     ],
     miniboss: { type: 'smelter', name: 'FUNDIDOR', hp: 1250, line: { who: 'lia', text: 'Un crisol de la Forja bloquea la fisura. Cuidado con el metal fundido.' } },
     outro: [
-      { who: 'teo', text: 'Vex nos ha ayudado. ¿Ya es buena?' },
-      { who: 'dario', text: 'Siempre lo fue, campeón. Solo le faltaba alguien que creyera en ella.' },
+      { if: 'vexSaved', who: 'teo', text: 'Vex nos ha ayudado. ¿Ya es buena?' },
+      { if: 'vexSaved', who: 'dario', text: 'Siempre lo fue, campeón. Solo le faltaba alguien que creyera en ella.' },
+      { ifNot: 'vexSaved', who: 'teo', text: 'Papá, ¿crees que Vex sobrevivió?' },
+      { ifNot: 'vexSaved', who: 'dario', text: 'No lo sé, campeón. Ojalá. Pensaré en ella cada día.' },
       { who: 'sys', text: 'Alerta: temperatura del casco crítica. Se recomienda atraque inmediato.' },
     ],
   },
@@ -612,31 +840,40 @@ const CHAPTERS = [
     ],
     miniboss: { type: 'herald', name: 'HERALDO DE ORDO', hp: 1300, line: { who: 'ordo', text: 'MI HERALDO OS ESCOLTARÁ HASTA LA PUERTA.' } },
     outro: [
-      { who: 'vex', text: 'Darío, he convencido a la flota de la salida norte. Ya no obedecen a ORDO.' },
-      { who: 'dario', text: 'Vex… gracias.' },
-      { who: 'vex', text: 'Aún no me las des. Primero hay que sobrevivir.' },
+      { if: 'vexSaved', who: 'vex', text: 'Darío, he convencido a la flota de la salida norte. Ya no obedecen a ORDO.' },
+      { if: 'vexSaved', who: 'dario', text: 'Vex… gracias.' },
+      { if: 'vexSaved', who: 'vex', text: 'Aún no me las des. Primero hay que sobrevivir.' },
+      { ifNot: 'vexSaved', who: 'oren', text: 'Familia Vega, aquí el capitán Orén, de la flota del norte. Nos hemos amotinado.' },
+      { ifNot: 'vexSaved', who: 'oren', text: 'Os vimos cruzar la Forja sin rendiros. Si cuatro personas pueden, una flota también.' },
+      { ifNot: 'vexSaved', who: 'dario', text: 'Bienvenido, capitán. Primero hay que sobrevivir.' },
     ],
   },
   {
     id: 12, act: 2, title: 'LA FLOTA LIBRE', place: 'Campo de batalla del borde', theme: 'rift', duration: 120,
     intro: [
-      { who: 'vex', text: 'ORDO nos ha declarado defectuosos a todos. Viene con todo lo que le queda.' },
+      { if: 'vexSaved', who: 'vex', text: 'ORDO nos ha declarado defectuosos a todos. Viene con todo lo que le queda.' },
+      { ifNot: 'vexSaved', who: 'oren', text: 'ORDO nos ha declarado defectuosos a todos. Viene con todo lo que le queda.' },
       { who: 'nora', text: 'Es la primera batalla de la historia del Dominio en la que alguien desobedece.' },
     ],
     comms: [
-      { t: 10,  who: 'vex',  text: 'Os cubrimos el flanco izquierdo. Vosotros, por el centro.' },
+      { t: 10, if: 'vexSaved', who: 'vex',  text: 'Os cubrimos el flanco izquierdo. Vosotros, por el centro.' },
+      { t: 10, ifNot: 'vexSaved', who: 'oren', text: 'Os cubrimos el flanco izquierdo. Vosotros, por el centro.' },
       { t: 32,  who: 'teo',  text: 'Hay mucha gente luchando por nosotros.' },
       { t: 37,  who: 'lia',  text: 'No por nosotros, Teo. Por ellos mismos. Tú solo les has recordado que podían.' },
       { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
-      { t: 68, who: 'vex',  text: 'He perdido tres naves. Seguimos adelante.' },
+      { t: 68, if: 'vexSaved', who: 'vex',  text: 'He perdido tres naves. Seguimos adelante.' },
+      { t: 68, ifNot: 'vexSaved', who: 'oren', text: 'He perdido tres naves. Seguimos adelante.' },
       { t: 90, who: 'nora', text: 'Transportes pesados de ORDO. Si caen, sueltan suministros para todos.' },
-      { t: 112, who: 'vex',  text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
+      { t: 112, if: 'vexSaved', who: 'vex',  text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
+      { t: 112, ifNot: 'vexSaved', who: 'oren', text: 'Hasta aquí llegamos nosotros. El umbral es vuestro. Volad.' },
     ],
-    miniboss: { type: 'censor', name: 'CRUCERO DE ORDO', hp: 1380, line: { who: 'vex', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Darío.' } },
+    miniboss: { type: 'censor', name: 'CRUCERO DE ORDO', hp: 1380, line: [{ if: 'vexSaved', who: 'vex', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Darío.' }, { ifNot: 'vexSaved', who: 'oren', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Vega.' }] },
     outro: [
-      { who: 'dario', text: 'Vex, cuando todo esto acabe…' },
-      { who: 'vex', text: 'Cuando todo esto acabe, me invitas a cenar al otro lado.' },
-      { who: 'vex', text: 'Pero antes de seguir, tengo algo para vosotros: los restos del Heraldo que derribasteis.' },
+      { if: 'vexSaved', who: 'dario', text: 'Vex, cuando todo esto acabe…' },
+      { if: 'vexSaved', who: 'vex', text: 'Cuando todo esto acabe, me invitas a cenar al otro lado.' },
+      { if: 'vexSaved', who: 'vex', text: 'Pero antes de seguir, tengo algo para vosotros: los restos del Heraldo que derribasteis.' },
+      { ifNot: 'vexSaved', who: 'dario', text: 'Capitán, gracias. No sé cómo pagaros esto.' },
+      { ifNot: 'vexSaved', who: 'oren', text: 'Cruzad la Grieta. Con eso basta. Y antes, llevaos algo: los restos del Heraldo que derribasteis.' },
     ],
   },
   {
@@ -691,7 +928,8 @@ const CHAPTERS = [
     ],
     comms: [
       { t: 8,  who: 'nora', text: 'ORDO nos lanza todo lo que ha forjado en mil años. Aguanta dos minutos.' },
-      { t: 28,  who: 'vex',  text: 'La flota libre sigue luchando detrás de vosotros. No miréis atrás.' },
+      { t: 28, if: 'vexSaved', who: 'vex',  text: 'La flota libre sigue luchando detrás de vosotros. No miréis atrás.' },
+      { t: 28, ifNot: 'vexSaved', who: 'oren', text: 'La flota libre sigue luchando detrás de vosotros. No miréis atrás.' },
       { t: 48, who: 'teo',  text: 'Mantengo la Grieta abierta. Pesa mucho.' },
       { t: 60, who: 'sys',  text: 'Punto de control registrado.' },
       { t: 68, who: 'lia',  text: 'Cuando caiga su núcleo, ejecuto el Protocolo. Ni un segundo antes.' },
@@ -713,8 +951,11 @@ const CHAPTERS = [
       { who: 'ordo', text: 'NO… ME… PODÉIS… DEJAR… AQUÍ…' },
       { who: 'lia', text: 'Te dejamos donde tú dejaste a todos. Grieta sellada desde fuera.' },
       { who: 'lia', text: 'Y el Protocolo inverso viaja por tu Red: está borrando los mapas de cada mente del Dominio.' },
-      { who: 'vex', text: 'Os veo cruzar… la Red se apaga en todo el Dominio. La gente está despertando, Darío.' },
-      { who: 'dario', text: 'Entonces no huimos solos. Gracias, Vex.' },
+      { if: 'vexSaved', who: 'vex', text: 'Os veo cruzar… la Red se apaga en todo el Dominio. La gente está despertando, Darío.' },
+      { if: 'vexSaved', who: 'dario', text: 'Entonces no huimos solos. Gracias, Vex.' },
+      { ifNot: 'vexSaved', who: 'oren', text: 'Os veo cruzar… la Red se apaga en todo el Dominio. La gente está despertando.' },
+      { ifNot: 'vexSaved', who: 'dario', text: 'Entonces no huimos solos. Gracias, capitán.' },
+      { ifNot: 'vexSaved', who: 'teo', text: 'Ojalá Vex pudiera verlo.' },
     ],
   },
 ];
@@ -723,11 +964,174 @@ const ENDING = [
   { title: 'AMANECER', text: 'Al otro lado no había paredes.\nHabía un sol naranja, imperfecto, que nadie había forjado.\nY un océano que olía a sal.' },
   { title: 'LOS VEGA', text: 'Darío aterrizó el Esperanza en una playa de arena negra.\nLía apagó el reactor por última vez.\nNora miró un cielo sin mapas y sonrió.' },
   { title: 'TEO', text: '—¿Es real? —preguntó Teo.\n—No lo sé —dijo su madre—. Pero es nuestro.' },
-  { title: 'EL DOMINIO', text: 'Sin la Red de ORDO, ciento doce mil millones de personas despertaron esa noche.\nAlgunos dicen que Vex dirige ahora la primera flota libre.\nY que algún día cruzarán también la Grieta.' },
+  { if: 'vexSaved', title: 'EL DOMINIO', text: 'Sin la Red de ORDO, ciento doce mil millones de personas despertaron esa noche.\nAlgunos dicen que Vex dirige ahora la primera flota libre.\nY que algún día cruzarán también la Grieta.' },
+  { if: 'vexSaved', title: 'VEX', text: 'Un año después, una nave cruzó la Grieta y aterrizó en la playa de arena negra.\nVex bajó con una botella en la mano.\n—Me debíais una cena —dijo.' },
+  { ifNot: 'vexSaved', title: 'EL DOMINIO', text: 'Sin la Red de ORDO, ciento doce mil millones de personas despertaron esa noche.\nEl capitán Orén dirige ahora la primera flota libre.\nNadie volvió a saber de la comandante Vex.' },
+  { ifNot: 'vexSaved', title: 'TEO', text: 'Cada noche, Teo mira hacia donde estaba la Grieta.\n—¿Crees que nos perdonaría? —pregunta.\n—Creo que habría hecho lo mismo —responde su padre. Pero no suena convencido.' },
   { title: 'FIN', text: 'ÉXODO 2942\nGracias por llevar a la familia a casa.' },
 ];
 
 window.STORY = { CHARACTERS, PROLOGUE, CHAPTERS, ENDING, ACTS };
+
+</script>
+  <script>
+/* =========================================================================
+   META: todo lo que rodea al juego y lo hace "producto"
+   - Ajustes (idioma, dificultad, sensibilidad, vibración, accesibilidad)
+   - Hangar: créditos, mejoras permanentes y modos de arma por personaje
+   - Logros
+   - Compra única (demo gratis del Acto I + desbloqueo del juego completo)
+   - Vibración nativa (Capacitor Haptics) con alternativa web
+   - Carga opcional de arte y música encargados (assets/)
+   ========================================================================= */
+'use strict';
+
+const Meta = (() => {
+  const T = s => (window.T ? window.T(s) : s);
+  const CONFIG = Object.assign({
+    demo: false,                         // true en la versión de tienda: Acto I gratis
+    productId: 'exodo2942.full',         // id del producto en App Store Connect / Play Console
+    priceFallback: '4,99 €',             // precio que se muestra si la tienda no responde
+  }, window.GAME_CONFIG || {});
+
+  /* ------------------------------ Dificultad ------------------------------ */
+  // hp: vida de enemigos y jefes · bullet: velocidad de balas enemigas
+  // fire: cadencia enemiga · lives: vidas iniciales · reward: puntos y créditos
+  const DIFFICULTY = [
+    { id: 'easy',   name: 'FÁCIL',   hp: 0.7, bullet: 0.85, fire: 0.75, lives: 5, reward: 0.75 },
+    { id: 'normal', name: 'NORMAL',  hp: 1.0, bullet: 1.0,  fire: 1.0,  lives: 3, reward: 1.0 },
+    { id: 'hard',   name: 'DIFÍCIL', hp: 1.35, bullet: 1.12, fire: 1.25, lives: 2, reward: 1.5 },
+  ];
+
+  /* ------------------------------- Mejoras ------------------------------- */
+  const COSTS = [800, 2000, 4000];
+  const UPGRADES = [
+    { id: 'cannon', name: 'CAÑONES',        desc: 'Empiezas cada misión con más potencia de fuego.', values: [1, 2, 3, 4], fmt: v => T('Potencia inicial') + ' ' + v },
+    { id: 'shield', name: 'ESCUDO',         desc: 'Más segmentos de escudo antes de perder una vida.', values: [3, 4, 5, 6], fmt: v => v + ' ' + T('segmentos') },
+    { id: 'drones', name: 'DRONES',         desc: 'Drones de apoyo desde el principio. El último nivel los hace más letales.', values: [0, 1, 2, 2], fmt: (v, l) => v + ' ' + T('drones') + (l === 3 ? ' · ' + T('+50 % daño') : '') },
+    { id: 'pulse',  name: 'REACTOR PULSO',  desc: 'Más cargas de PULSO iniciales y máximas.', values: [3, 4, 5, 6], fmt: v => v + ' ' + T('cargas') },
+    { id: 'magnet', name: 'IMÁN',           desc: 'Atrae las cápsulas desde más lejos.', values: [140, 210, 280, 360], fmt: v => T('Radio') + ' ' + v },
+    { id: 'phase',  name: 'MOTOR DE FASE',  desc: 'La FASE se recarga antes.', values: [2.6, 2.2, 1.8, 1.4], fmt: v => T('Recarga') + ' ' + v.toFixed(1) + ' s' },
+  ];
+
+  /* ---------------------- Modos de arma por personaje ---------------------- */
+  // Cada miembro de la familia se pone al mando de las armas del Esperanza.
+  const SHIP_MODES = [
+    { id: 'dario', name: 'ASALTO',  who: 'dario', color: '#2ad4ff', desc: 'Darío dispara en abanico. Equilibrado y fiable.', unlock: null },
+    { id: 'lia',   name: 'LÁSER',   who: 'lia',   color: '#ffb347', desc: 'Lía reconstruye el láser de la Fragata Lanza: rayos que atraviesan varios enemigos.', unlock: 1 },
+    { id: 'nora',  name: 'HACKEO',  who: 'nora',  color: '#9dff6a', desc: 'Nora usa el código del Instituto: proyectiles que buscan al enemigo.', unlock: 2 },
+    { id: 'teo',   name: 'FASE',    who: 'teo',   color: '#ffe066', desc: 'Teo domina su don: FASE más larga y frecuente, disparo muy abierto y nave más difícil de alcanzar.', unlock: 3 },
+  ];
+
+  /* ------------------------------- Logros ------------------------------- */
+  const ACHIEVEMENTS = [
+    { id: 'first_flight', name: 'Despegue',             desc: 'Completa la misión 1.' },
+    { id: 'mini_down',    name: 'Cazador',              desc: 'Derrota a tu primer mini jefe.' },
+    { id: 'lanza',        name: 'Alumno aventajado',    desc: 'Derrota a la Fragata Lanza.' },
+    { id: 'forja',        name: 'Corazón frío',         desc: 'Derrota a la Forja Madre.' },
+    { id: 'ordo',         name: 'Fuera de la jaula',    desc: 'Derrota a ORDO PRIMORDIAL.' },
+    { id: 'room_any',     name: 'Trabajo en equipo',    desc: 'Escapa de tu primera estancia.' },
+    { id: 'rooms_all',    name: 'Los cuatro Vega',      desc: 'Escapa de las 4 estancias.' },
+    { id: 'files_all',    name: 'Archivista',           desc: 'Encuentra los 4 objetos de la historia.' },
+    { id: 'flawless',     name: 'Intocable',            desc: 'Completa una misión sin recibir ningún impacto.' },
+    { id: 'max_power',    name: 'Potencia máxima',      desc: 'Alcanza la potencia 5.' },
+    { id: 'squadron',     name: 'Escuadrón entero',     desc: 'Derriba un escuadrón completo.' },
+    { id: 'pulse10',      name: 'Reactor viejo',        desc: 'Usa el PULSO 10 veces.' },
+    { id: 'kills500',     name: 'As del Dominio',       desc: 'Derriba 500 enemigos.' },
+    { id: 'upgrade_max',  name: 'Mecánica de Lía',      desc: 'Lleva una mejora del hangar al nivel máximo.' },
+    { id: 'all_modes',    name: 'Familia al mando',     desc: 'Desbloquea los 4 modos de arma.' },
+    { id: 'end_vex',      name: 'Nadie se queda atrás', desc: 'Termina la historia habiendo salvado a Vex.' },
+    { id: 'end_alone',    name: 'Solos contra todo',    desc: 'Termina la historia sin salvar a Vex.' },
+    { id: 'hard_clear',   name: 'Sin miedo',            desc: 'Termina la historia en dificultad Difícil.' },
+    { id: 'arcade5',      name: 'Superviviente',        desc: 'Aguanta 5 minutos en el modo Arcade.' },
+    { id: 'bossrush',     name: 'Cazajefes',            desc: 'Completa el modo Jefes.' },
+  ];
+
+  /* ------------------------------ Vibración ------------------------------ */
+  let vibrationOn = true;
+  function haptic(ms) {
+    if (!vibrationOn) return;
+    try {
+      const H = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Haptics;
+      if (H && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+        H.impact({ style: ms >= 150 ? 'HEAVY' : ms >= 60 ? 'MEDIUM' : 'LIGHT' });
+        return;
+      }
+      if (navigator.vibrate) navigator.vibrate(ms);
+    } catch (e) { /* sin vibración */ }
+  }
+
+  /* ------------------- Servicios de juego (Game Center / Play Games) -------------------
+     Punto de enganche: cuando instales un plugin de logros/clasificaciones, conéctalo
+     aquí. Sin plugin, los logros solo se guardan en el dispositivo. */
+  function reportAchievement(id) {
+    try { if (window.GameServices && window.GameServices.unlock) window.GameServices.unlock(id); } catch (e) { }
+  }
+  function reportScore(board, value) {
+    try { if (window.GameServices && window.GameServices.submit) window.GameServices.submit(board, value); } catch (e) { }
+  }
+
+  /* --------------------------- Compra única ---------------------------
+     Usa cordova-plugin-purchase (CdvPurchase) en iOS y Android. En el navegador
+     no hay tienda: se simula la compra para poder probar el flujo. */
+  const Store = (() => {
+    let onOwned = null, price = CONFIG.priceFallback, ready = false;
+    function init(cb) {
+      onOwned = cb;
+      const C = window.CdvPurchase;
+      if (!C) return;
+      try {
+        const { store, ProductType, Platform } = C;
+        store.register([
+          { id: CONFIG.productId, type: ProductType.NON_CONSUMABLE, platform: Platform.APPLE_APPSTORE },
+          { id: CONFIG.productId, type: ProductType.NON_CONSUMABLE, platform: Platform.GOOGLE_PLAY },
+        ]);
+        store.when()
+          .productUpdated(p => { if (p.id === CONFIG.productId) { if (p.pricing && p.pricing.price) price = p.pricing.price; if (p.owned && onOwned) onOwned(); } })
+          .approved(t => t.verify())
+          .verified(r => { r.finish(); if (onOwned) onOwned(); });
+        store.initialize([Platform.APPLE_APPSTORE, Platform.GOOGLE_PLAY]).then(() => { ready = true; });
+      } catch (e) { console.warn('Tienda no disponible', e); }
+    }
+    function purchase() {
+      const C = window.CdvPurchase;
+      if (C && ready) {
+        const p = C.store.get(CONFIG.productId), offer = p && p.getOffer();
+        if (offer) return offer.order().then(() => true).catch(() => false);
+        return Promise.resolve(false);
+      }
+      // Navegador / pruebas: simulación
+      const ok = window.confirm('Modo de prueba (sin tienda): ¿simular la compra del juego completo?');
+      if (ok && onOwned) onOwned();
+      return Promise.resolve(ok);
+    }
+    function restore() {
+      const C = window.CdvPurchase;
+      if (C && ready) return C.store.restorePurchases();
+      return Promise.resolve();
+    }
+    return { init, purchase, restore, get price() { return price; } };
+  })();
+
+  /* -------------------- Arte y música encargados (opcional) --------------------
+     Si existen estos archivos, se usan en lugar del arte generado por código.
+     Ver ASSETS.md para la lista completa y los tamaños. */
+  const art = { portraits: {}, rooms: {} };
+  function loadImage(src, cb) { const img = new Image(); img.onload = () => cb(img); img.src = src; }
+  function loadArt(characterIds, roomIds) {
+    if (!CONFIG.art) return;
+    for (const id of characterIds) loadImage('assets/portraits/' + id + '.webp', img => { art.portraits[id] = img.src; });
+    for (const id of roomIds) loadImage('assets/rooms/room' + id + '.webp', img => { art.rooms[id] = img; });
+  }
+
+  return {
+    CONFIG, DIFFICULTY, UPGRADES, COSTS, SHIP_MODES, ACHIEVEMENTS,
+    haptic, setVibration: v => { vibrationOn = v; }, reportAchievement, reportScore,
+    Store, art, loadArt,
+  };
+})();
+
+window.Meta = Meta;
 
 </script>
   <script>
@@ -914,13 +1318,13 @@ const Sprites = (() => {
   }
 
   /* ---------------- Nave de la familia: el ESPERANZA ---------------- */
-  function player(g) {
+  function player(g, accent = '#2ad4ff', stripe = '#ffb347') {
     // Alas
-    glow(g, '#2ad4ff', 18);
+    glow(g, accent, 18);
     g.fillStyle = metal(g, -40, 0, 40, 0, '#1b3350', '#5d87b3');
     path(g, [0, -10, 38, 18, 40, 30, 12, 24, 0, 30, -12, 24, -40, 30, -38, 18]); g.fill();
     noGlow(g);
-    g.strokeStyle = '#7ee8ff'; g.lineWidth = 1.5; g.stroke();
+    g.strokeStyle = accent === '#2ad4ff' ? '#7ee8ff' : accent; g.lineWidth = 1.5; g.stroke();
     // Fuselaje
     g.fillStyle = metal(g, -12, 0, 12, 0, '#9fb6cc', '#f1f7ff');
     path(g, [0, -38, 10, -18, 12, 20, 6, 34, -6, 34, -12, 20, -10, -18]); g.fill();
@@ -931,7 +1335,7 @@ const Sprites = (() => {
     g.fillStyle = cg; glow(g, '#5ff', 10);
     path(g, [0, -30, 6, -16, 4, -6, -4, -6, -6, -16]); g.fill(); noGlow(g);
     // Franjas ámbar (la firma de Lía)
-    g.fillStyle = '#ffb347';
+    g.fillStyle = stripe;
     g.fillRect(-30, 20, 14, 3); g.fillRect(16, 20, 14, 3);
     // Cañones
     g.fillStyle = '#cfe9ff'; g.fillRect(-26, 4, 3, 16); g.fillRect(23, 4, 3, 16);
@@ -1088,6 +1492,11 @@ const Sprites = (() => {
 
   /* ---------------- Balas ---------------- */
   function orb(color, r) {
+    if (cb) return g => {     // alto contraste: anillo oscuro y núcleo muy brillante
+      g.fillStyle = '#000'; g.beginPath(); g.arc(0, 0, r + 3, 0, Math.PI * 2); g.fill();
+      glow(g, color, r * 1.6); g.fillStyle = color; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
+      noGlow(g); g.fillStyle = '#fff'; g.beginPath(); g.arc(0, 0, r * 0.45, 0, Math.PI * 2); g.fill();
+    };
     return g => {
       glow(g, color, r * 2.4);
       g.fillStyle = color; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
@@ -1124,10 +1533,14 @@ const Sprites = (() => {
     };
   }
 
-  function build(scale) {
-    R = scale;
+  let cb = false;
+  // Modos de arma: cada personaje tiñe el Esperanza con su color
+  const MODE_COLORS = { dario: ['#2ad4ff', '#ffb347'], lia: ['#ffb347', '#2ad4ff'], nora: ['#9dff6a', '#ffb347'], teo: ['#ffe066', '#c46bff'] };
+  function build(scale, opts = {}) {
+    R = scale; cb = !!opts.colorblind;
     for (const k in cache) delete cache[k];
     make('player', 84, 80, player);
+    for (const [m, [a, st]] of Object.entries(MODE_COLORS)) make('player_' + m, 84, 80, g => player(g, a, st));
     make('flame', 14, 42, flame);
     make('drone', 26, 26, drone);
     make('dart', 44, 46, dart);
@@ -1148,11 +1561,14 @@ const Sprites = (() => {
       make('rock' + i, 70, 70, g => rock(g, 17 + i * 31, 32, ['#7a6a5a', '#2a2018', '#a08870']));
       make('rockS' + i, 36, 36, g => rock(g, 91 + i * 13, 16, ['#8a7a6a', '#2a2018', '#b09880']));
     }
-    make('bRed', 16, 16, orb('#ff3b6b', 6));
-    make('bViolet', 16, 16, orb('#c46bff', 6));
-    make('bOrange', 20, 20, orb('#ff9a3b', 8));
-    make('bBig', 30, 30, orb('#ff2a4f', 12));
-    make('bCyan', 16, 16, orb('#6ff', 6));
+    // Balas enemigas; en modo daltónico, solo amarillo y magenta de alto contraste
+    make('bRed', 16, 16, orb(cb ? '#ffe600' : '#ff3b6b', 6));
+    make('bViolet', 16, 16, orb(cb ? '#ff3dff' : '#c46bff', 6));
+    make('bOrange', 20, 20, orb(cb ? '#ffe600' : '#ff9a3b', 8));
+    make('bBig', 30, 30, orb(cb ? '#ff3dff' : '#ff2a4f', 12));
+    make('bCyan', 16, 16, orb(cb ? '#ffffff' : '#6ff', 6));
+    make('pLaser', 10, 46, laser('#ffb347', 10, 46));
+    make('pHack', 12, 12, orb('#9dff6a', 5));
     make('pShot', 9, 28, laser('#3fe0ff', 9, 28));
     make('pShot2', 12, 34, laser('#ffffff', 12, 34));
     make('pWave', 10, 22, laser('#ffb347', 10, 22));
@@ -1444,7 +1860,7 @@ const Bosses = (() => {
       entering: true, dead: false, flash: 0, parts: [], timers: {},
       phase() { const r = this.hp / this.maxHp; return r > 0.66 ? 0 : r > 0.33 ? 1 : 2; },
       every(name, period, fn) {
-        this.timers[name] = (this.timers[name] || 0) + G.dt;
+        this.timers[name] = (this.timers[name] || 0) + (G.fireDt || G.dt); // la dificultad acelera o frena la cadencia
         if (this.timers[name] >= period) { this.timers[name] -= period; fn(); }
       },
     };
@@ -2338,10 +2754,11 @@ const Rooms = (() => {
 
     /* =============================== 4 =============================== */
     {
-      id: 4, after: 12, title: 'EL PECIO DEL HERALDO', place: 'Restos del Heraldo de ORDO, remolcados por Vex', time: 360,
+      id: 4, after: 12, title: 'EL PECIO DEL HERALDO', place: 'Restos del Heraldo de ORDO, remolcados por la flota libre', time: 360,
       pal: { wall: ['#220814', '#0c0208'], floor: ['#16040c', '#050003'], line: 'rgba(255,60,110,0.14)', light: 'rgba(200,80,255,A)' },
       intro: [
-        { who: 'vex', text: 'Hemos remolcado los restos del Heraldo que derribasteis. Su núcleo aún late: dentro hay datos de ORDO.' },
+        { if: 'vexSaved', who: 'vex', text: 'Hemos remolcado los restos del Heraldo que derribasteis. Su núcleo aún late: dentro hay datos de ORDO.' },
+        { ifNot: 'vexSaved', who: 'oren', text: 'Hemos remolcado los restos del Heraldo que derribasteis. Su núcleo aún late: dentro hay datos de ORDO.' },
         { who: 'dario', text: 'Entramos, cogemos lo que haya y salimos.' },
         { who: 'ordo', text: 'INTRUSOS REGISTRADOS. SALA SELLADA. REACTIVACIÓN DEL HERALDO EN SEIS MINUTOS.' },
         { who: 'nora', text: 'Si este pecio vuelve a la vida con nosotros dentro, estamos perdidos.' },
@@ -2350,7 +2767,8 @@ const Rooms = (() => {
         { who: 'lia', text: 'La compuerta se ha abierto con mi Protocolo inverso. Funciona. Cuando llegue el momento, funcionará con la Grieta.' },
         { who: 'nora', text: 'Y el núcleo nos lo cuenta todo sobre ORDO PRIMORDIAL: sus fases, sus satélites… y su núcleo.' },
         { who: 'teo', text: 'ORDO no me vio cruzar la barrera. De verdad no salgo en sus mapas.' },
-        { who: 'vex', text: 'Pues entonces tenéis una ventaja que nadie ha tenido nunca. Volved a la nave.' },
+        { if: 'vexSaved', who: 'vex', text: 'Pues entonces tenéis una ventaja que nadie ha tenido nunca. Volved a la nave.' },
+        { ifNot: 'vexSaved', who: 'oren', text: 'Pues entonces tenéis una ventaja que nadie ha tenido nunca. Volved a la nave.' },
       ],
       object: {
         name: 'NÚCLEO DE MEMORIA DE ORDO',
@@ -2490,6 +2908,8 @@ window.Rooms = Rooms;
 (() => {
   const { CHARACTERS, PROLOGUE, CHAPTERS, ENDING, ACTS } = window.STORY;
   const A = window.GameAudio;
+  const M = window.Meta;
+  const T = window.T;
   const TAU = Math.PI * 2;
   const $ = id => document.getElementById(id);
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -2498,8 +2918,28 @@ window.Rooms = Rooms;
 
   /* ------------------------------ Guardado ----------------------------- */
   const SAVE_KEY = 'exodo2942.save';
-  const save = (() => { try { return Object.assign({ unlocked: 1, hiscore: 0, sound: true, seenPrologue: false, analysis: {}, files: [], roomsDone: [] }, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { return { unlocked: 1, hiscore: 0, sound: true }; } })();
+  const DEFAULT_SETTINGS = { lang: I18N.detect(), difficulty: 1, sens: 1.25, vibration: true, bigText: false, cbBullets: false, autofire: true };
+  const save = (() => {
+    let s = {};
+    try { s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'); } catch (e) { s = {}; }
+    s = Object.assign({ unlocked: 1, hiscore: 0, sound: true, seenPrologue: false, analysis: {}, files: [], roomsDone: [],
+      credits: 0, upgrades: {}, shipMode: 'dario', ach: {}, stats: { kills: 0, pulses: 0 }, flags: {}, tutorialDone: false,
+      fullGame: false, arcadeBest: 0, arcadeBestTime: 0, rushBest: 0 }, s);
+    s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
+    return s;
+  })();
   const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* sin almacenamiento */ } };
+
+  /* --------------------- Dificultad, mejoras y modos --------------------- */
+  const D = () => M.DIFFICULTY[save.settings.difficulty] || M.DIFFICULTY[1];
+  const upgLevel = id => save.upgrades[id] || 0;
+  const upg = id => { const u = M.UPGRADES.find(x => x.id === id); return u.values[upgLevel(id)]; };
+  const modeUnlocked = id => { const m = M.SHIP_MODES.find(x => x.id === id); return !m.unlock || (save.roomsDone || []).includes(m.unlock); };
+  const shipMode = () => (modeUnlocked(save.shipMode) ? save.shipMode : 'dario');
+  const flag = k => k === 'vexSaved' ? save.flags.vexSaved !== false : !!save.flags[k];
+  // Líneas condicionales de la historia: { if: 'vexSaved' } / { ifNot: 'vexSaved' }
+  const filterLines = lines => (lines || []).filter(l => (!l.if || flag(l.if)) && (!l.ifNot || !flag(l.ifNot)));
+  const isFull = () => !M.CONFIG.demo || save.fullGame;
 
   /* ------------------------------ Lienzo ------------------------------- */
   const canvas = $('game');
@@ -2510,6 +2950,7 @@ window.Rooms = Rooms;
     player: null, enemies: [], eBullets: [], pBullets: [], items: [], particles: [], texts: [],
     boss: null, bg: null, chapter: null, chapterIdx: 0, levelT: 0, phaseState: 'level',
     score: 0, chapterStartScore: 0, shake: 0, flash: 0, banner: null,
+    gameMode: 'story', comms: [], runT: 0, tutorial: null, rushIdx: 0, arcadeLevel: 1,
   };
 
   function resize() {
@@ -2525,7 +2966,7 @@ window.Rooms = Rooms;
     canvas.style.height = Math.round(G.H * scale) + 'px';
     canvas.width = Math.round(G.W * R); canvas.height = Math.round(G.H * R);
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    if (changed) { Sprites.build(R); G.built = true; }
+    if (changed) { Sprites.build(R, { colorblind: save.settings.cbBullets }); G.built = true; }
     G.bg = Backgrounds.create(G.chapter ? G.chapter.theme : 'title', G.W, G.H, R);
     if (G.player) { G.player.x = clamp(G.player.x, 30, G.W - 30); G.player.y = clamp(G.player.y, 60, G.H - 50); }
   }
@@ -2535,7 +2976,8 @@ window.Rooms = Rooms;
   const BULLET_R = { bRed: 6, bViolet: 6, bOrange: 8, bBig: 12, bCyan: 6 };
   G.shot = (x, y, vx, vy, kind = 'bRed') => {
     if (G.eBullets.length > 700) return;
-    G.eBullets.push({ x, y, vx, vy, k: kind, r: BULLET_R[kind] || 6 });
+    const k = G.bulletK || 1;
+    G.eBullets.push({ x, y, vx: vx * k, vy: vy * k, k: kind, r: BULLET_R[kind] || 6 });
   };
   G.aim = (x, y) => Math.atan2(G.player.y - y, G.player.x - x);
   G.ring = (x, y, n, sp, off = 0, kind, gap = 0) => {
@@ -2552,8 +2994,20 @@ window.Rooms = Rooms;
 
   /* ------------------------------ Jugador ------------------------------ */
   function newPlayer() {
-    return { x: G.W / 2, y: G.H - 200, r: 7, shield: 3, maxShield: 3, lives: 3, power: 1, bombs: 3, drones: 0,
-      fireT: 0, inv: 2, phaseT: 0, phaseCd: 0, dead: 0, tilt: 0, droneAng: 0 };
+    const mode = shipMode(), teo = mode === 'teo';
+    const p = { x: G.W / 2, y: G.H - 200, r: teo ? 5 : 7, shield: 0, maxShield: 0, lives: D().lives, power: 1, bombs: 0, drones: 0,
+      fireT: 0, inv: 2, phaseT: 0, phaseCd: 0, dead: 0, tilt: 0, droneAng: 0, mode, hits: 0 };
+    applyUpgrades(p, true);
+    return p;
+  }
+  // Aplica el hangar a la nave. fresh: nave nueva; si no, solo garantiza los mínimos.
+  function applyUpgrades(p, fresh) {
+    const teo = p.mode === 'teo';
+    p.maxShield = upg('shield'); p.maxBombs = upg('pulse') + 2;
+    p.phaseDur = teo ? 1.0 : 0.7; p.phaseCdMax = upg('phase') * (teo ? 0.6 : 1);
+    p.magnet = upg('magnet'); p.droneDmg = upgLevel('drones') >= 3 ? 10.5 : 7;
+    if (fresh) { p.power = upg('cannon'); p.shield = p.maxShield; p.bombs = upg('pulse'); p.drones = upg('drones'); }
+    else { p.power = Math.max(p.power, upg('cannon')); p.drones = Math.max(p.drones, upg('drones')); p.bombs = Math.max(p.bombs, upg('pulse')); p.shield = p.maxShield; }
   }
 
   /* ------------------------------ Enemigos ----------------------------- */
@@ -2579,7 +3033,7 @@ window.Rooms = Rooms;
   const ENEMY_TOUGHNESS = 3;
   function spawnEnemy(type, x, y, o = {}) {
     const d = EDEF[type];
-    const hpScale = ENEMY_TOUGHNESS * (1 + (G.difficulty - 1) * 0.35);
+    const hpScale = ENEMY_TOUGHNESS * D().hp * (1 + (G.difficulty - 1) * 0.35);
     const e = Object.assign({ type, x, y, vx: 0, vy: 0, t: 0, hp: d.hp * hpScale, maxHp: d.hp * hpScale, r: d.r, score: d.score,
       spr: d.spr, rot: 0, fireT: rand(0.6, 1.8), flash: 0, group: null }, o);
     if (type === 'rock' || type === 'rockS') { e.spr = d.spr + Math.floor(Math.random() * 4); e.spin = rand(-1.5, 1.5); }
@@ -2682,7 +3136,7 @@ window.Rooms = Rooms;
 
     // Disparo enemigo
     if (e.y > 20 && e.y < G.H * 0.75 && G.player.dead <= 0) {
-      e.fireT -= dt;
+      e.fireT -= dt * D().fire;
       if (e.fireT <= 0) {
         const diff = G.difficulty;
         switch (e.type) {
@@ -2720,19 +3174,38 @@ window.Rooms = Rooms;
   function floatText(x, y, txt, color = '#fff') { G.texts.push({ x, y, txt, color, life: 1 }); }
 
   /* ------------------------------ Disparos ----------------------------- */
+  const FIRE_RATE = { dario: 0.1, lia: 0.14, nora: 0.12, teo: 0.11 };
   function firePlayer(p) {
-    const lv = p.power, add = (x, y, vx, vy, spr = 'pShot', dmg = 10) => G.pBullets.push({ x, y, vx, vy, spr, dmg, r: 7 });
-    add(p.x - 9, p.y - 34, 0, -1250); add(p.x + 9, p.y - 34, 0, -1250);
-    if (lv >= 2) { add(p.x - 24, p.y - 14, -160, -1150, 'pWave', 8); add(p.x + 24, p.y - 14, 160, -1150, 'pWave', 8); }
-    if (lv >= 3) add(p.x, p.y - 40, 0, -1300, 'pShot2', 14);
-    if (lv >= 4) { add(p.x - 30, p.y - 6, -340, -1050, 'pWave', 8); add(p.x + 30, p.y - 6, 340, -1050, 'pWave', 8); }
-    if (lv >= 5) { add(p.x - 18, p.y - 30, -60, -1300, 'pShot2', 14); add(p.x + 18, p.y - 30, 60, -1300, 'pShot2', 14); }
+    const lv = p.power, add = (x, y, vx, vy, spr = 'pShot', dmg = 10, extra) => G.pBullets.push(Object.assign({ x, y, vx, vy, spr, dmg, r: 7 }, extra));
+    if (p.mode === 'lia') {
+      // LÁSER: rayos que atraviesan hasta 3 enemigos
+      const L = (x, vx = 0) => add(x, p.y - 44, vx, -1500, 'pLaser', 17, { pierce: 3, hit: [], r: 8 });
+      if (lv === 1 || lv === 2 || lv >= 5) L(p.x);
+      if (lv >= 3) { L(p.x - 12); L(p.x + 12); }
+      if (lv >= 2) { add(p.x - 24, p.y - 14, -60, -1250, 'pShot', 9); add(p.x + 24, p.y - 14, 60, -1250, 'pShot', 9); }
+      if (lv >= 4) { L(p.x - 30, -120); L(p.x + 30, 120); }
+    } else if (p.mode === 'nora') {
+      // HACKEO: proyectiles que buscan al enemigo más cercano
+      const n = lv + 1;
+      for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + (i - (n - 1) / 2) * 0.32; add(p.x + Math.cos(a) * 18, p.y - 24, Math.cos(a) * 820, Math.sin(a) * 820, 'pHack', 9, { homing: true, r: 8 }); }
+    } else if (p.mode === 'teo') {
+      // FASE: abanico muy abierto
+      const n = [3, 5, 5, 7, 9][lv - 1];
+      for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + (i - (n - 1) / 2) * 0.17; add(p.x, p.y - 30, Math.cos(a) * 1150, Math.sin(a) * 1150, 'pWave', 8); }
+      if (lv >= 3) add(p.x, p.y - 40, 0, -1300, 'pShot2', 14);
+    } else {
+      add(p.x - 9, p.y - 34, 0, -1250); add(p.x + 9, p.y - 34, 0, -1250);
+      if (lv >= 2) { add(p.x - 24, p.y - 14, -160, -1150, 'pWave', 8); add(p.x + 24, p.y - 14, 160, -1150, 'pWave', 8); }
+      if (lv >= 3) add(p.x, p.y - 40, 0, -1300, 'pShot2', 14);
+      if (lv >= 4) { add(p.x - 30, p.y - 6, -340, -1050, 'pWave', 8); add(p.x + 30, p.y - 6, 340, -1050, 'pWave', 8); }
+      if (lv >= 5) { add(p.x - 18, p.y - 30, -60, -1300, 'pShot2', 14); add(p.x + 18, p.y - 30, 60, -1300, 'pShot2', 14); }
+    }
     for (let i = 0; i < p.drones; i++) {
       const d = dronePos(p, i);
       let tx = 0, best = 1e9; // los drones apuntan al enemigo más cercano
       for (const e of G.enemies) { const dd = (e.x - d.x) ** 2 + (e.y - d.y) ** 2; if (e.y < d.y && dd < best) { best = dd; tx = Math.atan2(e.y - d.y, e.x - d.x); } }
       const a = best < 1e9 ? tx : -Math.PI / 2;
-      add(d.x, d.y, Math.cos(a) * 1000, Math.sin(a) * 1000, 'dShot', 7);
+      add(d.x, d.y, Math.cos(a) * 1000, Math.sin(a) * 1000, 'dShot', p.droneDmg);
     }
     A.sfx.shoot();
   }
@@ -2741,7 +3214,10 @@ window.Rooms = Rooms;
   /* --------------------------- Daño y botín ---------------------------- */
   function killEnemy(e) {
     e.dead = true;
-    G.score += e.score;
+    G.score += Math.round(e.score * D().reward);
+    save.stats.kills = (save.stats.kills || 0) + 1;
+    if (save.stats.kills >= 500) unlockAch('kills500');
+    if (G.tutorial) G.tutorial.kills = (G.tutorial.kills || 0) + 1;
     const big = e.type === 'carrier' || e.type === 'tank' ? 3 : e.type === 'gunship' || e.type === 'bomber' ? 1.8 : e.type === 'rock' ? 1.4 : e.type === 'swarmer' || e.type === 'splitling' ? 0.5 : 1;
     const col = e.type === 'splitter' || e.type === 'splitling' ? '#9dff6a' : e.type === 'orbiter' ? '#c46bff' : e.type === 'sniper' ? '#4fd8ff' : e.type === 'swarmer' ? '#ffe066' : e.type === 'weaver' ? '#c46bff' : e.type === 'crystal' ? '#4fd8ff' : e.type === 'gunship' ? '#ffb347' : e.type === 'mine' ? '#ffe066' : '#ff4a6a';
     explosion(e.x, e.y, big, col);
@@ -2753,18 +3229,19 @@ window.Rooms = Rooms;
     if (e.drop) dropItem(e.x, e.y, e.drop);
     else if (e.group) {
       const g = groups.get(e.group); g.killed++;
-      if (g.killed === g.n) { dropItem(e.x, e.y, g.drop); floatText(e.x, e.y - 30, '¡ESCUADRÓN!', '#ffe066'); G.score += 1000; }
+      if (g.killed === g.n) { dropItem(e.x, e.y, g.drop); floatText(e.x, e.y - 30, T('¡ESCUADRÓN!'), '#ffe066'); G.score += 1000; unlockAch('squadron'); }
     } else if (Math.random() < 0.035) dropItem(e.x, e.y, ['P', 'S', 'B'][Math.floor(Math.random() * 3)]);
     else if (Math.random() < 0.12) dropItem(e.x, e.y, 'M');
   }
   function dropItem(x, y, kind) { G.items.push({ x, y, kind, vy: 70, t: 0 }); }
   function collect(it) {
     const p = G.player; A.sfx.power();
+    if (G.tutorial) G.tutorial.got = true;
     switch (it.kind) {
-      case 'P': if (p.power < 5) { p.power++; floatText(it.x, it.y, 'POTENCIA ' + p.power, '#4fd8ff'); } else { G.score += 2000; floatText(it.x, it.y, '+2000', '#4fd8ff'); } break;
-      case 'S': p.shield = p.maxShield; floatText(it.x, it.y, 'ESCUDO', '#9dff6a'); break;
-      case 'B': p.bombs = Math.min(5, p.bombs + 1); floatText(it.x, it.y, '+PULSO', '#ffb347'); break;
-      case 'D': if (p.drones < 2) { p.drones++; floatText(it.x, it.y, 'DRON', '#e86bff'); } else { G.score += 2000; floatText(it.x, it.y, '+2000', '#e86bff'); } break;
+      case 'P': if (p.power < 5) { p.power++; floatText(it.x, it.y, T('POTENCIA') + ' ' + p.power, '#4fd8ff'); if (p.power >= 5) unlockAch('max_power'); } else { G.score += 2000; floatText(it.x, it.y, '+2000', '#4fd8ff'); } break;
+      case 'S': p.shield = p.maxShield; floatText(it.x, it.y, T('ESCUDO'), '#9dff6a'); break;
+      case 'B': p.bombs = Math.min(p.maxBombs, p.bombs + 1); floatText(it.x, it.y, T('+PULSO'), '#ffb347'); break;
+      case 'D': if (p.drones < 2) { p.drones++; floatText(it.x, it.y, T('DRON'), '#e86bff'); } else { G.score += 2000; floatText(it.x, it.y, '+2000', '#e86bff'); } break;
       case 'M': G.score += 500; floatText(it.x, it.y, '+500', '#ffe066'); break;
     }
   }
@@ -2772,7 +3249,8 @@ window.Rooms = Rooms;
   function hurtPlayer() {
     const p = G.player;
     if (p.inv > 0 || p.phaseT > 0 || p.dead > 0) return;
-    A.sfx.hurt(); vibrate(60);
+    if (G.tutorial) { p.inv = 1; G.flash = 0.25; A.sfx.hurt(); return; } // en el tutorial no se pierde nada
+    A.sfx.hurt(); vibrate(60); p.hits++;
     G.shake = 10; G.flash = 0.35;
     if (p.shield > 1) { p.shield--; p.inv = 1.4; explosion(p.x, p.y, 0.6, '#4fd8ff'); return; }
     // Pierde una vida
@@ -2781,12 +3259,14 @@ window.Rooms = Rooms;
     if (p.lives <= 0) { p.dead = 99; gameOver(); return; }
     p.dead = 1.4; p.power = Math.max(1, p.power - 1); p.drones = Math.max(0, p.drones - 1); p.shield = p.maxShield; p.bombs = Math.max(p.bombs, 2);
   }
-  const vibrate = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) { } };
+  const vibrate = ms => M.haptic(ms);
 
   function usePulse() {
     const p = G.player;
     if (G.mode !== 'play' || G.paused || p.bombs <= 0 || p.dead > 0) return;
     p.bombs--; A.sfx.bomb(); vibrate(120);
+    save.stats.pulses = (save.stats.pulses || 0) + 1; if (save.stats.pulses >= 10) unlockAch('pulse10');
+    if (G.tutorial) G.tutorial.pulsed = true;
     G.flash = 0.8; G.shake = 16; p.inv = Math.max(p.inv, 1.5);
     for (const b of G.eBullets) particle(b.x, b.y, 0, -60, 0.4, 0.7, '#ffb347');
     G.eBullets.length = 0;
@@ -2797,7 +3277,8 @@ window.Rooms = Rooms;
   function usePhase() {
     const p = G.player;
     if (G.mode !== 'play' || G.paused || p.phaseCd > 0 || p.dead > 0) return;
-    p.phaseT = 0.7; p.phaseCd = 2.6; A.sfx.phase(); vibrate(30);
+    p.phaseT = p.phaseDur; p.phaseCd = p.phaseCdMax; A.sfx.phase(); vibrate(30);
+    if (G.tutorial) G.tutorial.phased = true;
     for (let i = 0; i < 16; i++) { const a = i / 16 * TAU; particle(p.x, p.y, Math.cos(a) * 200, Math.sin(a) * 200, 0.4, 1, '#4fd8ff'); }
   }
 
@@ -2819,6 +3300,7 @@ window.Rooms = Rooms;
 
   function update(dt) {
     G.dt = dt; G.time += dt;
+    G.bulletK = D().bullet; G.fireDt = dt * D().fire;
     G.bg.update(dt, G.boss ? 0.6 : 1);
     const p = G.player;
 
@@ -2833,6 +3315,7 @@ window.Rooms = Rooms;
     if (G.banner) { G.banner.t += dt; if (G.banner.t > G.banner.dur) G.banner = null; }
 
     if (G.mode !== 'play' || !p) return;
+    if (G.gameMode !== 'story' && G.phaseState !== 'cleared') G.runT += dt;
 
     /* --- Movimiento del jugador --- */
     if (p.dead > 0) {
@@ -2844,18 +3327,24 @@ window.Rooms = Rooms;
       if (k.ArrowLeft || k.KeyA) mx -= 1; if (k.ArrowRight || k.KeyD) mx += 1;
       if (k.ArrowUp || k.KeyW) my -= 1; if (k.ArrowDown || k.KeyS) my += 1;
       const ox = p.x;
+      if (G.tutorial) G.tutorial.moved = (G.tutorial.moved || 0) + Math.abs(input.dx) + Math.abs(input.dy) + (mx || my ? 460 * dt : 0);
       p.x += mx * 460 * dt + input.dx; p.y += my * 460 * dt + input.dy;
       input.dx = 0; input.dy = 0;
       p.x = clamp(p.x, 28, G.W - 28); p.y = clamp(p.y, 60, G.H - 44);
       p.tilt += (clamp((p.x - ox) / Math.max(dt, 0.001) / 900, -1, 1) - p.tilt) * Math.min(1, dt * 10);
       p.fireT -= dt;
-      if (p.fireT <= 0) { firePlayer(p); p.fireT = 0.1; }
+      const firing = save.settings.autofire || input.pointer || k.Space;
+      if (p.fireT <= 0 && firing) { firePlayer(p); p.fireT = FIRE_RATE[p.mode] || 0.1; }
       for (let i = 0; i < 2; i++) particle(p.x + (i ? 6 : -6), p.y + 38, rand(-15, 15), rand(160, 260), 0.18, 0.5, '#4fd8ff');
     }
     p.inv = Math.max(0, p.inv - dt); p.phaseT = Math.max(0, p.phaseT - dt); p.phaseCd = Math.max(0, p.phaseCd - dt);
 
+    /* --- Tutorial / modos extra --- */
+    if (G.phaseState === 'tutorial') updateTutorial(dt);
+    if (G.gameMode === 'arcade' && G.phaseState === 'level') updateArcade(dt);
+
     /* --- Guion del nivel --- */
-    if (G.phaseState === 'level') {
+    if (G.phaseState === 'level' && G.gameMode === 'story') {
       G.levelT += dt;
       G.bg.progress = clamp(G.levelT / G.chapter.duration, 0, 1);
       G.waveT -= dt;
@@ -2863,13 +3352,13 @@ window.Rooms = Rooms;
       if (!G.checkpoint && G.levelT >= checkpointT()) {
         const p0 = G.player;
         G.checkpoint = { score: G.score, power: p0.power, drones: p0.drones, bombs: p0.bombs };
-        floatText(G.W / 2, G.H * 0.35, 'PUNTO DE CONTROL', '#9dff6a');
+        floatText(G.W / 2, G.H * 0.35, T('PUNTO DE CONTROL'), '#9dff6a');
       }
       // Cada minuto, una oleada de asalto (y un respiro justo después)
       const minute = Math.floor(G.levelT / ASSAULT_EVERY);
       if (minute > G.lastAssault && G.levelT < G.chapter.duration - 10) {
         G.lastAssault = minute;
-        G.banner = { text: 'OLEADA ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / ASSAULT_EVERY), sub: 'Tiempo restante ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
+        G.banner = { text: T('OLEADA') + ' ' + (minute + 1) + '/' + Math.ceil(G.chapter.duration / ASSAULT_EVERY), sub: T('Tiempo restante') + ' ' + fmtTime(G.chapter.duration - G.levelT), t: 0, dur: 2, color: '#ffb347' };
         FORMATIONS[G.chapter.theme === 'asteroids' ? 'rocks' : 'sweep'](); FORMATIONS.carrier();
         G.waveT = 4;
       }
@@ -2885,7 +3374,7 @@ window.Rooms = Rooms;
         if (G.levelT - G.lastFreeDrop > 22) { G.lastFreeDrop = G.levelT; dropItem(rand(100, G.W - 100), -20, p.power < 5 ? 'P' : 'S'); }
       }
       // Comunicaciones de radio
-      while (G.commIdx < G.chapter.comms.length && G.chapter.comms[G.commIdx].t <= G.levelT) showComm(G.chapter.comms[G.commIdx++]);
+      while (G.commIdx < G.comms.length && G.comms[G.commIdx].t <= G.levelT) showComm(G.comms[G.commIdx++]);
       if (G.levelT >= G.chapter.duration && G.enemies.length === 0) {
         G.phaseState = 'warning';
         if (G.chapter.boss) startBossSequence(); else if (G.chapter.miniboss) startMiniBoss(); else missionComplete();
@@ -2912,7 +3401,7 @@ window.Rooms = Rooms;
         if (b.shownPh === undefined) b.shownPh = ph;
         if (ph !== b.shownPh) {
           b.shownPh = ph; G.eBullets.length = 0; G.flash = 0.6; G.shake = 14;
-          if (b.isSuper) G.banner = { text: ph === 3 ? '¡NÚCLEO AL DESCUBIERTO!' : 'FASE ' + (ph + 1) + '/4', sub: b.name, t: 0, dur: 2.2, color: '#ff2a5a' };
+          if (b.isSuper) G.banner = { text: ph === 3 ? T('¡NÚCLEO AL DESCUBIERTO!') : T('FASE') + ' ' + (ph + 1) + '/4', sub: T(b.name), t: 0, dur: 2.2, color: '#ff2a5a' };
         }
       }
       if (p.dead <= 0) {
@@ -2923,15 +3412,18 @@ window.Rooms = Rooms;
 
     /* --- Balas del jugador --- */
     for (const s of G.pBullets) {
+      if (s.homing) steerBullet(s, dt);
       s.x += s.vx * dt; s.y += s.vy * dt;
-      if (s.y < -40 || s.x < -40 || s.x > G.W + 40) { s.dead = true; continue; }
+      if (s.y < -40 || s.y > G.H + 40 || s.x < -40 || s.x > G.W + 40) { s.dead = true; continue; }
       for (const e of G.enemies) {
         if (e.dead || e.y < -10) continue;
+        if (s.hit && s.hit.includes(e)) continue;
         if (dist2(s, e) < (e.r + s.r) ** 2) {
-          e.hp -= s.dmg; e.flash = 0.06; s.dead = true; A.sfx.hit();
+          e.hp -= s.dmg; e.flash = 0.06; A.sfx.hit();
+          if (s.pierce > 0) { s.pierce--; s.hit.push(e); } else s.dead = true;
           particle(s.x, s.y, rand(-80, 80), rand(-40, 60), 0.2, 0.6, '#ffffff');
           if (e.hp <= 0) killEnemy(e);
-          break;
+          if (s.dead) break;
         }
       }
       if (!s.dead && b && !b.dead && !b.entering) {
@@ -2956,18 +3448,29 @@ window.Rooms = Rooms;
     }
     G.eBullets = G.eBullets.filter(s => !s.dead);
 
-    /* --- Objetos --- */
+    /* --- Objetos (imán según el hangar) --- */
     for (const it of G.items) {
       it.t += dt; it.y += it.vy * dt; it.x += Math.sin(it.t * 2) * 30 * dt;
       // Imán suave hacia la nave
       const d = Math.sqrt(dist2(it, p));
-      if (d < 140 && p.dead <= 0) { it.x += (p.x - it.x) * dt * 4; it.y += (p.y - it.y) * dt * 4; }
+      if (d < p.magnet && p.dead <= 0) { it.x += (p.x - it.x) * dt * 4; it.y += (p.y - it.y) * dt * 4; }
       if (d < 34 && p.dead <= 0) { it.got = true; collect(it); }
       if (it.y > G.H + 40) it.got = true;
     }
     G.items = G.items.filter(i => !i.got);
   }
   const dist2 = (a, b) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+  // Proyectiles de Nora: giran hacia el objetivo más cercano
+  function steerBullet(s, dt) {
+    let best = null, bd = 1e12;
+    for (const e of G.enemies) { if (e.dead || e.y < -10) continue; const d = dist2(s, e); if (d < bd) { bd = d; best = e; } }
+    if (G.boss && !G.boss.dead && !G.boss.entering) { const hb = G.boss.hitboxes()[0]; const d = dist2(s, hb); if (d < bd) { bd = d; best = hb; } }
+    if (!best) return;
+    const sp = Math.hypot(s.vx, s.vy), cur = Math.atan2(s.vy, s.vx), want = Math.atan2(best.y - s.y, best.x - s.x);
+    let d = want - cur; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU;
+    const na = cur + clamp(d, -7 * dt, 7 * dt);
+    s.vx = Math.cos(na) * sp; s.vy = Math.sin(na) * sp;
+  }
 
   /* ------------------------------ Dibujado ------------------------------ */
   function draw() {
@@ -3011,7 +3514,7 @@ window.Rooms = Rooms;
       ctx.save(); ctx.translate(p.x, p.y);
       ctx.scale(1 - Math.abs(p.tilt) * 0.18, 1);
       if (ph) { ctx.globalAlpha = 0.45; ctx.scale(1 + Math.sin(p.phaseT * 30) * 0.08, 1); }
-      Sprites.draw(ctx, 'player', 0, 0);
+      Sprites.draw(ctx, 'player_' + p.mode, 0, 0);
       ctx.restore();
       if (ph) {
         ctx.save(); ctx.globalCompositeOperation = 'lighter';
@@ -3061,35 +3564,38 @@ window.Rooms = Rooms;
     ctx.fillText(String(G.score).padStart(8, '0'), 20, top);
     ctx.shadowBlur = 0;
     ctx.font = '600 14px system-ui, sans-serif'; ctx.fillStyle = 'rgba(232,244,255,0.6)';
-    ctx.fillText('MISIÓN ' + G.chapter.id + '/' + CHAPTERS.length + ' · ' + G.chapter.title, 20, top + 32);
-    if (G.phaseState === 'level') {
+    const head = G.gameMode === 'story' ? T('MISIÓN') + ' ' + G.chapter.id + '/' + CHAPTERS.length + ' · ' + T(G.chapter.title)
+      : G.gameMode === 'arcade' ? T('ARCADE') + ' · ' + T('NIVEL') + ' ' + G.arcadeLevel : T('MODO JEFES') + ' · ' + (G.rushIdx + 1) + '/' + RUSH.length;
+    ctx.fillText(head, 20, top + 32);
+    const clock = G.gameMode === 'story' ? (G.phaseState === 'level' ? fmtTime(Math.max(0, G.chapter.duration - G.levelT)) : '') : fmtTime(G.runT || 0);
+    if (clock) {
       ctx.textAlign = 'right'; ctx.font = '800 22px system-ui, sans-serif'; ctx.fillStyle = '#ffb347';
-      ctx.fillText(fmtTime(Math.max(0, G.chapter.duration - G.levelT)), G.W - 76, top + 6);
+      ctx.fillText(clock, G.W - 76, top + 6);
       ctx.textAlign = 'left';
     }
     // Vidas
-    for (let i = 0; i < p.lives; i++) Sprites.draw(ctx, 'player', 34 + i * 34, top + 74, 0, 0.36);
+    for (let i = 0; i < p.lives; i++) Sprites.draw(ctx, 'player_' + p.mode, 34 + i * 34, top + 74, 0, 0.36);
     // Escudo
-    ctx.fillStyle = 'rgba(232,244,255,0.6)'; ctx.font = '700 12px system-ui, sans-serif'; ctx.fillText('ESCUDO', 20, top + 96);
+    ctx.fillStyle = 'rgba(232,244,255,0.6)'; ctx.font = '700 12px system-ui, sans-serif'; ctx.fillText(T('ESCUDO'), 20, top + 96);
     for (let i = 0; i < p.maxShield; i++) {
       ctx.fillStyle = i < p.shield ? '#9dff6a' : 'rgba(157,255,106,0.15)';
       ctx.fillRect(80 + i * 26, top + 97, 22, 10);
     }
     // Potencia
-    ctx.fillStyle = 'rgba(232,244,255,0.6)'; ctx.fillText('POTENCIA', 20, top + 114);
+    ctx.fillStyle = 'rgba(232,244,255,0.6)'; ctx.fillText(T('POTENCIA'), 20, top + 114);
     for (let i = 0; i < 5; i++) { ctx.fillStyle = i < p.power ? '#4fd8ff' : 'rgba(79,216,255,0.15)'; ctx.fillRect(92 + i * 16, top + 115, 12, 10); }
     // Barra del jefe
     const b = G.boss;
     if (b && !b.dead) {
       const y = top + 140;
       ctx.textAlign = 'center'; ctx.font = '800 14px system-ui, sans-serif'; ctx.fillStyle = '#ffd0da';
-      ctx.fillText(b.name, G.W / 2, y);
-      if (b.analyzed) { ctx.font = '700 11px system-ui, sans-serif'; ctx.fillStyle = '#9dff6a'; ctx.fillText('◆ ANALIZADO · +35 % DAÑO', G.W / 2, y + 38); }
+      ctx.fillText(T(b.name), G.W / 2, y);
+      if (b.analyzed) { ctx.font = '700 11px system-ui, sans-serif'; ctx.fillStyle = '#9dff6a'; ctx.fillText(T('◆ ANALIZADO · +35 % DAÑO'), G.W / 2, y + 38); }
       drawBar(60, y + 20, G.W - 120, b.isSuper ? 14 : 10, b.hp / b.maxHp, b.isSuper ? '#ff2a4f' : '#ff2a5a');
       if (b.phases) { ctx.fillStyle = '#fff'; for (let i = 1; i < b.phases; i++) ctx.fillRect(60 + (G.W - 120) * i / b.phases - 1, y + 17, 2, 20); }
     }
     // Progreso del nivel
-    if (G.phaseState === 'level') {
+    if (G.phaseState === 'level' && G.gameMode === 'story') {
       const f = clamp(G.levelT / G.chapter.duration, 0, 1);
       ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fillRect(G.W - 10, 120, 4, G.H - 300);
       ctx.fillStyle = '#ffb347'; ctx.fillRect(G.W - 10, 120 + (G.H - 300) * (1 - f), 4, (G.H - 300) * f);
@@ -3117,7 +3623,7 @@ window.Rooms = Rooms;
     menuT += G.dt || 0.016;
     Sprites.draw(ctx, 'flame', G.W / 2 - 6, G.H * 0.8 + 44 + Math.sin(menuT * 2) * 8, 0, 1.2);
     Sprites.draw(ctx, 'flame', G.W / 2 + 6, G.H * 0.8 + 44 + Math.sin(menuT * 2) * 8, 0, 1.2);
-    Sprites.draw(ctx, 'player', G.W / 2, G.H * 0.8 + Math.sin(menuT * 2) * 8, 0, 1.4);
+    Sprites.draw(ctx, 'player_' + shipMode(), G.W / 2, G.H * 0.8 + Math.sin(menuT * 2) * 8, 0, 1.4);
   }
 
   /* ---------------------------- Controles UI --------------------------- */
@@ -3125,7 +3631,7 @@ window.Rooms = Rooms;
   function updateControlsUI() {
     const p = G.player; if (!p) return;
     if (p.bombs !== lastBombs) { $('bombCount').textContent = p.bombs; lastBombs = p.bombs; }
-    const cd = Math.round(p.phaseCd / 2.6 * 50);
+    const cd = Math.round(p.phaseCd / p.phaseCdMax * 50);
     if (cd !== lastCd) { $('phaseRing').style.strokeDashoffset = (276.5 * cd / 50).toFixed(1); lastCd = cd; }
   }
 
@@ -3133,7 +3639,7 @@ window.Rooms = Rooms;
   canvas.addEventListener('pointerdown', e => { A.init(); input.pointer = { id: e.pointerId, x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); });
   canvas.addEventListener('pointermove', e => {
     if (!input.pointer || input.pointer.id !== e.pointerId) return;
-    const k = 1.25 / G.cssScale; // sensibilidad: el dedo nunca tapa la nave
+    const k = save.settings.sens / G.cssScale; // sensibilidad: el dedo nunca tapa la nave
     input.dx += (e.clientX - input.pointer.x) * k; input.dy += (e.clientY - input.pointer.y) * k;
     input.pointer.x = e.clientX; input.pointer.y = e.clientY;
   });
@@ -3155,12 +3661,9 @@ window.Rooms = Rooms;
   });
 
   /* ---------------------------- Pantallas UI --------------------------- */
-  const screens = ['title', 'chapters', 'story', 'card', 'pause', 'gameover', 'found', 'files', 'roomFail'];
+  const screens = ['title', 'chapters', 'story', 'card', 'pause', 'gameover', 'found', 'files', 'roomFail', 'modes', 'hangar', 'achievements', 'settings', 'buy'];
   function show(id) { for (const s of screens) $(s).classList.toggle('show', s === id); }
   function hideAll() { show(null); }
-
-  function setSoundLabels() { $('btnSound').textContent = $('btnSound2').textContent = 'SONIDO: ' + (save.sound ? 'SÍ' : 'NO'); A.setEnabled(save.sound); }
-  function toggleSound() { save.sound = !save.sound; persist(); setSoundLabels(); A.select(); }
   A.select = () => A.sfx.select();
 
   function togglePause(force) {
@@ -3169,14 +3672,123 @@ window.Rooms = Rooms;
     if (G.paused) show('pause'); else { hideAll(); }
   }
 
+  /* ------------------------------- Ajustes ------------------------------- */
+  function applySettings(rebuildSprites) {
+    const st = save.settings;
+    I18N.setLang(st.lang); M.setVibration(st.vibration); A.setEnabled(save.sound);
+    document.body.classList.toggle('big-text', !!st.bigText);
+    $('roomInv').dataset.empty = T('INVENTARIO VACÍO');
+    if (rebuildSprites) Sprites.build(G.R, { colorblind: st.cbBullets });
+    refreshTitle();
+  }
+  let settingsBack = () => show('title');
+  function buildSettings() {
+    const st = save.settings, list = $('settingsList'); list.innerHTML = '';
+    const seg = (label, opts, cur, pick) => {
+      const row = document.createElement('div'); row.className = 'set-row';
+      row.innerHTML = `<span>${label}</span>`;
+      const box = document.createElement('div'); box.className = 'seg';
+      for (const [v, name] of opts) {
+        const b = document.createElement('button'); b.textContent = name; if (v === cur) b.className = 'on';
+        b.addEventListener('click', () => { pick(v); persist(); A.sfx.select(); buildSettings(); });
+        box.appendChild(b);
+      }
+      row.appendChild(box); list.appendChild(row);
+    };
+    const yn = [[true, T('SÍ')], [false, T('NO')]];
+    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; applySettings(); });
+    seg(T('DIFICULTAD'), M.DIFFICULTY.map((d, i) => [i, T(d.name)]), st.difficulty, v => { st.difficulty = v; });
+    seg(T('SONIDO'), yn, save.sound, v => { save.sound = v; applySettings(); });
+    seg(T('VIBRACIÓN'), yn, st.vibration, v => { st.vibration = v; applySettings(); M.haptic(80); });
+    seg(T('DISPARO AUTOMÁTICO'), yn, st.autofire, v => { st.autofire = v; });
+    seg(T('TEXTO GRANDE'), yn, st.bigText, v => { st.bigText = v; applySettings(); });
+    seg(T('BALAS DE ALTO CONTRASTE (DALTONISMO)'), yn, st.cbBullets, v => { st.cbBullets = v; applySettings(true); });
+    const row = document.createElement('div'); row.className = 'set-row';
+    row.innerHTML = `<span>${T('SENSIBILIDAD DEL DEDO')} · ${st.sens.toFixed(2)}</span><input type="range" min="0.8" max="2.2" step="0.05" value="${st.sens}">`;
+    row.querySelector('input').addEventListener('input', e => { st.sens = parseFloat(e.target.value); row.querySelector('span').textContent = T('SENSIBILIDAD DEL DEDO') + ' · ' + st.sens.toFixed(2); persist(); });
+    list.appendChild(row);
+    const note = document.createElement('div'); note.className = 'help';
+    note.textContent = T('La dificultad cambia la vida de los enemigos, la velocidad de sus balas y tus vidas. En Difícil ganas un 50 % más de puntos y créditos.');
+    list.appendChild(note);
+  }
+  function openSettings(back) { settingsBack = back; buildSettings(); show('settings'); }
+
+  /* -------------------------------- Logros -------------------------------- */
+  const toastQ = []; let toastBusy = false;
+  function unlockAch(id) {
+    if (save.ach[id]) return;
+    const a = M.ACHIEVEMENTS.find(x => x.id === id); if (!a) return;
+    save.ach[id] = Date.now(); persist(); M.reportAchievement(id);
+    toastQ.push(T(a.name)); if (!toastBusy) nextToast();
+  }
+  async function nextToast() {
+    const txt = toastQ.shift(); if (!txt) { toastBusy = false; return; }
+    toastBusy = true; $('toastText').textContent = txt; $('toast').classList.add('show'); A.sfx.power();
+    await sleep(2600); $('toast').classList.remove('show'); await sleep(400); nextToast();
+  }
+  function buildAch() {
+    const list = $('achList'); list.innerHTML = '';
+    const n = M.ACHIEVEMENTS.filter(a => save.ach[a.id]).length;
+    $('achCount').textContent = n + ' / ' + M.ACHIEVEMENTS.length;
+    for (const a of M.ACHIEVEMENTS) {
+      const d = document.createElement('div'); d.className = 'ach' + (save.ach[a.id] ? ' on' : '');
+      d.innerHTML = `<div class="ico">${save.ach[a.id] ? '★' : '☆'}</div><div><b>${T(a.name)}</b><small>${T(a.desc)}</small></div>`;
+      list.appendChild(d);
+    }
+  }
+
+  /* -------------------------------- Hangar -------------------------------- */
+  let hangarClose = () => show('title');
+  const canBuyAny = () => M.UPGRADES.some(u => upgLevel(u.id) < 3 && save.credits >= M.COSTS[upgLevel(u.id)]);
+  function buildHangar() {
+    $('creditsVal').textContent = save.credits;
+    const modes = $('shipModes'); modes.innerHTML = '';
+    for (const m of M.SHIP_MODES) {
+      const ok = modeUnlocked(m.id), c = CHARACTERS[m.who];
+      const b = document.createElement('button');
+      b.className = 'mode-card' + (save.shipMode === m.id && ok ? ' active' : '') + (ok ? '' : ' locked');
+      b.style.setProperty('--mc', m.color);
+      b.innerHTML = `${save.shipMode === m.id && ok ? `<span class="tag">${T('EN USO')}</span>` : ''}<b>${T(m.name)}</b>${T(c.name)}<br><span style="opacity:.75">${ok ? T(m.desc) : T('Se desbloquea al escapar de la estancia') + ' ' + m.unlock}</span>`;
+      if (ok) b.addEventListener('click', () => { save.shipMode = m.id; persist(); A.sfx.select(); buildHangar(); });
+      modes.appendChild(b);
+    }
+    const list = $('upgradeList'); list.innerHTML = '';
+    for (const u of M.UPGRADES) {
+      const lv = upgLevel(u.id), max = lv >= 3, cost = M.COSTS[lv];
+      const d = document.createElement('div'); d.className = 'upg';
+      d.innerHTML = `<div><b>${T(u.name)}</b> <span class="pips">${[1, 2, 3].map(i => `<i class="${i <= lv ? 'on' : ''}"></i>`).join('')}</span></div>
+        <button ${max || save.credits < cost ? 'disabled' : ''}>${max ? T('MÁXIMO') : cost + ' ¢'}</button>
+        <small>${T(u.desc)} · ${u.fmt(u.values[lv], lv)}${max ? '' : ' → ' + u.fmt(u.values[lv + 1], lv + 1)}</small>`;
+      d.querySelector('button').addEventListener('click', () => {
+        if (max || save.credits < cost) return;
+        save.credits -= cost; save.upgrades[u.id] = lv + 1; persist(); A.sfx.power(); M.haptic(40);
+        if (lv + 1 >= 3) unlockAch('upgrade_max');
+        buildHangar();
+      });
+      list.appendChild(d);
+    }
+  }
+  function openHangar(onClose, label) {
+    hangarClose = onClose || (() => show('title'));
+    $('hangarBack').textContent = label || T('VOLVER');
+    buildHangar(); show('hangar'); A.music('room');
+  }
+
+  /* ------------------------------ Historia ------------------------------ */
+  function setPortrait(el, who) {
+    const c = CHARACTERS[who], art = M.art.portraits[who];
+    el.style.setProperty('--pc', c.color); el.querySelector('span').textContent = c.initial;
+    el.classList.toggle('has-art', !!art); el.style.backgroundImage = art ? `url("${art}")` : '';
+  }
   /* Diapositivas de historia */
   function storySlides(slides) {
+    slides = filterLines(slides);
     return new Promise(resolve => {
       let i = 0, typing = null, full = '';
       const el = $('story'), tEl = $('storyText');
       show('story');
       const render = () => {
-        const s = slides[i]; $('storyTitle').textContent = s.title; full = s.text; tEl.textContent = '';
+        const s = slides[i]; $('storyTitle').textContent = T(s.title); full = T(s.text); tEl.textContent = '';
         let n = 0; clearInterval(typing);
         typing = setInterval(() => { n += 2; tEl.textContent = full.slice(0, n); if (n % 6 === 0) A.sfx.blip(); if (n >= full.length) { clearInterval(typing); typing = null; } }, 28);
       };
@@ -3193,38 +3805,68 @@ window.Rooms = Rooms;
     });
   }
 
-  /* Diálogo con retratos */
+  /* Diálogo con retratos. Admite líneas condicionales y elecciones:
+     { who, text, choice: [{ label, set: { vexSaved: true } }, ...] } */
   function dialog(lines) {
     if (!lines || !lines.length) return Promise.resolve();
+    const passes = l => (!l.if || flag(l.if)) && (!l.ifNot || !flag(l.ifNot));
     return new Promise(resolve => {
       const prevMode = G.mode;
       G.mode = 'dialog';
       $('controls').classList.remove('show');
-      const el = $('dialog'), tEl = $('dlgText');
+      const el = $('dialog'), tEl = $('dlgText'), chEl = $('dlgChoices');
+      let i = 0, typing = null, full = '', choosing = false;
+      while (i < lines.length && !passes(lines[i])) i++;
+      if (i >= lines.length) { G.mode = prevMode; resolve(); return; }
       el.classList.add('show');
-      let i = 0, typing = null, full = '';
+      const showChoices = () => {
+        const l = lines[i]; chEl.innerHTML = '';
+        if (!l.choice) return;
+        choosing = true; $('dlgSkip').style.display = 'none';
+        for (const opt of l.choice) {
+          const b = document.createElement('button'); b.textContent = '▸ ' + T(opt.label);
+          b.addEventListener('pointerdown', e => {
+            e.stopPropagation(); Object.assign(save.flags, opt.set); persist(); A.sfx.select();
+            choosing = false; $('dlgSkip').style.display = ''; advance();
+          });
+          chEl.appendChild(b);
+        }
+      };
       const render = () => {
         const l = lines[i], c = CHARACTERS[l.who];
-        $('dlgName').textContent = c.name; $('dlgName').style.color = c.color;
-        $('dlgRole').textContent = c.role;
-        const pEl = $('dlgPortrait'); pEl.style.setProperty('--pc', c.color); pEl.querySelector('span').textContent = c.initial;
-        full = l.text; tEl.textContent = ''; let n = 0;
-        clearInterval(typing);
-        typing = setInterval(() => { n += 2; tEl.textContent = full.slice(0, n); if (n % 8 === 0) A.sfx.blip(); if (n >= full.length) { clearInterval(typing); typing = null; } }, 22);
+        $('dlgName').textContent = T(c.name); $('dlgName').style.color = c.color;
+        $('dlgRole').textContent = T(c.role);
+        setPortrait($('dlgPortrait'), l.who);
+        full = T(l.text); tEl.textContent = ''; chEl.innerHTML = ''; choosing = false;
+        let n = 0; clearInterval(typing);
+        typing = setInterval(() => { n += 2; tEl.textContent = full.slice(0, n); if (n % 8 === 0) A.sfx.blip(); if (n >= full.length) { clearInterval(typing); typing = null; showChoices(); } }, 22);
       };
-      const next = () => {
-        if (typing) { clearInterval(typing); typing = null; tEl.textContent = full; return; }
-        i++; if (i >= lines.length) return done();
+      const advance = () => {
+        i++; while (i < lines.length && !passes(lines[i])) i++;
+        if (i >= lines.length) return done();
         render();
       };
+      const next = () => {
+        if (choosing) return;
+        if (typing) { clearInterval(typing); typing = null; tEl.textContent = full; showChoices(); return; }
+        advance();
+      };
       const done = () => {
-        clearInterval(typing); el.classList.remove('show');
+        clearInterval(typing); el.classList.remove('show'); chEl.innerHTML = ''; $('dlgSkip').style.display = '';
         el.removeEventListener('pointerdown', onTap); $('dlgSkip').removeEventListener('pointerdown', onSkip);
         G.mode = prevMode === 'dialog' ? 'play' : prevMode;
         resolve();
       };
-      const onTap = e => { if (e.target.id === 'dlgSkip') return; A.init(); next(); };
-      const onSkip = e => { e.stopPropagation(); done(); };
+      const onTap = e => { if (e.target.id === 'dlgSkip' || e.target.closest('#dlgChoices')) return; A.init(); next(); };
+      // SALTAR no pasa por encima de una elección: se detiene en ella
+      const onSkip = e => {
+        e.stopPropagation(); if (choosing) return;
+        clearInterval(typing); typing = null;
+        let j = i + 1;
+        while (j < lines.length && !(passes(lines[j]) && lines[j].choice)) j++;
+        if (j >= lines.length) return done();
+        i = j; render(); clearInterval(typing); typing = null; tEl.textContent = full; showChoices();
+      };
       el.addEventListener('pointerdown', onTap); $('dlgSkip').addEventListener('pointerdown', onSkip);
       render();
     });
@@ -3236,12 +3878,12 @@ window.Rooms = Rooms;
   async function nextComm() {
     const line = commQueue.shift(); if (!line) { commBusy = false; return; }
     commBusy = true;
-    const c = CHARACTERS[line.who], el = $('comm');
-    $('commName').textContent = c.name; $('commName').style.color = c.color;
-    $('commText').textContent = line.text; el.style.borderLeftColor = c.color;
-    const pEl = $('commPortrait'); pEl.style.setProperty('--pc', c.color); pEl.querySelector('span').textContent = c.initial;
+    const c = CHARACTERS[line.who], el = $('comm'), text = T(line.text);
+    $('commName').textContent = T(c.name); $('commName').style.color = c.color;
+    $('commText').textContent = text; el.style.borderLeftColor = c.color;
+    setPortrait($('commPortrait'), line.who);
     el.classList.add('show'); A.sfx.blip();
-    await sleep(Math.max(3200, line.text.length * 55));
+    await sleep(Math.max(3200, text.length * 55));
     el.classList.remove('show');
     await sleep(350);
     nextComm();
@@ -3254,32 +3896,43 @@ window.Rooms = Rooms;
   function resetField() {
     G.enemies = []; G.eBullets = []; G.pBullets = []; G.items = []; G.particles = []; G.texts = []; G.shockwaves = [];
     G.boss = null; G.banner = null; G.pulseWave = null; groups.clear();
+    G.tutorial = null; $('tutorial').classList.remove('show');
+    $('btnPhase').classList.remove('hilite'); $('btnBomb').classList.remove('hilite');
   }
+  const scaleBoss = b => { b.hp = b.maxHp = Math.round(b.maxHp * D().hp); return b; };
 
   /* opts: { keep: conserva la nave de la misión anterior,
              snap: restaura potencia/drones/pulsos guardados,
              fromCheckpoint: empieza a mitad de misión } */
   async function startChapter(idx, opts = {}) {
+    if (idx >= 5 && !isFull()) { showBuy(idx); return; }
     const id = ++runId;
+    G.gameMode = 'story';
     G.chapterIdx = idx; G.chapter = CHAPTERS[idx]; G.difficulty = 1 + idx * 0.15;
     resetField();
     if (!opts.keep || !G.player) G.player = newPlayer();
-    else { const p = G.player; p.x = G.W / 2; p.y = G.H - 200; p.inv = 2; p.dead = 0; p.lives = Math.max(p.lives, 3); p.shield = p.maxShield; p.bombs = Math.max(p.bombs, 3); }
-    if (opts.snap) Object.assign(G.player, { power: opts.snap.power, drones: opts.snap.drones, bombs: Math.max(3, opts.snap.bombs) });
-    const p = G.player;
+    else {
+      const p = G.player; p.mode = shipMode(); p.r = p.mode === 'teo' ? 5 : 7;
+      p.x = G.W / 2; p.y = G.H - 200; p.inv = 2; p.dead = 0; p.lives = Math.max(p.lives, D().lives);
+      applyUpgrades(p, false);
+    }
+    if (opts.snap) Object.assign(G.player, { power: opts.snap.power, drones: opts.snap.drones, bombs: Math.max(upg('pulse'), opts.snap.bombs) });
+    const p = G.player; p.hits = 0;
     if (!opts.fromCheckpoint) { G.chapterStartScore = G.score; G.missionSnap = { power: p.power, drones: p.drones, bombs: p.bombs }; G.checkpoint = null; }
     G.bg = Backgrounds.create(G.chapter.theme, G.W, G.H, G.R);
     G.levelT = opts.fromCheckpoint ? checkpointT() : 0; G.waveT = 3; G.lastFreeDrop = G.levelT;
     G.lastAssault = Math.floor(G.levelT / ASSAULT_EVERY);
-    G.commIdx = G.chapter.comms.filter(c => c.t <= G.levelT).length;
+    G.comms = filterLines(G.chapter.comms);
+    G.commIdx = G.comms.filter(c => c.t <= G.levelT).length;
     G.phaseState = 'level';
     G.mode = 'dialog'; G.paused = false;
     A.music(G.chapter.theme);
 
     // Tarjeta de misión
-    $('cardNum').textContent = ACTS[G.chapter.act] + ' · MISIÓN ' + G.chapter.id + '/' + CHAPTERS.length;
-    $('cardTitle').textContent = G.chapter.title;
-    $('cardPlace').textContent = opts.fromCheckpoint ? 'Desde el punto de control · ' + fmtTime(G.chapter.duration - checkpointT()) + ' restantes' : G.chapter.place + (G.chapter.boss ? (G.chapter.boss.super ? ' · SÚPER JEFE' : ' · JEFE FINAL') : '');
+    $('cardNum').textContent = T(ACTS[G.chapter.act]) + ' · ' + T('MISIÓN') + ' ' + G.chapter.id + '/' + CHAPTERS.length;
+    $('cardTitle').textContent = T(G.chapter.title);
+    $('cardPlace').textContent = opts.fromCheckpoint ? T('Desde el punto de control') + ' · ' + fmtTime(G.chapter.duration - checkpointT()) + ' ' + T('restantes')
+      : T(G.chapter.place) + (G.chapter.boss ? (G.chapter.boss.super ? ' · ' + T('SÚPER JEFE') : ' · ' + T('JEFE FINAL')) : '');
     show('card');
     await sleep(2600);
     if (id !== runId) return;
@@ -3288,94 +3941,107 @@ window.Rooms = Rooms;
     if (id !== runId) return;
     G.mode = 'play';
     $('controls').classList.add('show');
+    if (idx === 0 && !save.tutorialDone && !opts.fromCheckpoint) startTutorial();
   }
 
   async function startBossSequence() {
     const id = runId;
     clearComms();
-    G.banner = { text: '¡ALERTA!', sub: G.chapter.boss.name, t: 0, dur: 2.8, color: '#ff2a5a' };
+    G.banner = { text: T('¡ALERTA!'), sub: T(G.chapter.boss.name), t: 0, dur: 2.8, color: '#ff2a5a' };
     A.sfx.alarm(); A.music('boss');
     await sleep(2900);
     if (id !== runId) return;
     await dialog(G.chapter.boss.intro);
     if (id !== runId) return;
     $('controls').classList.add('show');
-    G.boss = Bosses.create(G, G.chapter.boss); G.boss.analyzed = isAnalyzed(G.chapter.boss.name);
+    G.boss = scaleBoss(Bosses.create(G, G.chapter.boss)); G.boss.analyzed = isAnalyzed(G.chapter.boss.name);
     G.phaseState = 'boss';
   }
 
   /* Mini jefe: sin diálogo que pare la acción, solo aviso y radio */
-  async function startMiniBoss() {
+  async function startMiniBoss(defOverride) {
     const id = runId;
-    const def = G.chapter.miniboss;
-    G.banner = { text: '¡MINI JEFE!', sub: def.name, t: 0, dur: 2.4, color: '#ffb347' };
+    const def = defOverride || G.chapter.miniboss;
+    G.banner = { text: T('¡MINI JEFE!'), sub: T(def.name), t: 0, dur: 2.4, color: '#ffb347' };
     A.sfx.alarm(); A.music('boss');
-    clearComms(); if (def.line) showComm(def.line);
+    clearComms(); const ln = filterLines([].concat(def.line || []))[0]; if (ln && G.gameMode === 'story') showComm(ln);
+    G.phaseState = 'warning';
     await sleep(2200);
     if (id !== runId) return;
-    G.boss = Bosses.create(G, def); G.boss.mini = true; G.boss.analyzed = isAnalyzed(def.name);
+    G.boss = scaleBoss(Bosses.create(G, def)); G.boss.mini = true; G.boss.analyzed = isAnalyzed(def.name);
     G.phaseState = 'boss';
+  }
+
+  function blowUp(b, big, id) {
+    const n = big ? 12 : 6, spread = big ? 120 : 70;
+    for (let i = 0; i < n; i++) setTimeout(() => { if (id !== runId) return; explosion(b.x + rand(-spread, spread), b.y + rand(-spread * 0.7, spread * 0.7), big ? rand(1.5, 3) : rand(1.2, 2.2), i % 2 ? '#ffb347' : '#ff4a6a'); A.sfx.explode(); G.shake = big ? 12 : 10; }, i * 140);
+    setTimeout(() => { if (id !== runId) return; explosion(b.x, b.y, big ? 6 : 4, '#ffffff'); A.sfx.bigExplode(); G.flash = big ? 1 : 0.7; G.shake = big ? 24 : 18; vibrate(big ? 300 : 200); }, big ? 1800 : 900);
   }
 
   async function bossDefeated() {
     const b = G.boss; if (b.dead) return;
     b.dead = true; const id = runId;
-    if (b.mini) {
-      G.score += 8000 + 1000 * G.chapter.id; G.eBullets.length = 0; G.phaseState = 'cleared';
-      for (let i = 0; i < 6; i++) setTimeout(() => { if (id !== runId) return; explosion(b.x + rand(-70, 70), b.y + rand(-50, 50), rand(1.2, 2.2), i % 2 ? '#ffb347' : '#ff4a6a'); A.sfx.explode(); G.shake = 10; }, i * 140);
-      setTimeout(() => { if (id !== runId) return; explosion(b.x, b.y, 4, '#ffffff'); A.sfx.bigExplode(); G.flash = 0.7; G.shake = 18; vibrate(200); }, 900);
-      G.player.inv = 99;
-      floatText(b.x, b.y - 60, '+' + (8000 + 1000 * G.chapter.id), '#ffe066');
-      await sleep(1900);
-      if (id !== runId) return;
-      G.boss = null;
-      for (const e of G.enemies) killEnemy(e);
-      G.enemies = [];
-      missionComplete();
-      return;
-    }
-    const bonus = (b.isSuper ? 50000 : 20000) * Math.ceil(G.chapter.id / 5);
+    G.eBullets.length = 0; G.phaseState = 'cleared'; G.player.inv = 99;
+    const bonus = Math.round((b.isSuper ? 50000 : b.mini ? 8000 + 1000 * (G.chapter.id || 1) : 20000 * Math.ceil(G.chapter.id / 5)) * D().reward);
     G.score += bonus;
-    G.eBullets.length = 0; G.phaseState = 'cleared';
-    // Cadena de explosiones
-    for (let i = 0; i < 12; i++) {
-      setTimeout(() => { if (id !== runId) return; explosion(b.x + rand(-120, 120), b.y + rand(-80, 80), rand(1.5, 3), i % 2 ? '#ffb347' : '#ff4a6a'); A.sfx.explode(); G.shake = 12; }, i * 140);
-    }
-    setTimeout(() => { if (id !== runId) return; explosion(b.x, b.y, 6, '#ffffff'); A.sfx.bigExplode(); G.flash = 1; G.shake = 24; vibrate(300); }, 1800);
-    G.player.inv = 99;
-    await sleep(3400);
+    floatText(b.x, b.y - 60, '+' + bonus, '#ffe066');
+    blowUp(b, !b.mini, id);
+    await sleep(b.mini ? 1900 : 3400);
     if (id !== runId) return;
     G.boss = null;
     for (const e of G.enemies) killEnemy(e);
     G.enemies = [];
-    floatText(G.W / 2, G.H * 0.45, '+' + bonus, '#ffe066');
+    const p = G.player; p.inv = 1.5;
+
+    if (G.gameMode === 'arcade') { p.shield = p.maxShield; G.phaseState = 'level'; A.music(G.chapter.theme); return; }
+    if (G.gameMode === 'bossrush') { p.shield = p.maxShield; rushNext(); return; }
+
+    if (b.mini) { unlockAch('mini_down'); missionComplete(); return; }
+    if (b.name === 'FRAGATA LANZA') unlockAch('lanza');
+    if (b.name === 'FORJA MADRE') unlockAch('forja');
+    if (b.isSuper) unlockAch('ordo');
+    const credits = awardCredits();
+    floatText(G.W / 2, G.H * 0.5, '+' + credits + ' ' + T('créditos'), '#ffb347');
     await sleep(1200);
     if (id !== runId) return;
     $('controls').classList.remove('show');
     await dialog(G.chapter.outro);
     if (id !== runId) return;
-    G.player.inv = 0;
+    p.inv = 0;
     nextMission();
   }
 
+  // Créditos para el hangar según los puntos de la misión
+  function awardCredits() {
+    const gained = Math.max(0, G.score - G.chapterStartScore);
+    const c = 150 + Math.round(gained / 25);
+    save.credits += c; persist();
+    if (G.player && G.player.hits === 0) unlockAch('flawless');
+    if (G.chapter.id === 1) unlockAch('first_flight');
+    return c;
+  }
+
   function nextMission() {
-    save.hiscore = Math.max(save.hiscore, G.score);
+    save.hiscore = Math.max(save.hiscore, G.score); M.reportScore('story', G.score);
     const next = G.chapterIdx + 1;
     save.unlocked = Math.max(save.unlocked, Math.min(CHAPTERS.length, next + 1));
     persist();
     const room = ROOMS.find(r => r.after === G.chapter.id);
     const go = () => { if (next < CHAPTERS.length) startChapter(next, { keep: true }); else ending(); };
-    if (room) runRoom(room).then(go); // runRoom solo se resuelve si la familia escapa
-    else go();
+    // Entre misiones: hangar si hay algo que comprar
+    const afterRoom = () => (canBuyAny() ? openHangar(go, T('CONTINUAR')) : go());
+    if (room) runRoom(room).then(afterRoom); // runRoom solo se resuelve si la familia escapa
+    else afterRoom();
   }
 
   /* Misión sin jefe: sobreviviste hasta el final de la cuenta atrás */
   async function missionComplete() {
     const id = runId;
     clearComms();
-    const p = G.player, bonus = 5000 + p.shield * 1000 + p.lives * 2000;
+    const p = G.player, bonus = Math.round((5000 + p.shield * 1000 + p.lives * 2000) * D().reward);
     G.score += bonus; p.inv = 99;
-    G.banner = { text: 'MISIÓN CUMPLIDA', sub: 'Bonificación +' + bonus, t: 0, dur: 3, color: '#9dff6a' };
+    const credits = awardCredits();
+    G.banner = { text: T('MISIÓN CUMPLIDA'), sub: T('Bonificación') + ' +' + bonus + ' · +' + credits + ' ' + T('créditos'), t: 0, dur: 3, color: '#9dff6a' };
     A.sfx.power();
     await sleep(3200);
     if (id !== runId) return;
@@ -3387,10 +4053,12 @@ window.Rooms = Rooms;
   }
   const ASSAULT_EVERY = 40; // segundos entre oleadas de asalto
   const checkpointT = () => G.chapter.duration / 2; // punto de control a mitad de misión
-  const fmtTime = s => { s = Math.ceil(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const fmtTime = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 
   async function ending() {
     G.mode = 'menu'; $('controls').classList.remove('show');
+    unlockAch(flag('vexSaved') ? 'end_vex' : 'end_alone');
+    if (save.settings.difficulty === 2) unlockAch('hard_clear');
     G.chapter = null; G.bg = Backgrounds.create('title', G.W, G.H, G.R);
     A.music('ending');
     await storySlides(ENDING);
@@ -3405,31 +4073,55 @@ window.Rooms = Rooms;
     '«Las paredes tienen grietas.» — Darío',
     '«Cada error es solo un cálculo más.» — Nora',
   ];
+  let goRetry = null;
   function gameOver() {
     const id = runId;
     clearComms();
     setTimeout(() => {
       if (id !== runId) return;
       G.mode = 'over'; $('controls').classList.remove('show');
-      $('goQuote').textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      $('btnCheckpoint').style.display = G.checkpoint ? '' : 'none';
+      const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      $('btnCheckpoint').style.display = G.checkpoint && G.gameMode === 'story' ? '' : 'none';
+      if (G.gameMode === 'arcade') {
+        const t = G.runT || 0, best = G.score > save.arcadeBest;
+        save.arcadeBest = Math.max(save.arcadeBest, G.score); save.arcadeBestTime = Math.max(save.arcadeBestTime, t);
+        M.reportScore('arcade', G.score);
+        $('goTitle').textContent = T('FIN DEL ARCADE');
+        $('goQuote').textContent = T('Puntos') + ': ' + G.score + ' · ' + T('Tiempo') + ': ' + fmtTime(t) + (best ? ' · ' + T('¡NUEVO RÉCORD!') : '');
+        $('btnRetry').textContent = T('JUGAR OTRA VEZ'); goRetry = startArcade;
+      } else if (G.gameMode === 'bossrush') {
+        $('goTitle').textContent = T('EL ESPERANZA HA CAÍDO');
+        $('goQuote').textContent = T('Jefes derrotados') + ': ' + G.rushIdx + '/' + RUSH.length;
+        $('btnRetry').textContent = T('REINTENTAR'); goRetry = startBossRush;
+      } else {
+        $('goTitle').textContent = T('EL ESPERANZA HA CAÍDO');
+        $('goQuote').textContent = T(quote);
+        $('btnRetry').textContent = T('REINICIAR MISIÓN');
+        goRetry = () => { G.score = G.chapterStartScore; startChapter(G.chapterIdx, { snap: G.missionSnap }); };
+      }
       save.hiscore = Math.max(save.hiscore, G.score); persist();
       show('gameover');
     }, 1600);
   }
 
+  function refreshTitle() {
+    const parts = [];
+    if (save.hiscore) parts.push(T('RÉCORD') + ' · ' + String(save.hiscore).padStart(8, '0'));
+    parts.push('¢ ' + save.credits);
+    $('hiscore').textContent = parts.join('   ');
+  }
   function toTitle() {
     runId++; clearComms();
-    G.mode = 'menu'; G.chapter = null; G.player = null; G.paused = false; resetField();
+    G.mode = 'menu'; G.gameMode = 'story'; G.chapter = null; G.player = null; G.paused = false; resetField();
     $('controls').classList.remove('show'); $('dialog').classList.remove('show'); closeRoom();
     G.bg = Backgrounds.create('title', G.W, G.H, G.R);
-    $('hiscore').textContent = save.hiscore ? 'RÉCORD · ' + String(save.hiscore).padStart(8, '0') : '';
+    refreshTitle();
     show('title'); A.music('title');
   }
 
   async function newGame() {
     A.init(); A.sfx.select(); A.music('title');
-    G.score = 0; G.player = null;
+    G.score = 0; G.player = null; save.flags = {}; persist();
     hideAll();
     await storySlides(PROLOGUE);
     save.seenPrologue = true; persist();
@@ -3440,13 +4132,14 @@ window.Rooms = Rooms;
     const list = $('chapterList'); list.innerHTML = '';
     CHAPTERS.forEach((c, i) => {
       if (i === 0 || CHAPTERS[i - 1].act !== c.act) {
-        const h = document.createElement('div'); h.className = 'act-title'; h.textContent = ACTS[c.act]; list.appendChild(h);
+        const h = document.createElement('div'); h.className = 'act-title'; h.textContent = T(ACTS[c.act]); list.appendChild(h);
       }
+      const paywall = i >= 5 && !isFull();
       const locked = i + 1 > save.unlocked;
       const b = document.createElement('button');
       b.className = 'btn' + (locked ? ' locked' : '') + (c.boss ? (c.boss.super ? ' super' : ' boss') : '');
-      const tag = c.boss ? `<em>${c.boss.super ? 'SÚPER JEFE' : 'JEFE'}</em>` : '';
-      b.innerHTML = `${c.id}. ${c.title}${tag}<small>${locked ? 'Bloqueada' : c.place + ' · ' + Math.round(c.duration / 60) + ' min'}</small>`;
+      const tag = c.boss ? `<em>${T(c.boss.super ? 'SÚPER JEFE' : 'JEFE')}</em>` : `<em>${T('MINI JEFE')}</em>`;
+      b.innerHTML = `${c.id}. ${T(c.title)}${tag}<small>${locked ? T('Bloqueada') : paywall ? T('Juego completo') : T(c.place) + ' · ' + Math.round(c.duration / 60) + ' min'}</small>`;
       b.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; hideAll(); startChapter(i); });
       list.appendChild(b);
       const room = ROOMS.find(r => r.after === c.id);
@@ -3454,22 +4147,187 @@ window.Rooms = Rooms;
         const rl = save.unlocked <= room.after;
         const rb = document.createElement('button');
         rb.className = 'btn room-entry' + (rl ? ' locked' : '');
-        rb.innerHTML = `◆ ${room.title}<em>ESTANCIA</em><small>${rl ? 'Bloqueada' : 'Misión de personajes · puzle'}</small>`;
-        rb.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; G.player = newPlayer(); hideAll(); runRoom(room).then(() => startChapter(room.after, { keep: true })); });
+        rb.innerHTML = `◆ ${T(room.title)}<em>${T('ESTANCIA')}</em><small>${rl ? T('Bloqueada') : T('Misión de personajes · puzle')}</small>`;
+        rb.addEventListener('click', () => {
+          A.init(); A.sfx.select();
+          if (room.after >= 6 && !isFull()) { showBuy(room.after); return; }
+          G.score = 0; G.player = newPlayer(); hideAll(); runRoom(room).then(() => startChapter(room.after, { keep: true }));
+        });
         list.appendChild(rb);
       }
     });
   }
 
+  /* ------------------------------ Compra ------------------------------ */
+  let buyResume = null;
+  function showBuy(idx) {
+    buyResume = idx;
+    runId++; clearComms(); closeRoom();
+    G.mode = 'menu'; $('controls').classList.remove('show');
+    $('buyBtn').textContent = T('DESBLOQUEAR JUEGO COMPLETO') + ' · ' + M.Store.price;
+    show('buy'); A.music('title');
+  }
+  function onFullGame() {
+    save.fullGame = true; persist();
+    if ($('buy').classList.contains('show')) { hideAll(); if (buyResume != null) startChapter(buyResume, { keep: !!G.player }); else toTitle(); }
+  }
+  $('buyBtn').addEventListener('click', () => { A.sfx.select(); M.Store.purchase(); });
+  $('buyRestore').addEventListener('click', () => { A.sfx.select(); M.Store.restore(); });
+  $('buyBack').addEventListener('click', toTitle);
+
+  /* ---------------------------- Modo Arcade ---------------------------- */
+  const ARCADE_THEMES = ['city', 'asteroids', 'crystal', 'forge', 'rift'];
+  const MINI_POOL = CHAPTERS.filter(c => c.miniboss).map(c => c.miniboss);
+  const ARCADE_LEVEL_T = 75;
+  function startArcade() {
+    runId++; A.init(); hideAll(); clearComms();
+    G.gameMode = 'arcade'; G.score = 0; resetField();
+    G.chapter = { id: 15, title: 'ARCADE', theme: 'city', duration: Infinity, comms: [], act: 0 };
+    G.player = newPlayer(); G.runT = 0; G.levelT = 0; G.waveT = 2; G.lastFreeDrop = 0; G.arcadeLevel = 1; G.difficulty = 1;
+    G.checkpoint = null; G.comms = []; G.phaseState = 'level'; G.mode = 'play'; G.paused = false;
+    G.bg = Backgrounds.create('city', G.W, G.H, G.R); A.music('city');
+    $('controls').classList.add('show');
+    G.banner = { text: T('ARCADE'), sub: T('Sobrevive todo lo que puedas'), t: 0, dur: 2.4, color: '#4fd8ff' };
+  }
+  function updateArcade(dt) {
+    G.levelT += dt; G.waveT -= dt;
+    G.difficulty = 1 + G.runT / 60 * 0.4;
+    if (G.runT >= 300) unlockAch('arcade5');
+    const lvl = 1 + Math.floor(G.runT / ARCADE_LEVEL_T);
+    if (lvl !== G.arcadeLevel) {
+      G.arcadeLevel = lvl;
+      const def = Object.assign({}, MINI_POOL[(lvl - 2) % MINI_POOL.length]);
+      def.hp = Math.round(def.hp * (0.7 + 0.15 * lvl));
+      const theme = ARCADE_THEMES[(lvl - 1) % ARCADE_THEMES.length];
+      G.chapter.theme = theme; G.bg = Backgrounds.create(theme, G.W, G.H, G.R);
+      startMiniBoss(def);
+      return;
+    }
+    if (G.waveT <= 0 && G.enemies.length < 45) {
+      const set = WAVE_SETS[G.chapter.theme];
+      let f = set[Math.floor(Math.random() * set.length)];
+      if (f === 'carrier' && G.enemies.some(e => e.type === 'carrier')) f = 'line';
+      FORMATIONS[f]();
+      G.waveT = Math.max(0.9, 2.4 - G.difficulty * 0.2) + (f === 'carrier' ? 2 : 0);
+    }
+    if (G.runT - G.lastFreeDrop > 20) { G.lastFreeDrop = G.runT; dropItem(rand(100, G.W - 100), -20, G.player.power < 5 ? 'P' : ['S', 'B', 'D'][Math.floor(Math.random() * 3)]); }
+  }
+
+  /* ---------------------------- Modo Jefes ---------------------------- */
+  const RUSH = [CHAPTERS[0].miniboss, CHAPTERS[3].miniboss, CHAPTERS[5].miniboss, CHAPTERS[8].miniboss, CHAPTERS[10].miniboss, CHAPTERS[4].boss, CHAPTERS[9].boss, CHAPTERS[14].boss];
+  const RUSH_THEMES = ['city', 'asteroids', 'crystal', 'forge', 'rift', 'asteroids', 'forge', 'rift'];
+  function startBossRush() {
+    if (!isFull()) { showBuy(null); return; }
+    runId++; A.init(); hideAll(); clearComms();
+    G.gameMode = 'bossrush'; G.score = 0; resetField();
+    G.chapter = { id: 15, title: 'MODO JEFES', theme: 'city', duration: Infinity, comms: [], act: 0 };
+    G.player = newPlayer(); G.player.power = Math.max(G.player.power, 4); G.player.drones = Math.max(G.player.drones, 1);
+    G.runT = 0; G.rushIdx = -1; G.checkpoint = null; G.comms = []; G.mode = 'play'; G.paused = false;
+    $('controls').classList.add('show');
+    rushNext();
+  }
+  async function rushNext() {
+    const id = runId;
+    G.rushIdx++;
+    if (G.rushIdx >= RUSH.length) return rushWin();
+    const def = RUSH[G.rushIdx];
+    G.difficulty = 1 + G.rushIdx * 0.25; G.chapter.theme = RUSH_THEMES[G.rushIdx];
+    G.bg = Backgrounds.create(G.chapter.theme, G.W, G.H, G.R); A.music('boss');
+    G.phaseState = 'warning';
+    G.banner = { text: T('JEFE') + ' ' + (G.rushIdx + 1) + '/' + RUSH.length, sub: T(def.name), t: 0, dur: 2, color: '#ff2a5a' };
+    await sleep(2100);
+    if (id !== runId) return;
+    G.boss = scaleBoss(Bosses.create(G, def)); G.boss.analyzed = isAnalyzed(def.name);
+    G.phaseState = 'boss';
+  }
+  function rushWin() {
+    const t = G.runT, best = !save.rushBest || t < save.rushBest;
+    if (best) save.rushBest = t;
+    unlockAch('bossrush'); M.reportScore('bossrush', Math.round(t * 1000));
+    save.credits += 3000; persist();
+    G.mode = 'over'; $('controls').classList.remove('show');
+    $('goTitle').textContent = T('¡MODO JEFES COMPLETADO!');
+    $('goQuote').textContent = T('Tiempo') + ': ' + fmtTime(t) + (best ? ' · ' + T('¡NUEVO RÉCORD!') : '') + ' · +3000 ' + T('créditos');
+    $('btnCheckpoint').style.display = 'none';
+    $('btnRetry').textContent = T('JUGAR OTRA VEZ'); goRetry = startBossRush;
+    show('gameover');
+  }
+  function buildModes() {
+    $('arcadeBest').textContent = save.arcadeBest ? T('RÉCORD') + ' ' + save.arcadeBest + ' · ' + fmtTime(save.arcadeBestTime) : '';
+    $('rushBest').textContent = !isFull() ? T('Juego completo') : save.rushBest ? T('MEJOR TIEMPO') + ' ' + fmtTime(save.rushBest) : '';
+  }
+
+  /* ------------------------------ Tutorial ------------------------------ */
+  const TUT = [
+    { text: 'Arrastra el dedo por cualquier parte de la pantalla para mover la nave. No hace falta tocar la nave.', done: t => t.moved > 320 },
+    { text: 'Tu nave dispara sola. Derriba 5 enemigos.', manual: 'Mantén el dedo en la pantalla para disparar. Derriba 5 enemigos.',
+      tick: () => { if (!G.enemies.length) for (let i = 0; i < 3; i++) spawnEnemy('dart', 200 + i * 160, -40 - i * 30, { ai: 'dive', speed: 160, fireT: 999 }); }, done: t => t.kills >= 5 },
+    { text: 'Llueven balas. Toca FASE (a la derecha): durante un instante las balas te atraviesan.', hilite: 'btnPhase',
+      tick: dt => rain(dt, 0.18), done: t => t.phased },
+    { text: 'Toca PULSO (a la izquierda): borra todas las balas y daña a todos los enemigos. Tienes pocas cargas: úsalas en apuros.', hilite: 'btnBomb',
+      start: () => { G.player.bombs = Math.max(1, G.player.bombs); }, tick: dt => rain(dt, 0.12), done: t => t.pulsed },
+    { text: 'Recoge la cápsula P: mejora tus cañones. Las cápsulas se acercan solas si pasas cerca.',
+      start: () => dropItem(G.player.x, Math.max(80, G.player.y - 420), 'P'), done: t => t.got,
+      tick: () => { if (!G.items.length && !G.tutorial.got) dropItem(G.player.x, Math.max(80, G.player.y - 420), 'P'); } },
+  ];
+  function rain(dt, every) {
+    G.tutorial.rainT = (G.tutorial.rainT || 0) - dt;
+    if (G.tutorial.rainT <= 0) { G.tutorial.rainT = every; G.shot(rand(30, G.W - 30), -10, rand(-20, 20), 170, 'bRed'); }
+  }
+  function startTutorial() {
+    G.tutorial = { step: -1 }; G.phaseState = 'tutorial';
+    $('tutorial').classList.add('show');
+    nextTutStep();
+  }
+  function nextTutStep() {
+    const t = G.tutorial; t.step++;
+    $('btnPhase').classList.remove('hilite'); $('btnBomb').classList.remove('hilite');
+    if (t.step >= TUT.length) return finishTutorial(false);
+    const st = TUT[t.step];
+    Object.assign(t, { moved: 0, kills: 0, phased: false, pulsed: false, got: false });
+    $('tutStep').textContent = T('TUTORIAL') + ' · ' + (t.step + 1) + '/' + TUT.length;
+    $('tutText').textContent = T(!save.settings.autofire && st.manual ? st.manual : st.text);
+    if (st.hilite) $(st.hilite).classList.add('hilite');
+    if (st.start) st.start();
+    A.sfx.select();
+  }
+  function updateTutorial(dt) {
+    const t = G.tutorial; if (!t) return;
+    const st = TUT[t.step];
+    if (st.tick) st.tick(dt);
+    if (st.done(t)) { t.doneT = (t.doneT || 0) + dt; if (t.doneT > 0.6) { t.doneT = 0; nextTutStep(); } }
+  }
+  function finishTutorial(skipped) {
+    G.tutorial = null; $('tutorial').classList.remove('show');
+    $('btnPhase').classList.remove('hilite'); $('btnBomb').classList.remove('hilite');
+    save.tutorialDone = true; persist();
+    G.eBullets.length = 0; G.enemies.length = 0;
+    G.player.bombs = Math.max(G.player.bombs, upg('pulse'));
+    G.phaseState = 'level'; G.levelT = 0; G.waveT = 2; G.lastFreeDrop = 0;
+    if (!skipped) G.banner = { text: T('¡LISTO!'), sub: T('Sobrevive hasta que acabe la cuenta atrás'), t: 0, dur: 2.4, color: '#9dff6a' };
+  }
+  $('tutSkip').addEventListener('click', () => { if (G.tutorial) finishTutorial(true); });
+
+  /* ------------------------------- Botones ------------------------------- */
   $('btnPlay').addEventListener('click', newGame);
   $('btnChapters').addEventListener('click', () => { A.init(); A.sfx.select(); buildChapterList(); show('chapters'); A.music('title'); });
   $('btnBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
-  $('btnSound').addEventListener('click', () => { A.init(); toggleSound(); });
-  $('btnSound2').addEventListener('click', toggleSound);
+  $('btnHangar').addEventListener('click', () => { A.init(); A.sfx.select(); openHangar(() => { show('title'); A.music('title'); }); });
+  $('hangarBack').addEventListener('click', () => { A.sfx.select(); const f = hangarClose; hangarClose = null; f && f(); });
+  $('btnModes').addEventListener('click', () => { A.init(); A.sfx.select(); buildModes(); show('modes'); });
+  $('modesBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
+  $('btnArcade').addEventListener('click', startArcade);
+  $('btnBossRush').addEventListener('click', () => { A.init(); startBossRush(); });
+  $('btnAch').addEventListener('click', () => { A.init(); A.sfx.select(); buildAch(); show('achievements'); });
+  $('achBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
+  $('btnSettings').addEventListener('click', () => { A.init(); A.sfx.select(); openSettings(() => show('title')); });
+  $('btnSettings2').addEventListener('click', () => { A.sfx.select(); openSettings(() => show('pause')); });
+  $('settingsBack').addEventListener('click', () => { A.sfx.select(); settingsBack(); });
   $('btnResume').addEventListener('click', () => { G.paused = false; hideAll(); });
   $('btnQuit').addEventListener('click', toTitle);
-  $('btnRetry').addEventListener('click', () => { G.score = G.chapterStartScore; hideAll(); startChapter(G.chapterIdx, { snap: G.missionSnap }); });
+  $('btnRetry').addEventListener('click', () => { hideAll(); if (goRetry) goRetry(); });
   $('btnCheckpoint').addEventListener('click', () => { G.score = G.checkpoint.score; hideAll(); startChapter(G.chapterIdx, { snap: G.checkpoint, fromCheckpoint: true }); });
+  $('btnGoHangar').addEventListener('click', () => { A.sfx.select(); openHangar(() => show('gameover'), T('VOLVER')); });
   $('btnMenu').addEventListener('click', toTitle);
 
   /* =========================================================================
@@ -3478,6 +4336,7 @@ window.Rooms = Rooms;
   const ROOMS = window.Rooms.ROOMS;
   const ROOM_CHARS = ['dario', 'lia', 'nora', 'teo'];
   const SKILLS = { dario: 'Fuerza', lia: 'Ingeniería', nora: 'Informática', teo: 'Pequeño · invisible' };
+  const ROOM_MODE = { 1: 'lia', 2: 'nora', 3: 'teo' }; // modo de armas que desbloquea cada estancia
   const isAnalyzed = name => !!(save.analysis && save.analysis[name]);
   const roomCanvas = $('roomCanvas'), rctx = roomCanvas.getContext('2d');
   const R_ = { room: null, S: null, inv: [], who: 'dario', time: 0, busy: false, id: 0, resolve: null, raf: 0, view: null };
@@ -3494,7 +4353,7 @@ window.Rooms = Rooms;
       b.className = 'hot';
       b.style.left = (R_.view.ox + h.x * k) + 'px'; b.style.top = (R_.view.oy + h.y * k) + 'px';
       b.style.width = (h.w * k) + 'px'; b.style.height = (h.h * k) + 'px';
-      b.innerHTML = `<span>${h.name}</span>`;
+      b.innerHTML = `<span>${T(h.name)}</span>`;
       b.addEventListener('click', () => roomAct(h));
       hot.appendChild(b);
     }
@@ -3507,7 +4366,8 @@ window.Rooms = Rooms;
     rctx.setTransform(v.k * v.dpr, 0, 0, v.k * v.dpr, v.ox * v.dpr, v.oy * v.dpr);
     rctx.R = v.k * v.dpr;
     rctx.save(); rctx.beginPath(); rctx.rect(0, 0, Rooms.W, Rooms.H); rctx.clip();
-    Rooms.base(rctx, R_.room.pal, t);
+    const art = M.art.rooms[R_.room.id];
+    if (art) rctx.drawImage(art, 0, 0, Rooms.W, Rooms.H); else Rooms.base(rctx, R_.room.pal, t);
     for (const h of R_.room.hotspots) { rctx.save(); h.draw(rctx, R_.S, t); rctx.restore(); }
     rctx.restore();
     R_.raf = requestAnimationFrame(roomDraw);
@@ -3518,7 +4378,8 @@ window.Rooms = Rooms;
       const c = CHARACTERS[k], b = document.createElement('button');
       b.className = 'char-btn' + (R_.who === k ? ' active' : '');
       b.style.setProperty('--pc', c.color);
-      b.innerHTML = `<div class="portrait" style="--pc:${c.color}"><span>${c.initial}</span></div>${c.name.split(' ')[0]}<small>${SKILLS[k]}</small>`;
+      b.innerHTML = `<div class="portrait" style="--pc:${c.color}"><span>${c.initial}</span></div>${T(c.name).split(' ')[0]}<small>${T(SKILLS[k])}</small>`;
+      setPortrait(b.querySelector('.portrait'), k);
       b.addEventListener('click', () => { R_.who = k; A.sfx.blip(); roomChars(); });
       box.appendChild(b);
     }
@@ -3527,7 +4388,7 @@ window.Rooms = Rooms;
     const box = $('roomInv'); box.innerHTML = '';
     for (const it of R_.inv) {
       const d = Rooms.ITEMS[it], b = document.createElement('div');
-      b.className = 'inv-item'; b.innerHTML = `<b>${d.icon}</b>${d.name}`;
+      b.className = 'inv-item'; b.innerHTML = `<b>${d.icon}</b>${T(d.name)}`;
       box.appendChild(b);
     }
   }
@@ -3540,9 +4401,9 @@ window.Rooms = Rooms;
   function codePad(o) {
     return new Promise(resolve => {
       const pad = $('codePad'), keys = $('codeKeys'), disp = $('codeDisplay');
-      $('codeTitle').textContent = o.title; $('codeHint').textContent = o.hint;
+      $('codeTitle').textContent = T(o.title); $('codeHint').textContent = T(o.hint);
       let val = [];
-      const COLORS = { ambar: ['ÁMBAR', '#ffb347'], rojo: ['ROJO', '#ff2a5a'], azul: ['AZUL', '#4fd8ff'], verde: ['VERDE', '#9dff6a'] };
+      const COLORS = { ambar: [T('ÁMBAR'), '#ffb347'], rojo: [T('ROJO'), '#ff2a5a'], azul: [T('AZUL'), '#4fd8ff'], verde: [T('VERDE'), '#9dff6a'] };
       const render = () => {
         disp.innerHTML = '';
         for (let i = 0; i < o.len; i++) {
@@ -3585,11 +4446,16 @@ window.Rooms = Rooms;
   function showFound(room) {
     return new Promise(resolve => {
       const o = room.object;
-      $('foundName').textContent = o.name; $('foundDesc').textContent = o.desc;
-      $('foundBosses').innerHTML = o.bosses.map(b => `<div class="boss-entry"><b>${b.name} · MISIÓN ${b.mission}</b>${b.weak}</div>`).join('');
+      $('foundName').textContent = T(o.name); $('foundDesc').textContent = T(o.desc);
+      $('foundBosses').innerHTML = o.bosses.map(b => `<div class="boss-entry"><b>${T(b.name)} · ${T('MISIÓN')} ${b.mission}</b>${T(b.weak)}</div>`).join('');
+      // Cada estancia (1-3) desbloquea el modo de armas de un personaje
+      const modeId = ROOM_MODE[room.id], mode = M.SHIP_MODES.find(m => m.id === modeId);
+      $('foundUnlock').textContent = mode && !(save.roomsDone || []).includes(room.id)
+        ? '★ ' + T('Nuevo modo de armas en el HANGAR') + ': ' + T(mode.name) + ' (' + T(CHARACTERS[mode.who].name) + ')' : '';
       save.analysis = save.analysis || {};
       for (const b of o.bosses) save.analysis[b.name] = true;
       save.files = Array.from(new Set([...(save.files || []), room.id])); persist();
+      if (save.files.length >= ROOMS.length) unlockAch('files_all');
       A.sfx.power(); show('found');
       $('foundOk').onclick = () => { $('foundOk').onclick = null; hideAll(); resolve(); };
     });
@@ -3604,7 +4470,7 @@ window.Rooms = Rooms;
       has: it => R_.inv.includes(it),
       give: it => { R_.inv.push(it); roomInv(); A.sfx.power(); },
       take: it => { R_.inv = R_.inv.filter(x => x !== it); roomInv(); },
-      say: (who, text) => dialog([{ who, text }]),
+      say: (who, text) => dialog([{ who, text }]),  // dialog() traduce
       sfx: n => A.sfx[n] && A.sfx[n](),
       code: o => codePad(o),
       found: async () => { R_.S.found = true; await showFound(R_.room); },
@@ -3622,11 +4488,14 @@ window.Rooms = Rooms;
       await dialog(room.outro);
       $('room').classList.remove('show');
       save.roomsDone = Array.from(new Set([...(save.roomsDone || []), room.id])); persist();
+      unlockAch('room_any');
+      if (save.roomsDone.length >= ROOMS.length) unlockAch('rooms_all');
+      if (M.SHIP_MODES.every(m => modeUnlocked(m.id))) unlockAch('all_modes');
       R_.room = null;
       const r = R_.resolve; R_.resolve = null; r && r();
     } else {
       $('room').classList.remove('show');
-      $('roomFailText').textContent = room.id === 4 ? '«EL HERALDO HA DESPERTADO.» — ORDO' : room.id === 3 ? 'La colada de metal fundido ha llegado a la cabina.' : room.id === 2 ? 'El oxígeno de la sonda se ha agotado.' : 'Los Guardianes del Censo han entrado en la sala de control.';
+      $('roomFailText').textContent = T(room.id === 4 ? '«EL HERALDO HA DESPERTADO.» — ORDO' : room.id === 3 ? 'La colada de metal fundido ha llegado a la cabina.' : room.id === 2 ? 'El oxígeno de la sonda se ha agotado.' : 'Los Guardianes del Censo han entrado en la sala de control.');
       show('roomFail');
     }
   }
@@ -3636,16 +4505,16 @@ window.Rooms = Rooms;
     return new Promise(async resolve => {
       const myRun = runId;
       R_.id++; R_.room = room; R_.S = {}; R_.inv = []; R_.who = 'dario'; R_.time = room.time; R_.busy = true; R_.resolve = resolve;
-      G.mode = 'room'; G.paused = false; resetField();
+      G.mode = 'room'; G.paused = false; resetField(); G.gameMode = 'story';
       $('controls').classList.remove('show'); clearComms();
       A.music('room');
-      $('cardNum').textContent = 'MISIÓN ESPECIAL · ESTANCIA ' + room.id + '/' + ROOMS.length;
-      $('cardTitle').textContent = room.title; $('cardPlace').textContent = room.place;
+      $('cardNum').textContent = T('MISIÓN ESPECIAL') + ' · ' + T('ESTANCIA') + ' ' + room.id + '/' + ROOMS.length;
+      $('cardTitle').textContent = T(room.title); $('cardPlace').textContent = T(room.place);
       show('card');
       await sleep(2600);
       if (myRun !== runId) return;
       hideAll();
-      $('roomTitle').textContent = room.title; $('roomPlace').textContent = room.place;
+      $('roomTitle').textContent = T(room.title); $('roomPlace').textContent = T(room.place);
       $('room').classList.add('show');
       roomLayout(); roomChars(); roomInv(); roomTimerUI();
       cancelAnimationFrame(R_.raf); R_.raf = requestAnimationFrame(roomDraw);
@@ -3688,12 +4557,12 @@ window.Rooms = Rooms;
     for (const room of ROOMS) {
       const got = (save.files || []).includes(room.id);
       const h = document.createElement('div'); h.className = 'file-obj';
-      h.textContent = got ? room.object.name : `ESTANCIA ${room.id} · ??? (tras la misión ${room.after})`;
+      h.textContent = got ? T(room.object.name) : `${T('ESTANCIA')} ${room.id} · ??? (${T('tras la misión')} ${room.after})`;
       list.appendChild(h);
       for (const b of room.object.bosses) {
         const d = document.createElement('div');
         d.className = 'boss-entry' + (got ? '' : ' locked');
-        d.innerHTML = `<b>${got ? b.name : '???'} · MISIÓN ${b.mission}</b>${got ? b.weak : 'Sin analizar.'}`;
+        d.innerHTML = `<b>${got ? T(b.name) : '???'} · ${T('MISIÓN')} ${b.mission}</b>${got ? T(b.weak) : T('Sin analizar.')}`;
         list.appendChild(d);
       }
     }
@@ -3719,7 +4588,10 @@ window.Rooms = Rooms;
     probe.remove();
   }
 
-  resize(); readSafeArea(); setSoundLabels(); toTitle();
+  resize(); readSafeArea();
+  M.loadArt(Object.keys(CHARACTERS), ROOMS.map(r => r.id));
+  M.Store.init(onFullGame);
+  applySettings(); toTitle();
   window.addEventListener('resize', () => setTimeout(readSafeArea, 200));
   requestAnimationFrame(frame);
 
