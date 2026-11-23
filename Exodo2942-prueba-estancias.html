@@ -1302,7 +1302,7 @@ const CHAPTERS = [
       { t: 86, who: 'lia',  text: 'El motor de fase responde más rápido de lo que debería. No lo entiendo.' },
       { t: 102, who: 'nora', text: 'Salimos del bloque 77. Las torres del distrito 4, justo delante.' },
     ],
-    miniboss: { type: 'censor', name: 'GUARDIÁN DEL CENSO', hp: 600, line: { who: 'nora', text: 'Un Guardián del Censo nos corta el paso. ¡Derríbalo!' } },
+    miniboss: { type: 'censor', name: 'GUARDIÁN DEL CENSO', hp: 1600, turretHp: 600, escorts: true, line: { who: 'nora', text: 'Un Guardián del Censo nos corta el paso. ¡Derríbalo!' } },
     outro: [
       { who: 'teo', text: 'Papá… ¿nos buscan por mi culpa?' },
       { who: 'dario', text: 'Te buscan porque eres libre, Teo. Y eso no es ninguna culpa.' },
@@ -2831,7 +2831,9 @@ const Bosses = (() => {
       glow('#ff8a2a', 16); g.fillStyle = '#3a1406'; g.beginPath(); g.arc(0, 0, 26, 0, TAU); g.fill();
       g.strokeStyle = '#ffb36b'; g.lineWidth = 3; g.stroke(); g.fillStyle = '#ffb36b'; g.fillRect(-5, 0, 10, 30);
     });
-    b.parts = [{ ox: -112, oy: 24, r: 28, hp: 260, max: 260, alive: true }, { ox: 112, oy: 24, r: 28, hp: 260, max: 260, alive: true }];
+    // Opciones por misión: turretHp (vida de cada torreta) y escorts (pide cazas de escolta)
+    const th = def.turretHp || 260;
+    b.parts = [{ ox: -112, oy: 24, r: 28, hp: th, max: th, alive: true }, { ox: 112, oy: 24, r: 28, hp: th, max: th, alive: true }];
     b.spiral = 0;
     b.update = function (dt) {
       this.t += dt;
@@ -2843,6 +2845,7 @@ const Bosses = (() => {
       }
       this.every('ring', ph === 2 ? 1.4 : 2.4, () => G.ring(this.x, this.y + 10, ph === 0 ? 14 : 20, 170, this.t, 'bRed'));
       if (ph >= 1) this.every('spiral', 0.09, () => { this.spiral += 0.37; G.shot(this.x, this.y + 10, Math.cos(this.spiral) * 200, Math.sin(this.spiral) * 200, 'bViolet'); });
+      if (def.escorts) this.every('escort', ph === 2 ? 4.5 : 6.5, () => { G.spawnEnemy('dart', this.x - 140, this.y + 20, { ai: 'dive', speed: 300 }); G.spawnEnemy('dart', this.x + 140, this.y + 20, { ai: 'dive', speed: 300 }); });
     };
     b.hitboxes = function () {
       const hb = [{ x: this.x, y: this.y + 6, r: 52, part: null }];

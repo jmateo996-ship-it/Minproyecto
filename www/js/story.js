@@ -54,7 +54,7 @@ const CHAPTERS = [
       { t: 86, who: 'lia',  text: 'El motor de fase responde más rápido de lo que debería. No lo entiendo.' },
       { t: 102, who: 'nora', text: 'Salimos del bloque 77. Las torres del distrito 4, justo delante.' },
     ],
-    miniboss: { type: 'censor', name: 'GUARDIÁN DEL CENSO', hp: 600, line: { who: 'nora', text: 'Un Guardián del Censo nos corta el paso. ¡Derríbalo!' } },
+    miniboss: { type: 'censor', name: 'GUARDIÁN DEL CENSO', hp: 1600, turretHp: 600, escorts: true, line: { who: 'nora', text: 'Un Guardián del Censo nos corta el paso. ¡Derríbalo!' } },
     outro: [
       { who: 'teo', text: 'Papá… ¿nos buscan por mi culpa?' },
       { who: 'dario', text: 'Te buscan porque eres libre, Teo. Y eso no es ninguna culpa.' },
