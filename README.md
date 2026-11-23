@@ -14,6 +14,11 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
   - **Mini jefe** en 12 misiones: Guardián del Censo, Torre Centinela, Excavadora Minera, Leviatán Vítreo, Fundidor, Heraldo de ORDO… Son más débiles que los jefes.
   - **Jefe** en las misiones 5 (**Fragata Lanza**) y 10 (**Forja Madre**).
   - **Súper jefe** en la misión 15: **ORDO PRIMORDIAL**, con 4 fases, 6 satélites que bloquean tus disparos, muros de balas y una fase final con el núcleo al descubierto.
+- **4 estancias de personajes (puzle)**, después de las misiones 3, 6, 9 y 12. La familia baja de la nave y tiene que escapar de una sala en 6 minutos:
+  - **La Esclusa 9**, **La Sonda Arenal‑7**, **La Cabina del Capataz** y **El Pecio del Heraldo**.
+  - Cada personaje tiene su habilidad: Darío (fuerza), Lía (ingeniería), Nora (informática) y Teo (es pequeño y ORDO no puede detectarlo).
+  - Hay objetos de inventario, códigos numéricos, de letras y de colores, y un botón de PISTA.
+  - En cada estancia hay un **objeto de la historia** que desbloquea el **análisis** de los jefes y mini jefes de las 3 misiones siguientes, incluido el súper jefe: **+35 % de daño** contra ellos y su punto débil marcado. Todo se consulta en **EXPEDIENTES**.
 - **16 tipos de enemigo**, entre ellos bombarderos, francotiradores que avisan con un láser antes de disparar, divisores que se parten en dos, orbitadores, enjambres y acorazados. Los nuevos se van incorporando misión a misión.
 - Enemigos resistentes (`ENEMY_TOUGHNESS = 3` en `www/js/game.js`, el triple del valor original), con barra de vida en los más grandes.
 - Oleada de asalto cada 40 segundos y **punto de control al minuto 1**: si caes, sigues desde ahí con la potencia que llevabas.
@@ -76,6 +81,7 @@ www/
   css/style.css
   js/story.js           guion completo (personajes, prólogo, 15 misiones, epílogo)
   js/game.js            motor: bucle, jugador, enemigos, oleadas, colisiones, flujo narrativo
+  js/rooms.js           las 4 estancias de puzle (escenarios, objetos, códigos, pistas)
   js/bosses.js          mini jefes, jefes de las misiones 5 y 10 y súper jefe de la 15
   js/backgrounds.js     fondos parallax procedurales por capítulo
   js/sprites.js         naves, balas y efectos vectoriales a resolución nativa

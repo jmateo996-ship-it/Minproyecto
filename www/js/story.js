@@ -101,8 +101,8 @@ const CHAPTERS = [
     ],
     miniboss: { type: 'censor', name: 'GUARDIÁN DE LA CÚPULA', hp: 800, line: { who: 'nora', text: 'El guardián de la compuerta despierta. Sin él fuera, no salimos.' } },
     outro: [
-      { who: 'teo', text: '¡Estrellas! Nunca las había visto sin el cristal de la cúpula.' },
-      { who: 'nora', text: 'Trazo rumbo al Anillo de Ceniza: el único corredor sin balizas de ORDO.' },
+      { who: 'dario', text: 'Hemos cruzado la compuerta 9… pero ¿por qué no avanzamos?' },
+      { who: 'nora', text: 'Estamos dentro de la esclusa. ORDO ha bloqueado la compuerta exterior.' },
     ],
   },
   {
@@ -182,8 +182,8 @@ const CHAPTERS = [
     ],
     miniboss: { type: 'leviathan', name: 'LEVIATÁN VÍTREO', hp: 950, line: { who: 'teo', text: 'Algo grande se mueve en el cristal. Canta muy triste.' } },
     outro: [
-      { who: 'nora', text: 'El archivo sigue. Hay algo sobre el borde del Dominio, pero está cifrado en capas.' },
-      { who: 'lia', text: 'Descífralo mientras volamos. Necesitamos saberlo todo.' },
+      { who: 'nora', text: 'La descarga se ha cortado a la mitad. El resto del archivo sigue dentro de la sonda.' },
+      { who: 'lia', text: 'Pues entraremos a buscarlo. Necesitamos saberlo todo.' },
     ],
   },
   {
@@ -252,6 +252,7 @@ const CHAPTERS = [
     outro: [
       { who: 'teo', text: 'Vex nos ha ayudado. ¿Ya es buena?' },
       { who: 'dario', text: 'Siempre lo fue, campeón. Solo le faltaba alguien que creyera en ella.' },
+      { who: 'sys', text: 'Alerta: temperatura del casco crítica. Se recomienda atraque inmediato.' },
     ],
   },
   {
@@ -327,7 +328,8 @@ const CHAPTERS = [
     miniboss: { type: 'censor', name: 'CRUCERO DE ORDO', hp: 1380, line: { who: 'vex', text: 'Un crucero pesado de ORDO rompe nuestra línea. Es vuestro, Darío.' } },
     outro: [
       { who: 'dario', text: 'Vex, cuando todo esto acabe…' },
-      { who: 'vex', text: 'Cuando todo esto acabe, me invitas a cenar al otro lado. Vete ya.' },
+      { who: 'vex', text: 'Cuando todo esto acabe, me invitas a cenar al otro lado.' },
+      { who: 'vex', text: 'Pero antes de seguir, tengo algo para vosotros: los restos del Heraldo que derribasteis.' },
     ],
   },
   {

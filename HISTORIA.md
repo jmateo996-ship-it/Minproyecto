@@ -50,6 +50,22 @@ Son 15 misiones de 2 minutos en tres actos. Cada misión termina con un mini jef
 14. **La Canción al Revés** · Teo abre la Grieta. ORDO concentra toda su mente en un solo cuerpo.
 15. **ORDO** · **SÚPER JEFE: ORDO PRIMORDIAL.** Tras derribarlo, Lía sella la Grieta y el Protocolo inverso libera a todo el Dominio.
 
+## Estancias (misiones de personajes)
+
+Cada 3 misiones, la familia baja del *Esperanza* y tiene que escapar de una estancia. Lo que encuentra allí explica cómo vencer a los siguientes jefes.
+
+| Tras la misión | Estancia | Objeto de la historia | Analiza |
+|---|---|---|---|
+| 3 | **La Esclusa 9**: ORDO bloquea la compuerta exterior de la cúpula. | Plano de mantenimiento de la Fragata Lanza, firmado por Vex | Excavadora Minera, Fragata Lanza, Leviatán Vítreo |
+| 6 | **La Sonda Arenal‑7**: la descarga del archivo se corta y hay que entrar en la sonda. | Expediente del Instituto: Proyecto Leviatán | Leviatán Ancestral, Vigía del Instituto, Fundidor |
+| 9 | **La Cabina del Capataz**: el casco se recalienta y se refugian en la Forja. | Cuaderno de Bruno Kael, el último capataz humano | Forja Madre, Heraldo de ORDO, Crucero de ORDO |
+| 12 | **El Pecio del Heraldo**: Vex les trae los restos del Heraldo. | Núcleo de memoria de ORDO | Heraldo del Umbral, Taladro de la Grieta, **ORDO PRIMORDIAL** |
+
+Detalles que unen las estancias con la historia:
+- En la estancia 1, la clave de la taquilla es el año en que **Darío y Vex fundaron juntos** el escuadrón.
+- En la estancia 2, la clave del archivo es **ARENAL**, el apellido de soltera de Lía.
+- En la estancia 4, solo **Teo** puede cruzar la barrera de ORDO, porque no aparece en sus mapas. Además, **Lía prueba por primera vez su Protocolo inverso**, el mismo que sellará la Grieta al final.
+
 ## Epílogo
 
 Al otro lado hay un sol imperfecto que nadie ha forjado y un océano que huele a sal. Los Vega aterrizan en una playa de arena negra.

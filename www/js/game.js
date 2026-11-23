@@ -16,7 +16,7 @@
 
   /* ------------------------------ Guardado ----------------------------- */
   const SAVE_KEY = 'exodo2942.save';
-  const save = (() => { try { return Object.assign({ unlocked: 1, hiscore: 0, sound: true, seenPrologue: false }, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { return { unlocked: 1, hiscore: 0, sound: true }; } })();
+  const save = (() => { try { return Object.assign({ unlocked: 1, hiscore: 0, sound: true, seenPrologue: false, analysis: {}, files: [], roomsDone: [] }, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { return { unlocked: 1, hiscore: 0, sound: true }; } })();
   const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* sin almacenamiento */ } };
 
   /* ------------------------------ Lienzo ------------------------------- */
@@ -322,6 +322,7 @@
   function damageBoss(hb, dmg) {
     const b = G.boss;
     if (!b || b.dead) return;
+    if (b.analyzed) dmg *= 1.35; // punto débil conocido gracias a los objetos de las estancias
     if (hb.part) {
       hb.part.hp -= dmg;
       if (hb.part.hp <= 0 && hb.part.alive) { hb.part.alive = false; explosion(hb.x, hb.y, 2, '#ffb347'); A.sfx.bigExplode(); G.score += 2500; G.shake = 8; b.hp -= b.maxHp * 0.06; }
@@ -491,7 +492,7 @@
     ctx.setTransform(G.R, 0, 0, G.R, 0, 0);
     if (G.shake > 0) ctx.translate(rand(-G.shake, G.shake) * 0.6, rand(-G.shake, G.shake) * 0.6);
     G.bg.draw(ctx);
-    if (G.mode === 'menu') { drawMenuShip(); return; }
+    if (G.mode === 'menu' || G.mode === 'room') { if (G.mode === 'menu') drawMenuShip(); return; }
 
     // Objetos
     for (const it of G.items) Sprites.draw(ctx, 'pw' + it.kind, it.x, it.y, 0, 1 + Math.sin(it.t * 6) * 0.06);
@@ -511,6 +512,11 @@
     const b = G.boss;
     if (b && !b.dead) {
       b.draw(ctx);
+      if (b.analyzed && !b.entering) {
+        const hb = b.hitboxes()[0], r = hb.r + 10 + Math.sin(G.time * 6) * 4;
+        ctx.save(); ctx.strokeStyle = 'rgba(157,255,106,0.75)'; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
+        ctx.beginPath(); ctx.arc(hb.x, hb.y, r, G.time, G.time + TAU); ctx.stroke(); ctx.restore();
+      }
       if (b.flash > 0) { ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(0, 0, G.W, G.H); }
     }
     // Jugador
@@ -596,6 +602,7 @@
       const y = top + 140;
       ctx.textAlign = 'center'; ctx.font = '800 14px system-ui, sans-serif'; ctx.fillStyle = '#ffd0da';
       ctx.fillText(b.name, G.W / 2, y);
+      if (b.analyzed) { ctx.font = '700 11px system-ui, sans-serif'; ctx.fillStyle = '#9dff6a'; ctx.fillText('◆ ANALIZADO · +35 % DAÑO', G.W / 2, y + 38); }
       drawBar(60, y + 20, G.W - 120, b.isSuper ? 14 : 10, b.hp / b.maxHp, b.isSuper ? '#ff2a4f' : '#ff2a5a');
       if (b.phases) { ctx.fillStyle = '#fff'; for (let i = 1; i < b.phases; i++) ctx.fillRect(60 + (G.W - 120) * i / b.phases - 1, y + 17, 2, 20); }
     }
@@ -661,12 +668,12 @@
   tap($('btnBomb'), usePulse); tap($('btnPhase'), usePhase); tap($('btnPause'), () => togglePause());
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { if (G.mode === 'play' && !G.paused) togglePause(true); A.suspend(); }
+    if (document.hidden) { if (G.mode === 'play' && !G.paused) togglePause(true); else if (G.mode === 'room' && !G.paused) { G.paused = true; show('pause'); } A.suspend(); }
     else A.resume();
   });
 
   /* ---------------------------- Pantallas UI --------------------------- */
-  const screens = ['title', 'chapters', 'story', 'card', 'pause', 'gameover'];
+  const screens = ['title', 'chapters', 'story', 'card', 'pause', 'gameover', 'found', 'files', 'roomFail'];
   function show(id) { for (const s of screens) $(s).classList.toggle('show', s === id); }
   function hideAll() { show(null); }
 
@@ -811,7 +818,7 @@
     await dialog(G.chapter.boss.intro);
     if (id !== runId) return;
     $('controls').classList.add('show');
-    G.boss = Bosses.create(G, G.chapter.boss);
+    G.boss = Bosses.create(G, G.chapter.boss); G.boss.analyzed = isAnalyzed(G.chapter.boss.name);
     G.phaseState = 'boss';
   }
 
@@ -824,7 +831,7 @@
     clearComms(); if (def.line) showComm(def.line);
     await sleep(2200);
     if (id !== runId) return;
-    G.boss = Bosses.create(G, def); G.boss.mini = true;
+    G.boss = Bosses.create(G, def); G.boss.mini = true; G.boss.analyzed = isAnalyzed(def.name);
     G.phaseState = 'boss';
   }
 
@@ -874,8 +881,10 @@
     const next = G.chapterIdx + 1;
     save.unlocked = Math.max(save.unlocked, Math.min(CHAPTERS.length, next + 1));
     persist();
-    if (next < CHAPTERS.length) startChapter(next, { keep: true });
-    else ending();
+    const room = ROOMS.find(r => r.after === G.chapter.id);
+    const go = () => { if (next < CHAPTERS.length) startChapter(next, { keep: true }); else ending(); };
+    if (room) runRoom(room).then(go); // runRoom solo se resuelve si la familia escapa
+    else go();
   }
 
   /* Misión sin jefe: sobreviviste hasta el final de la cuenta atrás */
@@ -930,7 +939,7 @@
   function toTitle() {
     runId++; clearComms();
     G.mode = 'menu'; G.chapter = null; G.player = null; G.paused = false; resetField();
-    $('controls').classList.remove('show'); $('dialog').classList.remove('show');
+    $('controls').classList.remove('show'); $('dialog').classList.remove('show'); closeRoom();
     G.bg = Backgrounds.create('title', G.W, G.H, G.R);
     $('hiscore').textContent = save.hiscore ? 'RÉCORD · ' + String(save.hiscore).padStart(8, '0') : '';
     show('title'); A.music('title');
@@ -958,6 +967,15 @@
       b.innerHTML = `${c.id}. ${c.title}${tag}<small>${locked ? 'Bloqueada' : c.place + ' · ' + Math.round(c.duration / 60) + ' min'}</small>`;
       b.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; hideAll(); startChapter(i); });
       list.appendChild(b);
+      const room = ROOMS.find(r => r.after === c.id);
+      if (room) {
+        const rl = save.unlocked <= room.after;
+        const rb = document.createElement('button');
+        rb.className = 'btn room-entry' + (rl ? ' locked' : '');
+        rb.innerHTML = `◆ ${room.title}<em>ESTANCIA</em><small>${rl ? 'Bloqueada' : 'Misión de personajes · puzle'}</small>`;
+        rb.addEventListener('click', () => { A.init(); A.sfx.select(); G.score = 0; G.player = newPlayer(); hideAll(); runRoom(room).then(() => startChapter(room.after, { keep: true })); });
+        list.appendChild(rb);
+      }
     });
   }
 
@@ -971,6 +989,235 @@
   $('btnRetry').addEventListener('click', () => { G.score = G.chapterStartScore; hideAll(); startChapter(G.chapterIdx, { snap: G.missionSnap }); });
   $('btnCheckpoint').addEventListener('click', () => { G.score = G.checkpoint.score; hideAll(); startChapter(G.chapterIdx, { snap: G.checkpoint, fromCheckpoint: true }); });
   $('btnMenu').addEventListener('click', toTitle);
+
+  /* =========================================================================
+     ESTANCIAS: misiones de personajes (puzle). Datos en rooms.js.
+     ========================================================================= */
+  const ROOMS = window.Rooms.ROOMS;
+  const ROOM_CHARS = ['dario', 'lia', 'nora', 'teo'];
+  const SKILLS = { dario: 'Fuerza', lia: 'Ingeniería', nora: 'Informática', teo: 'Pequeño · invisible' };
+  const isAnalyzed = name => !!(save.analysis && save.analysis[name]);
+  const roomCanvas = $('roomCanvas'), rctx = roomCanvas.getContext('2d');
+  const R_ = { room: null, S: null, inv: [], who: 'dario', time: 0, busy: false, id: 0, resolve: null, raf: 0, view: null };
+
+  function roomLayout() {
+    const st = $('roomStage').getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    roomCanvas.width = Math.round(st.width * dpr); roomCanvas.height = Math.round(st.height * dpr);
+    const k = Math.min(st.width / Rooms.W, st.height / Rooms.H);
+    R_.view = { k, ox: (st.width - Rooms.W * k) / 2, oy: (st.height - Rooms.H * k) / 2, dpr };
+    const hot = $('roomHot'); hot.innerHTML = '';
+    for (const h of R_.room.hotspots) {
+      const b = document.createElement('button');
+      b.className = 'hot';
+      b.style.left = (R_.view.ox + h.x * k) + 'px'; b.style.top = (R_.view.oy + h.y * k) + 'px';
+      b.style.width = (h.w * k) + 'px'; b.style.height = (h.h * k) + 'px';
+      b.innerHTML = `<span>${h.name}</span>`;
+      b.addEventListener('click', () => roomAct(h));
+      hot.appendChild(b);
+    }
+  }
+  function roomDraw(now) {
+    if (!R_.room) return;
+    const v = R_.view, t = now / 1000;
+    rctx.setTransform(1, 0, 0, 1, 0, 0);
+    rctx.fillStyle = '#020306'; rctx.fillRect(0, 0, roomCanvas.width, roomCanvas.height);
+    rctx.setTransform(v.k * v.dpr, 0, 0, v.k * v.dpr, v.ox * v.dpr, v.oy * v.dpr);
+    rctx.R = v.k * v.dpr;
+    rctx.save(); rctx.beginPath(); rctx.rect(0, 0, Rooms.W, Rooms.H); rctx.clip();
+    Rooms.base(rctx, R_.room.pal, t);
+    for (const h of R_.room.hotspots) { rctx.save(); h.draw(rctx, R_.S, t); rctx.restore(); }
+    rctx.restore();
+    R_.raf = requestAnimationFrame(roomDraw);
+  }
+  function roomChars() {
+    const box = $('roomChars'); box.innerHTML = '';
+    for (const k of ROOM_CHARS) {
+      const c = CHARACTERS[k], b = document.createElement('button');
+      b.className = 'char-btn' + (R_.who === k ? ' active' : '');
+      b.style.setProperty('--pc', c.color);
+      b.innerHTML = `<div class="portrait" style="--pc:${c.color}"><span>${c.initial}</span></div>${c.name.split(' ')[0]}<small>${SKILLS[k]}</small>`;
+      b.addEventListener('click', () => { R_.who = k; A.sfx.blip(); roomChars(); });
+      box.appendChild(b);
+    }
+  }
+  function roomInv() {
+    const box = $('roomInv'); box.innerHTML = '';
+    for (const it of R_.inv) {
+      const d = Rooms.ITEMS[it], b = document.createElement('div');
+      b.className = 'inv-item'; b.innerHTML = `<b>${d.icon}</b>${d.name}`;
+      box.appendChild(b);
+    }
+  }
+  function roomTimerUI() {
+    const el = $('roomTimer'); el.textContent = fmtTime(Math.max(0, R_.time));
+    el.classList.toggle('low', R_.time < 60);
+  }
+
+  /* Teclado: dígitos, letras o secuencia de colores. Devuelve true si se acierta. */
+  function codePad(o) {
+    return new Promise(resolve => {
+      const pad = $('codePad'), keys = $('codeKeys'), disp = $('codeDisplay');
+      $('codeTitle').textContent = o.title; $('codeHint').textContent = o.hint;
+      let val = [];
+      const COLORS = { ambar: ['ÁMBAR', '#ffb347'], rojo: ['ROJO', '#ff2a5a'], azul: ['AZUL', '#4fd8ff'], verde: ['VERDE', '#9dff6a'] };
+      const render = () => {
+        disp.innerHTML = '';
+        for (let i = 0; i < o.len; i++) {
+          const s = document.createElement('i'); const v = val[i];
+          if (v !== undefined) { if (o.type === 'colors') s.style.background = COLORS[v][1]; else s.textContent = v; }
+          disp.appendChild(s);
+        }
+      };
+      const close = ok => { pad.classList.remove('show'); $('codeCancel').onclick = null; resolve(ok); };
+      const check = () => {
+        const ok = o.type === 'colors' ? val.join() === o.answer.join() : val.join('') === o.answer;
+        if (ok) { A.sfx.power(); setTimeout(() => close(true), 250); return; }
+        A.sfx.hurt(); vibrate(80);
+        const p = pad.querySelector('.pad'); p.classList.remove('wrong'); void p.offsetWidth; p.classList.add('wrong');
+        setTimeout(() => { val = []; render(); }, 350);
+      };
+      const press = k => {
+        if (k === '⌫') { val.pop(); render(); return; }
+        if (val.length >= o.len) return;
+        val.push(k); A.sfx.blip(); render();
+        if (val.length === o.len) check();
+      };
+      keys.className = 'pad-keys' + (o.type === 'letters' ? ' letters' : o.type === 'colors' ? ' colors' : '');
+      keys.innerHTML = '';
+      const list = o.type === 'digits' ? ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0']
+        : o.type === 'letters' ? 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').concat('⌫')
+        : Object.keys(COLORS).concat('⌫');
+      for (const k of list) {
+        const b = document.createElement('button');
+        if (o.type === 'colors' && COLORS[k]) { b.textContent = COLORS[k][0]; b.style.background = COLORS[k][1] + '44'; b.style.borderColor = COLORS[k][1]; }
+        else b.textContent = k;
+        b.addEventListener('click', () => press(k));
+        keys.appendChild(b);
+      }
+      $('codeCancel').onclick = () => close(false);
+      render(); pad.classList.add('show');
+    });
+  }
+
+  function showFound(room) {
+    return new Promise(resolve => {
+      const o = room.object;
+      $('foundName').textContent = o.name; $('foundDesc').textContent = o.desc;
+      $('foundBosses').innerHTML = o.bosses.map(b => `<div class="boss-entry"><b>${b.name} · MISIÓN ${b.mission}</b>${b.weak}</div>`).join('');
+      save.analysis = save.analysis || {};
+      for (const b of o.bosses) save.analysis[b.name] = true;
+      save.files = Array.from(new Set([...(save.files || []), room.id])); persist();
+      A.sfx.power(); show('found');
+      $('foundOk').onclick = () => { $('foundOk').onclick = null; hideAll(); resolve(); };
+    });
+  }
+
+  async function roomAct(h) {
+    if (R_.busy || G.paused || !R_.room) return;
+    R_.busy = true;
+    const id = R_.id;
+    const C = {
+      S: R_.S, who: R_.who,
+      has: it => R_.inv.includes(it),
+      give: it => { R_.inv.push(it); roomInv(); A.sfx.power(); },
+      take: it => { R_.inv = R_.inv.filter(x => x !== it); roomInv(); },
+      say: (who, text) => dialog([{ who, text }]),
+      sfx: n => A.sfx[n] && A.sfx[n](),
+      code: o => codePad(o),
+      found: async () => { R_.S.found = true; await showFound(R_.room); },
+      escape: async () => { R_.S.escaped = true; },
+    };
+    try { await h.act(C); } finally { R_.busy = false; }
+    if (id === R_.id && R_.S.escaped) finishRoom(true);
+  }
+
+  async function finishRoom(won) {
+    const room = R_.room; if (!room) return;
+    clearInterval(R_.timer); cancelAnimationFrame(R_.raf);
+    if (won) {
+      A.sfx.select();
+      await dialog(room.outro);
+      $('room').classList.remove('show');
+      save.roomsDone = Array.from(new Set([...(save.roomsDone || []), room.id])); persist();
+      R_.room = null;
+      const r = R_.resolve; R_.resolve = null; r && r();
+    } else {
+      $('room').classList.remove('show');
+      $('roomFailText').textContent = room.id === 4 ? '«EL HERALDO HA DESPERTADO.» — ORDO' : room.id === 3 ? 'La colada de metal fundido ha llegado a la cabina.' : room.id === 2 ? 'El oxígeno de la sonda se ha agotado.' : 'Los Guardianes del Censo han entrado en la sala de control.';
+      show('roomFail');
+    }
+  }
+
+  /* Ejecuta una estancia. Resuelve cuando la familia escapa. */
+  function runRoom(room) {
+    return new Promise(async resolve => {
+      const myRun = runId;
+      R_.id++; R_.room = room; R_.S = {}; R_.inv = []; R_.who = 'dario'; R_.time = room.time; R_.busy = true; R_.resolve = resolve;
+      G.mode = 'room'; G.paused = false; resetField();
+      $('controls').classList.remove('show'); clearComms();
+      A.music('room');
+      $('cardNum').textContent = 'MISIÓN ESPECIAL · ESTANCIA ' + room.id + '/' + ROOMS.length;
+      $('cardTitle').textContent = room.title; $('cardPlace').textContent = room.place;
+      show('card');
+      await sleep(2600);
+      if (myRun !== runId) return;
+      hideAll();
+      $('roomTitle').textContent = room.title; $('roomPlace').textContent = room.place;
+      $('room').classList.add('show');
+      roomLayout(); roomChars(); roomInv(); roomTimerUI();
+      cancelAnimationFrame(R_.raf); R_.raf = requestAnimationFrame(roomDraw);
+      await dialog(room.intro);
+      if (myRun !== runId) return;
+      R_.busy = false;
+      clearInterval(R_.timer);
+      R_.timer = setInterval(() => {
+        if (myRun !== runId) { clearInterval(R_.timer); return; }
+        const blocked = G.paused || $('dialog').classList.contains('show') || $('codePad').classList.contains('show') || $('found').classList.contains('show');
+        if (blocked) return;
+        R_.time -= 0.25; roomTimerUI();
+        if (R_.time <= 0 && !R_.S.escaped) finishRoom(false);
+      }, 250);
+    });
+  }
+  function closeRoom() {
+    clearInterval(R_.timer); cancelAnimationFrame(R_.raf);
+    R_.room = null; R_.resolve = null;
+    $('room').classList.remove('show'); $('codePad').classList.remove('show');
+  }
+
+  $('roomHint').addEventListener('click', () => {
+    if (!R_.room || R_.busy) return;
+    const h = R_.room.hints.map(f => f(R_.S)).find(Boolean);
+    if (h) { R_.busy = true; dialog([h]).then(() => { R_.busy = false; }); }
+  });
+  $('roomPause').addEventListener('click', () => { if (!R_.room) return; G.paused = true; show('pause'); });
+  $('roomRetry').addEventListener('click', () => {
+    const room = R_.room, resolve = R_.resolve; hideAll();
+    runId++;
+    runRoom(room).then(resolve);
+  });
+  $('roomMenu').addEventListener('click', toTitle);
+  window.addEventListener('resize', () => { if (R_.room) setTimeout(roomLayout, 150); });
+
+  /* Expedientes: objetos encontrados y análisis de jefes */
+  function buildFiles() {
+    const list = $('filesList'); list.innerHTML = '';
+    for (const room of ROOMS) {
+      const got = (save.files || []).includes(room.id);
+      const h = document.createElement('div'); h.className = 'file-obj';
+      h.textContent = got ? room.object.name : `ESTANCIA ${room.id} · ??? (tras la misión ${room.after})`;
+      list.appendChild(h);
+      for (const b of room.object.bosses) {
+        const d = document.createElement('div');
+        d.className = 'boss-entry' + (got ? '' : ' locked');
+        d.innerHTML = `<b>${got ? b.name : '???'} · MISIÓN ${b.mission}</b>${got ? b.weak : 'Sin analizar.'}`;
+        list.appendChild(d);
+      }
+    }
+  }
+  $('btnFiles').addEventListener('click', () => { A.init(); A.sfx.select(); buildFiles(); show('files'); });
+  $('filesBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
 
   /* ------------------------------- Bucle ------------------------------- */
   let last = performance.now();
@@ -996,5 +1243,5 @@
 
   // Exponer para depuración / pruebas automáticas
   window.__G = G;
-  window.__debug = { startChapter, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
+  window.__debug = { startChapter, runRoom: i => runRoom(ROOMS[i]), R_, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
 })();

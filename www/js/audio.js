@@ -77,6 +77,7 @@ const Audio = (() => {
     forge:     { root: 40, bpm: 144, scale: [0, 1, 5, 7, 8, 12],  prog: [0, 0, 1, -2], lead: 1 },
     rift:      { root: 42, bpm: 150, scale: [0, 3, 6, 7, 10, 12], prog: [0, -4, -1, -6], lead: 1 },
     boss:      { root: 41, bpm: 156, scale: [0, 1, 4, 7, 8, 11],  prog: [0, 1, 0, -1], lead: 1 },
+    room:      { root: 44, bpm: 96,  scale: [0, 2, 3, 7, 8, 12],  prog: [0, -2, -4, -5], lead: 0.5 },
     ending:    { root: 48, bpm: 76,  scale: [0, 2, 4, 7, 9, 12],  prog: [0, 5, -3, 7], lead: 0.6 },
   };
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);

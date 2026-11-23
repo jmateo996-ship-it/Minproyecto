@@ -25,6 +25,7 @@
     <div class="menu">
       <button id="btnPlay" class="btn primary">NUEVA PARTIDA</button>
       <button id="btnChapters" class="btn">MISIONES</button>
+      <button id="btnFiles" class="btn small">EXPEDIENTES</button>
       <button id="btnSound" class="btn small">SONIDO: SÍ</button>
     </div>
     <div class="hiscore" id="hiscore"></div>
@@ -102,6 +103,59 @@
     </div>
   </section>
 
+  <!-- Estancia (misión de personajes) -->
+  <section id="room" class="room">
+    <div class="room-top">
+      <div class="room-title"><div id="roomTitle"></div><div id="roomPlace" class="room-place"></div></div>
+      <div id="roomTimer" class="room-timer">6:00</div>
+      <button id="roomHint" class="room-btn">PISTA</button>
+      <button id="roomPause" class="room-btn">II</button>
+    </div>
+    <div id="roomStage" class="room-stage"><canvas id="roomCanvas"></canvas><div id="roomHot"></div></div>
+    <div id="roomInv" class="room-inv"></div>
+    <div id="roomChars" class="room-chars"></div>
+  </section>
+
+  <!-- Teclado de códigos -->
+  <section id="codePad" class="codepad">
+    <div class="pad">
+      <div class="pad-title" id="codeTitle"></div>
+      <div class="pad-hint" id="codeHint"></div>
+      <div class="pad-display" id="codeDisplay"></div>
+      <div class="pad-keys" id="codeKeys"></div>
+      <button class="btn small" id="codeCancel">CERRAR</button>
+    </div>
+  </section>
+
+  <!-- Objeto de la historia encontrado -->
+  <section id="found" class="screen dim">
+    <div class="found-card">
+      <div class="found-kicker">OBJETO ENCONTRADO</div>
+      <div class="found-name" id="foundName"></div>
+      <div class="found-desc" id="foundDesc"></div>
+      <div class="found-kicker small">ANÁLISIS DESBLOQUEADO · +35 % DE DAÑO</div>
+      <div id="foundBosses" class="found-bosses"></div>
+      <button id="foundOk" class="btn primary">CONTINUAR</button>
+    </div>
+  </section>
+
+  <!-- Expedientes -->
+  <section id="files" class="screen dim">
+    <h2>EXPEDIENTES</h2>
+    <div id="filesList" class="files-list"></div>
+    <button id="filesBack" class="btn small">VOLVER</button>
+  </section>
+
+  <!-- Fallo en la estancia -->
+  <section id="roomFail" class="screen dim">
+    <h2 class="red">OS HAN ATRAPADO</h2>
+    <p class="go-quote" id="roomFailText"></p>
+    <div class="menu">
+      <button id="roomRetry" class="btn primary">REINTENTAR ESTANCIA</button>
+      <button id="roomMenu" class="btn small">MENÚ</button>
+    </div>
+  </section>
+
   <div id="rotate" class="rotate">Gira el dispositivo en vertical</div>
 
   <script src="js/story.js"></script>
@@ -109,6 +163,7 @@
   <script src="js/sprites.js"></script>
   <script src="js/backgrounds.js"></script>
   <script src="js/bosses.js"></script>
+  <script src="js/rooms.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>
