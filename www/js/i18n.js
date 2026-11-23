@@ -10,8 +10,9 @@ const I18N = (() => {
   let lang = 'es';
 
   function detect() {
+    // Español por defecto; inglés solo si el dispositivo está en inglés
     const n = (navigator.language || 'es').toLowerCase();
-    return n.startsWith('es') ? 'es' : 'en';
+    return n.startsWith('en') ? 'en' : 'es';
   }
   function T(s) {
     if (lang === 'es' || s == null) return s;

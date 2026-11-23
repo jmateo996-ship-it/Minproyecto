@@ -28,7 +28,7 @@ canvas#game { position: absolute; left: 50%; top: 50%; transform: translate(-50%
 h2 { margin: 0; font-size: clamp(22px, 6vw, 40px); letter-spacing: .25em; font-weight: 800; text-shadow: 0 0 18px var(--cyan); }
 h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
 
-.logo { margin-top: -6vh; }
+.logo { margin-top: 36px; }
 .logo-top { font-size: clamp(40px, 15vw, 110px); font-weight: 900; letter-spacing: .18em; line-height: 1.15; padding-top: .1em; background: linear-gradient(180deg, #fff 10%, #8fe6ff 55%, #2a7dff); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 18px rgba(79,216,255,.7)); }
 .logo-num { font-size: clamp(30px, 11vw, 80px); font-weight: 300; letter-spacing: .5em; margin-left: .5em; color: var(--amber); text-shadow: 0 0 24px rgba(255,179,71,.8); }
 .tagline { margin-top: 14px; font-size: clamp(13px, 3.6vw, 18px); opacity: .85; letter-spacing: .06em; }
@@ -151,6 +151,16 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
 .chapter-list .btn.room-entry em { background: rgba(157,255,106,.2); border-color: #9dff6a; color: #e8ffd8; }
 
 /* ------------------------- Menús y metajuego ------------------------- */
+@media (max-height: 700px) {
+  #title { justify-content: flex-start; overflow-y: auto; gap: 14px; padding-top: calc(58px + var(--safe-top)); }
+  #title .logo { margin-top: 0; }
+  #title .logo-top { font-size: clamp(36px, 12vw, 80px); }
+  #title .logo-num { font-size: clamp(26px, 9vw, 60px); }
+  #title .btn { padding-top: 13px; padding-bottom: 13px; }
+}
+.lang-switch { position: absolute; z-index: 3; top: calc(12px + var(--safe-top)); right: 12px; display: flex; gap: 4px; padding: 3px; border-radius: 8px; background: rgba(0,0,0,.35); border: 1px solid rgba(79,216,255,.35); }
+.lang-switch button { font: 800 13px var(--font); letter-spacing: .1em; color: var(--ink); background: none; border: 0; border-radius: 6px; padding: 8px 12px; opacity: .55; }
+.lang-switch button.on { background: rgba(79,216,255,.3); opacity: 1; }
 .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .menu-grid .btn { padding: 13px 4px; letter-spacing: .1em; }
 .btn-sub { display: block; margin-top: 6px; font-size: 11px; font-weight: 400; letter-spacing: .04em; opacity: .7; }
@@ -240,6 +250,7 @@ body.big-text .hot span { font-size: 12px; }
 
   <!-- Pantalla de título -->
   <section id="title" class="screen show">
+    <div class="lang-switch" id="langSwitch"><button data-lang="es">ES</button><button data-lang="en">EN</button></div>
     <div class="logo">
       <div class="logo-top">ÉXODO</div>
       <div class="logo-num">2942</div>
@@ -1250,8 +1261,9 @@ const I18N = (() => {
   let lang = 'es';
 
   function detect() {
+    // Español por defecto; inglés solo si el dispositivo está en inglés
     const n = (navigator.language || 'es').toLowerCase();
-    return n.startsWith('es') ? 'es' : 'en';
+    return n.startsWith('en') ? 'en' : 'es';
   }
   function T(s) {
     if (lang === 'es' || s == null) return s;
@@ -4188,6 +4200,8 @@ window.Rooms = Rooms;
       credits: 0, upgrades: {}, shipMode: 'dario', ach: {}, stats: { kills: 0, pulses: 0 }, flags: {}, tutorialDone: false,
       fullGame: false, arcadeBest: 0, arcadeBestTime: 0, rushBest: 0, duels: {} }, s);
     s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
+    // Si el jugador nunca eligió idioma, se vuelve a detectar (español por defecto)
+    if (!s.settings.langChosen) s.settings.lang = I18N.detect();
     return s;
   })();
   const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* sin almacenamiento */ } };
@@ -4946,6 +4960,7 @@ window.Rooms = Rooms;
     const st = save.settings;
     I18N.setLang(st.lang); M.setVibration(st.vibration); A.setEnabled(save.sound);
     document.body.classList.toggle('big-text', !!st.bigText);
+    document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === st.lang));
     $('roomInv').dataset.empty = T('INVENTARIO VACÍO');
     if (rebuildSprites) Sprites.build(G.R, { colorblind: st.cbBullets });
     refreshTitle();
@@ -4965,7 +4980,7 @@ window.Rooms = Rooms;
       row.appendChild(box); list.appendChild(row);
     };
     const yn = [[true, T('SÍ')], [false, T('NO')]];
-    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; applySettings(); });
+    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; st.langChosen = true; applySettings(); });
     seg(T('DIFICULTAD'), M.DIFFICULTY.map((d, i) => [i, T(d.name)]), st.difficulty, v => { st.difficulty = v; });
     seg(T('SONIDO'), yn, save.sound, v => { save.sound = v; applySettings(); });
     seg(T('VIBRACIÓN'), yn, st.vibration, v => { st.vibration = v; applySettings(); M.haptic(80); });
@@ -5651,6 +5666,9 @@ window.Rooms = Rooms;
 
   /* ------------------------------- Botones ------------------------------- */
   $('btnPlay').addEventListener('click', newGame);
+  document.querySelectorAll('#langSwitch button').forEach(b => b.addEventListener('click', () => {
+    save.settings.lang = b.dataset.lang; save.settings.langChosen = true; persist(); A.init(); A.sfx.select(); applySettings();
+  }));
   $('btnChapters').addEventListener('click', () => { A.init(); A.sfx.select(); buildChapterList(); show('chapters'); A.music('title'); });
   $('btnBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
   $('btnHangar').addEventListener('click', () => { A.init(); A.sfx.select(); openHangar(() => { show('title'); A.music('title'); }); });

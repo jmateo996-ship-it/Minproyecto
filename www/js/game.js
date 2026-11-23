@@ -26,6 +26,8 @@
       credits: 0, upgrades: {}, shipMode: 'dario', ach: {}, stats: { kills: 0, pulses: 0 }, flags: {}, tutorialDone: false,
       fullGame: false, arcadeBest: 0, arcadeBestTime: 0, rushBest: 0, duels: {} }, s);
     s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
+    // Si el jugador nunca eligió idioma, se vuelve a detectar (español por defecto)
+    if (!s.settings.langChosen) s.settings.lang = I18N.detect();
     return s;
   })();
   const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* sin almacenamiento */ } };
@@ -784,6 +786,7 @@
     const st = save.settings;
     I18N.setLang(st.lang); M.setVibration(st.vibration); A.setEnabled(save.sound);
     document.body.classList.toggle('big-text', !!st.bigText);
+    document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === st.lang));
     $('roomInv').dataset.empty = T('INVENTARIO VACÍO');
     if (rebuildSprites) Sprites.build(G.R, { colorblind: st.cbBullets });
     refreshTitle();
@@ -803,7 +806,7 @@
       row.appendChild(box); list.appendChild(row);
     };
     const yn = [[true, T('SÍ')], [false, T('NO')]];
-    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; applySettings(); });
+    seg(T('IDIOMA'), I18N.LANGS, st.lang, v => { st.lang = v; st.langChosen = true; applySettings(); });
     seg(T('DIFICULTAD'), M.DIFFICULTY.map((d, i) => [i, T(d.name)]), st.difficulty, v => { st.difficulty = v; });
     seg(T('SONIDO'), yn, save.sound, v => { save.sound = v; applySettings(); });
     seg(T('VIBRACIÓN'), yn, st.vibration, v => { st.vibration = v; applySettings(); M.haptic(80); });
@@ -1489,6 +1492,9 @@
 
   /* ------------------------------- Botones ------------------------------- */
   $('btnPlay').addEventListener('click', newGame);
+  document.querySelectorAll('#langSwitch button').forEach(b => b.addEventListener('click', () => {
+    save.settings.lang = b.dataset.lang; save.settings.langChosen = true; persist(); A.init(); A.sfx.select(); applySettings();
+  }));
   $('btnChapters').addEventListener('click', () => { A.init(); A.sfx.select(); buildChapterList(); show('chapters'); A.music('title'); });
   $('btnBack').addEventListener('click', () => { A.sfx.select(); show('title'); });
   $('btnHangar').addEventListener('click', () => { A.init(); A.sfx.select(); openHangar(() => { show('title'); A.music('title'); }); });
