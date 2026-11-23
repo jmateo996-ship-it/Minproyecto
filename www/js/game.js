@@ -135,6 +135,8 @@
   const ENEMY_TOUGHNESS = 3;
   // Daño de los disparos de tu nave (1 = original, 0.7 = un 30 % menos). No afecta al PULSO.
   const PLAYER_DAMAGE = 0.7;
+  // Daño del PULSO (1 = original: 150 a enemigos y 60 a jefes; 0.5 = la mitad)
+  const PULSE_DAMAGE = 0.5;
   function spawnEnemy(type, x, y, o = {}) {
     const d = EDEF[type];
     const hpScale = ENEMY_TOUGHNESS * D().hp * (1 + (G.difficulty - 1) * 0.35);
@@ -375,8 +377,8 @@
     for (const b of G.eBullets) particle(b.x, b.y, 0, -60, 0.4, 0.7, '#ffb347');
     G.eBullets.length = 0;
     G.pulseWave = { r: 0, t: 0, x: p.x, y: p.y };
-    for (const e of G.enemies) { e.hp -= 150; e.flash = 0.2; if (e.hp <= 0 && !e.dead) killEnemy(e); }
-    if (G.boss && !G.boss.entering) damageBoss({ x: G.boss.x, y: G.boss.y, part: null }, 60);
+    for (const e of G.enemies) { e.hp -= 150 * PULSE_DAMAGE; e.flash = 0.2; if (e.hp <= 0 && !e.dead) killEnemy(e); }
+    if (G.boss && !G.boss.entering) damageBoss({ x: G.boss.x, y: G.boss.y, part: null }, 60 * PULSE_DAMAGE);
   }
   function usePhase() {
     const p = G.player;
