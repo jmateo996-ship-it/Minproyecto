@@ -9,7 +9,9 @@ El código ya está preparado para usar las imágenes en cuanto existan:
 
 ## 1. Retratos de personajes · prioridad máxima
 
-Aparecen en todos los diálogos, en la radio y en las estancias. Ahora son una letra dentro de un círculo.
+El juego ya incluye **retratos ilustrados en vector** de los 8 personajes (`www/js/portraits.js`). Si se encargan retratos profesionales, se colocan en las rutas de abajo y sustituyen automáticamente a los ilustrados.
+
+Aparecen en todos los diálogos, en la radio y en las estancias.
 
 | Archivo | Personaje | Notas para el ilustrador |
 |---|---|---|

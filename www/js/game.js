@@ -897,7 +897,8 @@
 
   /* ------------------------------ Historia ------------------------------ */
   function setPortrait(el, who) {
-    const c = CHARACTERS[who], art = M.art.portraits[who];
+    // Arte encargado (assets/portraits) si existe; si no, el retrato ilustrado de portraits.js
+    const c = CHARACTERS[who], art = M.art.portraits[who] || (window.PORTRAITS && window.PORTRAITS[who]);
     el.style.setProperty('--pc', c.color); el.querySelector('span').textContent = c.initial;
     el.classList.toggle('has-art', !!art); el.style.backgroundImage = art ? `url("${art}")` : '';
   }

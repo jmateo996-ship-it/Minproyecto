@@ -21,6 +21,7 @@ html,body{width:360px;height:640px;overflow:hidden;background:#000;color:#fff;fo
 .grid{position:absolute;inset:0;background-image:linear-gradient(#ff2a4f22 1px,transparent 1px),linear-gradient(90deg,#ff2a4f22 1px,transparent 1px);background-size:24px 24px}
 </style></head>
 <body><div id="stage"></div>
+<script src="../../www/js/portraits.js"></script>
 <script>
 const P = Object.fromEntries(new URLSearchParams(location.search.slice(1)));
 const S = document.getElementById('stage');
@@ -47,7 +48,7 @@ window.render = t => {
       const a = ease((t - k * 0.3) / 0.5), teo = k === 3;
       const dim = teo ? 1 : 1 - 0.65 * mapped;
       return `<div class="p" style="opacity:${a * dim};transform:translateY(${(1 - a) * 20}px) scale(${teo ? 1 + 0.15 * mapped : 1})">
-        <div class="c" style="--pc:${c};${!teo && mapped ? `outline:2px solid rgba(255,42,79,${mapped});outline-offset:4px` : ''}">${i}</div><div class="n" style="color:${c}">${n}</div></div>`;
+        <div class="c" style="--pc:${c};background:url('${PORTRAITS[['dario','lia','nora','teo'][k]]}') 50% 22%/118%;${!teo && mapped ? `outline:2px solid rgba(255,42,79,${mapped});outline-offset:4px` : ''}"></div><div class="n" style="color:${c}">${n}</div></div>`;
     }).join('')}</div>
       <div class="txt l1" style="top:330px;opacity:${clamp((t - 1.3) / 0.5)}">${P.t1}</div>
       <div class="txt l2" style="top:400px;opacity:${clamp((t - 2.5) / 0.4)}">${P.t2}</div>`;
