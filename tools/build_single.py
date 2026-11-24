@@ -6,10 +6,14 @@ Uso:
   python3 tools/build_single.py --test   -> Exodo2942-prueba-estancias.html
       Versión de prueba: botones en la pantalla de inicio para entrar
       directamente en las 4 estancias de personajes y todas las misiones
-      desbloqueadas."""
+      desbloqueadas.
+  python3 tools/build_single.py --demo   -> Exodo2942-demo.html
+      Versión demo, como la de la tienda: Acto I gratis y compra simulada
+      para desbloquear el resto. Usa una partida guardada propia."""
 import base64, os, re, sys
 
 TEST = '--test' in sys.argv
+DEMO = '--demo' in sys.argv
 root = os.path.join(os.path.dirname(__file__), '..')
 w = os.path.join(root, 'www') + '/'
 h = open(w + 'index.html', encoding='utf-8').read()
@@ -53,12 +57,17 @@ TEST_POST = """<script>
 def inline(m):
     src = m.group(1)
     code = '<script>\n' + open(w + src, encoding='utf-8').read().replace('</script', '<\\/script') + '\n</script>'
+    if DEMO and src == 'js/config.js':
+        code += "\n<script>window.GAME_CONFIG.demo = true; window.GAME_CONFIG.saveKey = 'exodo2942.demo';</script>"
     if TEST and src == 'js/story.js':
         code = TEST_PRE + code
     return code
 
 h = re.sub(r'<script src="([^"]+)"></script>', inline, h)
 name = 'Exodo2942.html'
+if DEMO:
+    h = h.replace('<title>Éxodo 2942</title>', '<title>Éxodo 2942 · Demo</title>')
+    name = 'Exodo2942-demo.html'
 if TEST:
     h = h.replace('</body>', TEST_POST + '</body>')
     h = h.replace('<title>Éxodo 2942</title>', '<title>Éxodo 2942 · Prueba de estancias</title>')

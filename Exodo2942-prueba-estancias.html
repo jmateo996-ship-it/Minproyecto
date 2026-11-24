@@ -158,6 +158,7 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
   #title .logo-num { font-size: clamp(26px, 9vw, 60px); }
   #title .btn { padding-top: 13px; padding-bottom: 13px; }
 }
+.demo-badge { font-size: 12px; font-weight: 800; letter-spacing: .25em; color: #9dff6a; padding: 6px 12px; border: 1px solid #9dff6a88; border-radius: 4px; }
 .lang-switch { position: absolute; z-index: 3; top: calc(12px + var(--safe-top)); right: 12px; display: flex; gap: 4px; padding: 3px; border-radius: 8px; background: rgba(0,0,0,.35); border: 1px solid rgba(79,216,255,.35); }
 .lang-switch button { font: 800 13px var(--font); letter-spacing: .1em; color: var(--ink); background: none; border: 0; border-radius: 6px; padding: 8px 12px; opacity: .55; }
 .lang-switch button.on { background: rgba(79,216,255,.3); opacity: 1; }
@@ -276,6 +277,7 @@ body.big-text .hot span { font-size: 12px; }
       <button id="btnSettings" class="btn small" data-i18n>AJUSTES</button>
     </div>
     <div class="hiscore" id="hiscore"></div>
+    <div class="demo-badge" id="demoBadge" style="display:none" data-i18n>DEMO · ACTO I GRATIS</div>
   </section>
 
   <!-- Selector de misiones -->
@@ -1262,7 +1264,8 @@ window.LANG_EN = {
  "Escudo": "Shield",
  "Puntos y créditos": "Points and credits",
  "Se aplica desde la próxima misión que empieces.": "Applies from the next mission you start.",
- "Dificultad": "Difficulty"
+ "Dificultad": "Difficulty",
+ "DEMO · ACTO I GRATIS": "DEMO · ACT I FREE"
 };
 
 </script>
@@ -4325,7 +4328,7 @@ window.Rooms = Rooms;
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* ------------------------------ Guardado ----------------------------- */
-  const SAVE_KEY = 'exodo2942.save';
+  const SAVE_KEY = (window.GAME_CONFIG && window.GAME_CONFIG.saveKey) || 'exodo2942.save';
   const DEFAULT_SETTINGS = { lang: I18N.detect(), difficulty: 1, sens: 1.25, vibration: true, bigText: false, cbBullets: false, autofire: true };
   const save = (() => {
     let s = {};
@@ -5546,6 +5549,7 @@ window.Rooms = Rooms;
     if (save.hiscore) parts.push(T('RÉCORD') + ' · ' + String(save.hiscore).padStart(8, '0'));
     parts.push('¢ ' + save.credits);
     $('hiscore').textContent = parts.join('   ');
+    $('demoBadge').style.display = isFull() ? 'none' : '';
   }
   function toTitle() {
     runId++; clearComms();

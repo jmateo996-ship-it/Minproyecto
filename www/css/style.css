@@ -146,6 +146,7 @@ h2.red { color: #ffd0da; text-shadow: 0 0 20px var(--red); }
   #title .logo-num { font-size: clamp(26px, 9vw, 60px); }
   #title .btn { padding-top: 13px; padding-bottom: 13px; }
 }
+.demo-badge { font-size: 12px; font-weight: 800; letter-spacing: .25em; color: #9dff6a; padding: 6px 12px; border: 1px solid #9dff6a88; border-radius: 4px; }
 .lang-switch { position: absolute; z-index: 3; top: calc(12px + var(--safe-top)); right: 12px; display: flex; gap: 4px; padding: 3px; border-radius: 8px; background: rgba(0,0,0,.35); border: 1px solid rgba(79,216,255,.35); }
 .lang-switch button { font: 800 13px var(--font); letter-spacing: .1em; color: var(--ink); background: none; border: 0; border-radius: 6px; padding: 8px 12px; opacity: .55; }
 .lang-switch button.on { background: rgba(79,216,255,.3); opacity: 1; }

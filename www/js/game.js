@@ -17,7 +17,7 @@
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* ------------------------------ Guardado ----------------------------- */
-  const SAVE_KEY = 'exodo2942.save';
+  const SAVE_KEY = (window.GAME_CONFIG && window.GAME_CONFIG.saveKey) || 'exodo2942.save';
   const DEFAULT_SETTINGS = { lang: I18N.detect(), difficulty: 1, sens: 1.25, vibration: true, bigText: false, cbBullets: false, autofire: true };
   const save = (() => {
     let s = {};
@@ -1238,6 +1238,7 @@
     if (save.hiscore) parts.push(T('RÉCORD') + ' · ' + String(save.hiscore).padStart(8, '0'));
     parts.push('¢ ' + save.credits);
     $('hiscore').textContent = parts.join('   ');
+    $('demoBadge').style.display = isFull() ? 'none' : '';
   }
   function toTitle() {
     runId++; clearComms();

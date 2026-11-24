@@ -759,5 +759,6 @@ window.LANG_EN = {
  "Escudo": "Shield",
  "Puntos y créditos": "Points and credits",
  "Se aplica desde la próxima misión que empieces.": "Applies from the next mission you start.",
- "Dificultad": "Difficulty"
+ "Dificultad": "Difficulty",
+ "DEMO · ACTO I GRATIS": "DEMO · ACT I FREE"
 };

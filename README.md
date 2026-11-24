@@ -44,7 +44,7 @@ Toda la historia está en [`HISTORIA.md`](HISTORIA.md) y el guion jugable en [`w
 
 ## Probarlo ahora en el navegador
 
-**En el móvil, sin instalar nada:** abre [`Exodo2942.html`](Exodo2942.html) en el navegador. Es el juego completo en un solo archivo. [`Exodo2942-prueba-estancias.html`](Exodo2942-prueba-estancias.html) es la versión de prueba, con todo desbloqueado y acceso directo a las estancias. Ambos se regeneran con `npm run build:single`.
+**En el móvil, sin instalar nada:** abre [`Exodo2942.html`](Exodo2942.html) en el navegador. Es el juego completo en un solo archivo. [`Exodo2942-prueba-estancias.html`](Exodo2942-prueba-estancias.html) es la versión de prueba, con todo desbloqueado y acceso directo a las estancias. [`Exodo2942-demo.html`](Exodo2942-demo.html) es la **demo** tal como la vería quien la descarga gratis: el Acto I completo y, al terminarlo, la pantalla de compra (simulada). Ambos se regeneran con `npm run build:single`.
 
 
 ```bash
