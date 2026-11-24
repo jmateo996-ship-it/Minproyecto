@@ -1793,5 +1793,5 @@
 
   // Exponer para depuración / pruebas automáticas
   window.__G = G;
-  window.__debug = { startChapter, startDuel: i => startDuel(i), DUELS, runRoom: i => runRoom(ROOMS[i]), R_, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
+  window.__debug = { startChapter, startDuel: i => startDuel(i), DUELS, step: (n, dt) => { for (let k = 0; k < n; k++) update(dt); draw(); }, runRoom: i => runRoom(ROOMS[i]), R_, formations: FORMATIONS, bossDefeated: () => G.boss && (G.boss.hp = 1), skipLevel: () => { G.levelT = G.chapter.duration; G.enemies = []; }, setTime: t => { G.levelT = t; } };
 })();

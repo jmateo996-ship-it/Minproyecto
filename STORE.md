@@ -66,24 +66,37 @@ Play the whole of Act I for free. Unlock the rest with a single purchase.
 - En `www/js/config.js`, pon `demo: true` en la versión de tienda.
 - Apple exige un botón de **Restaurar compra**. Ya está en la pantalla de compra.
 
-## Capturas para Google Play (listas en `store/google-play/`)
+## Material listo para subir (carpeta `store/`)
 
-Son capturas reales del juego, como exige Google, montadas a **1080 × 1920** con un titular. Google Play admite de 2 a 8; estas son 6, en el orden recomendado:
+| Tienda | Carpeta | Tamaño | Contenido |
+|---|---|---|---|
+| Google Play | `store/google-play/es/` y `en/` | 1080 × 1920 | 6 capturas y la imagen destacada de 1024 × 500 |
+| App Store, iPhone 6,7" | `store/app-store/<es\|en>/iphone-6.7/` | 1290 × 2796 | 6 capturas |
+| App Store, iPad 13" | `store/app-store/<es\|en>/ipad-13/` | 2064 × 2752 | 6 capturas (obligatorias porque el juego funciona en iPad) |
+| Vídeo para Google Play y redes | `store/video/trailer_<es\|en>_1080x1920.mp4` | 1080 × 1920, 30 s | Súbelo a YouTube y pega el enlace en la Play Console |
+| Vista previa del App Store | `store/video/app-preview_<es\|en>_886x1920.mp4` | 886 × 1920, 30 s | Para iPhone de 6,5" a 6,9" |
 
-| Archivo | Titular | Qué muestra |
+Las capturas son reales del juego. Orden recomendado:
+
+| Archivo | Titular (ES / EN) | Qué muestra |
 |---|---|---|
-| `01_accion.png` | 15 MISIONES DE ACCIÓN | Oleada en el Mar de Cristal con el láser de Lía y radio de la historia |
-| `02_superjefe.png` | UN SÚPER JEFE DE 4 FASES | ORDO PRIMORDIAL con el núcleo al descubierto |
-| `03_decision.png` | TUS DECISIONES CAMBIAN EL FINAL | La elección de salvar o no a Vex |
-| `04_estancias.png` | ESCAPA CON TODA LA FAMILIA | Estancia «La Sonda Arenal‑7» con los 4 personajes |
-| `05_jefes.png` | 15 JEFES, TODOS DISTINTOS | Torre Centinela con sus subnaves (modo Jefes 1 vs 1) |
-| `06_hangar.png` | MEJORA TU NAVE | Hangar con los 4 modos de arma y las mejoras |
+| `01_accion` | 15 MISIONES DE ACCIÓN / 15 ACTION MISSIONS | Oleada en el Mar de Cristal con el láser de Lía |
+| `02_superjefe` | UN SÚPER JEFE DE 4 FASES / A 4-PHASE SUPER BOSS | ORDO PRIMORDIAL con el núcleo al descubierto |
+| `03_decision` | TUS DECISIONES CAMBIAN EL FINAL / YOUR CHOICES CHANGE THE ENDING | La elección de salvar o no a Vex |
+| `04_estancias` | ESCAPA CON TODA LA FAMILIA / ESCAPE WITH THE WHOLE FAMILY | La estancia de la sonda con los 4 personajes |
+| `05_jefes` | 15 JEFES, TODOS DISTINTOS / 15 BOSSES, ALL DIFFERENT | Torre Centinela con sus subnaves |
+| `06_hangar` | MEJORA TU NAVE / UPGRADE YOUR SHIP | Hangar con los 4 modos de arma |
 
-La **imagen destacada** obligatoria (`imagen_destacada_1024x500.png`) muestra el logo junto al ojo de ORDO PRIMORDIAL.
+### Regenerar todo cuando cambie el juego
 
-Para el App Store sirven las mismas capturas, pero hay que generarlas a 1290 × 2796 (iPhone 6,7").
+```bash
+npm run build:single                       # versiones de un solo archivo
+for l in es en; do for d in phone tablet; do node tools/store/capture.js $l $d; done; done
+node tools/store/compose.js                # capturas de Google Play y App Store
+rm -rf store/tmp && tools/store/make_trailer.sh   # vídeos (graba, compone la música y monta)
+```
 
-## Guion del tráiler (30 segundos)
+## Guion del tráiler (30 segundos, ya montado en `store/video/`)
 
 | Segundos | Imagen | Texto o voz |
 |---|---|---|
