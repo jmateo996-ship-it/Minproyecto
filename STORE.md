@@ -66,14 +66,22 @@ Play the whole of Act I for free. Unlock the rest with a single purchase.
 - En `www/js/config.js`, pon `demo: true` en la versión de tienda.
 - Apple exige un botón de **Restaurar compra**. Ya está en la pantalla de compra.
 
-## Capturas (6,7" iPhone, 13" iPad y Android)
+## Capturas para Google Play (listas en `store/google-play/`)
 
-1. Jefe ORDO PRIMORDIAL en su fase final (núcleo al descubierto), con el texto «Un súper jefe de 4 fases».
-2. Diálogo de la elección de Vex, con «Tus decisiones cambian el final».
-3. Estancia «La Sonda Arenal‑7» con los 4 personajes, con «Escapa con toda la familia».
-4. Hangar con los 4 modos de arma, con «Mejora tu nave».
-5. Oleada en el Mar de Cristal con el modo LÁSER, con «15 misiones de acción».
-6. Modo arcade con la cuenta de tiempo, con «Modo infinito y modo Jefes».
+Son capturas reales del juego, como exige Google, montadas a **1080 × 1920** con un titular. Google Play admite de 2 a 8; estas son 6, en el orden recomendado:
+
+| Archivo | Titular | Qué muestra |
+|---|---|---|
+| `01_accion.png` | 15 MISIONES DE ACCIÓN | Oleada en el Mar de Cristal con el láser de Lía y radio de la historia |
+| `02_superjefe.png` | UN SÚPER JEFE DE 4 FASES | ORDO PRIMORDIAL con el núcleo al descubierto |
+| `03_decision.png` | TUS DECISIONES CAMBIAN EL FINAL | La elección de salvar o no a Vex |
+| `04_estancias.png` | ESCAPA CON TODA LA FAMILIA | Estancia «La Sonda Arenal‑7» con los 4 personajes |
+| `05_jefes.png` | 15 JEFES, TODOS DISTINTOS | Torre Centinela con sus subnaves (modo Jefes 1 vs 1) |
+| `06_hangar.png` | MEJORA TU NAVE | Hangar con los 4 modos de arma y las mejoras |
+
+La **imagen destacada** obligatoria (`imagen_destacada_1024x500.png`) muestra el logo junto al ojo de ORDO PRIMORDIAL.
+
+Para el App Store sirven las mismas capturas, pero hay que generarlas a 1290 × 2796 (iPhone 6,7").
 
 ## Guion del tráiler (30 segundos)
 
