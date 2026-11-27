@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Fredoka";
+        src: url("assets/fonts/fredoka.woff2") format("woff2");
+        font-weight: 300 700;
+        font-display: block;
+      }
+      :root {
+        --paper: #f7f2e4;
+        --card: #fcfaf4;
+        --edge: #e1d5b8;
+        --ink: #1c2230;
+        --ink-2: #3a4152;
+        --pear: #f1d23a;
+        --pear-deep: #c9a71a;
+        --coral: #f2705f;
+        --coral-deep: #c23b2b;
+        --mint: #8be0a8;
+        --font: "Fredoka", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        font-family: var(--font);
+        color: var(--ink);
+        background:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.18 0 0 0 0 0.12 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+          var(--paper);
+      }
+      .scene { position: absolute; inset: 0; }
+
+      /* ---------- hook ---------- */
+      .brand {
+        position: absolute; left: 120px; top: 300px;
+        font-size: 44px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-2);
+      }
+      .hook {
+        position: absolute; left: 120px; top: 560px; width: 780px;
+        font-size: 150px; font-weight: 600; line-height: 0.98; letter-spacing: -0.035em; z-index: 1;
+      }
+      .hook .w { display: inline-block; }
+      .band {
+        position: absolute; left: 104px; top: 765px; width: 590px; height: 96px;
+        background: var(--pear); border-radius: 22px; transform-origin: left center; z-index: 0;
+      }
+      .hook-sub {
+        position: absolute; left: 120px; top: 960px; width: 640px;
+        font-size: 46px; font-weight: 500; line-height: 1.3; color: var(--ink-2);
+      }
+
+      /* ---------- services ---------- */
+      .svc-title {
+        position: absolute; left: 120px; top: 300px;
+        font-size: 72px; font-weight: 600; letter-spacing: -0.03em;
+      }
+      .svc-title span { color: var(--coral-deep); }
+      .card {
+        position: absolute; left: 120px; width: 660px; height: 240px;
+        border-radius: 32px; padding: 0 28px 0 40px;
+        background: var(--card);
+        box-shadow: inset 0 0 0 2px var(--edge), 0 10px 0 0 var(--edge), 12px 30px 40px -18px rgba(28,34,48,0.35);
+        display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      }
+      .card .name { font-size: 48px; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+      .card .meta { display: block; font-size: 32px; font-weight: 500; color: var(--ink-2); margin-top: 10px; letter-spacing: 0; }
+      .price {
+        flex: none; width: 150px; height: 150px; border-radius: 50%;
+        display: grid; place-items: center;
+        font-size: 50px; font-weight: 600; letter-spacing: -0.02em;
+      }
+      #c1 { top: 470px; } #c1 .price { background: var(--pear); }
+      #c2 { top: 760px; } #c2 .price { background: var(--coral); }
+      #c3 { top: 1050px; } #c3 .price { background: var(--mint); }
+
+      /* ---------- close ---------- */
+      .sheet {
+        position: absolute; left: -40px; top: 230px; width: 1160px; height: 1120px;
+        background: var(--pear);
+        clip-path: polygon(0% 2.1%, 6% 0.6%, 12% 1.8%, 18% 0.4%, 25% 1.5%, 31% 0.2%, 38% 1.9%, 44% 0.7%, 51% 1.6%, 57% 0.3%, 63% 1.4%, 70% 0.5%, 76% 2%, 83% 0.6%, 89% 1.7%, 95% 0.4%, 100% 1.2%, 100% 98.4%, 94% 99.6%, 88% 98.1%, 81% 99.4%, 75% 98.2%, 69% 99.8%, 62% 98.5%, 56% 99.5%, 49% 98%, 43% 99.3%, 37% 98.3%, 30% 99.7%, 24% 98.6%, 17% 99.4%, 11% 98.2%, 5% 99.5%, 0% 98.6%);
+        transform-origin: center bottom;
+      }
+      .close-head {
+        position: absolute; left: 120px; top: 420px; width: 700px;
+        font-size: 116px; font-weight: 600; line-height: 0.98; letter-spacing: -0.035em;
+      }
+      .wa {
+        position: absolute; left: 120px; top: 820px; height: 130px; padding: 0 56px;
+        border-radius: 999px; background: var(--ink); color: var(--paper);
+        display: flex; align-items: center; font-size: 56px; font-weight: 600; letter-spacing: -0.01em;
+        box-shadow: 0 10px 0 0 #0c0f16;
+      }
+      .addr {
+        position: absolute; left: 120px; top: 1040px; width: 660px;
+        font-size: 44px; font-weight: 500; line-height: 1.3; color: var(--ink-2);
+      }
+      .addr b { font-weight: 600; color: var(--ink); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="13" data-width="1080" data-height="1920">
+
+      <!-- 0–3.4 s: hook (already on screen at frame 0) -->
+      <div id="s-hook" class="scene clip" data-start="0" data-duration="3.4" data-track-index="0" data-track-kind="graphics">
+        <p class="brand" id="brand">Estética Inma</p>
+        <div class="band" id="band"></div>
+        <h1 class="hook" id="hook"><span class="w">Brilla</span> <span class="w">a</span> <span class="w">tu</span> <span class="w">manera.</span></h1>
+        <p class="hook-sub" id="hookSub">Uñas, pestañas, piel y masajes.</p>
+      </div>
+
+      <!-- 3.4–9.6 s: three services -->
+      <div id="s-svc" class="scene clip" data-start="3.4" data-duration="6.2" data-track-index="0" data-track-kind="graphics">
+        <p class="svc-title" id="svcTitle">Elige <span>lo tuyo</span></p>
+        <div class="card" id="c1"><p class="name">Lifting de pestañas<span class="meta">60 min, tinte incluido</span></p><div class="price">45 €</div></div>
+        <div class="card" id="c2"><p class="name">Semipermanente<span class="meta">45 min, dura semanas</span></p><div class="price">22 €</div></div>
+        <div class="card" id="c3"><p class="name">Higiene facial<span class="meta">60 min, piel nueva</span></p><div class="price">45 €</div></div>
+      </div>
+
+      <!-- 9.6–13 s: close -->
+      <div id="s-close" class="scene clip" data-start="9.6" data-duration="3.4" data-track-index="0" data-track-kind="graphics">
+        <div class="sheet" id="sheet" data-layout-allow-overflow></div>
+        <h2 class="close-head" id="closeHead">Tu hora te está esperando.</h2>
+        <div class="wa" id="wa">Pide cita por WhatsApp</div>
+        <p class="addr" id="addr"><b>Estética Inma</b><br />Calle del Olmo 14, bajo</p>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Hook: words are visible at frame 0 (thumbnail), then settle with a small lift.
+      tl.from("#hook .w", { y: 40, duration: 0.5, ease: "back.out(2)", stagger: 0.08 }, 0);
+      tl.fromTo("#band", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power3.out" }, 0.45);
+      tl.from("#hookSub", { opacity: 0, y: 24, duration: 0.45, ease: "power2.out" }, 0.7);
+      tl.from("#brand", { opacity: 0, duration: 0.4 }, 0.2);
+      tl.to(["#hook", "#band", "#hookSub", "#brand"], { y: -60, opacity: 0, duration: 0.35, ease: "power2.in" }, 3.0);
+
+      // Services: title, then one card every ~1.4 s, each pressed down like card stock.
+      tl.from("#svcTitle", { opacity: 0, y: 30, duration: 0.4, ease: "power2.out" }, 3.45);
+      ["#c1", "#c2", "#c3"].forEach((id, i) => {
+        const t = 3.75 + i * 1.4;
+        tl.from(id, { x: 1150, rotation: 6, duration: 0.55, ease: "back.out(1.4)" }, t);
+        tl.from(id + " .price", { scale: 0, rotation: -25, duration: 0.45, ease: "back.out(2.2)" }, t + 0.35);
+        tl.to(id, { y: "+=6", duration: 0.08, yoyo: true, repeat: 1, ease: "power1.inOut" }, t + 0.6);
+      });
+      tl.to(["#svcTitle", "#c1", "#c2", "#c3"], { opacity: 0, y: -40, duration: 0.3, stagger: 0.04, ease: "power2.in" }, 9.2);
+
+      // Close: torn pear sheet rises, head, WhatsApp pill pops, address.
+      tl.from("#sheet", { yPercent: 105, duration: 0.55, ease: "power3.out" }, 9.6);
+      tl.from("#closeHead", { opacity: 0, y: 40, duration: 0.45, ease: "power2.out" }, 9.95);
+      tl.from("#wa", { scale: 0.6, opacity: 0, duration: 0.45, ease: "back.out(2)" }, 10.35);
+      tl.to("#wa", { scale: 1.06, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut" }, 11.1);
+      tl.from("#addr", { opacity: 0, y: 20, duration: 0.4, ease: "power2.out" }, 10.75);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
